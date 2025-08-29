@@ -1,33 +1,51 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿// Controllers/AccountController.cs - Updated for Identity
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ReverseMarket.Data;
 using ReverseMarket.Models;
+using ReverseMarket.Models.Identity;
 using ReverseMarket.Services;
 using System.ComponentModel.DataAnnotations;
+using System.Security.Claims;
 
 namespace ReverseMarket.Controllers
 {
     public class AccountController : Controller
     {
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly RoleManager<ApplicationRole> _roleManager;
         private readonly ApplicationDbContext _context;
         private readonly IWhatsAppService _whatsAppService;
         private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly ILogger<AccountController> _logger;
 
-        public AccountController(ApplicationDbContext context, IWhatsAppService whatsAppService, IWebHostEnvironment webHostEnvironment)
+        public AccountController(
+            UserManager<ApplicationUser> userManager,
+            SignInManager<ApplicationUser> signInManager,
+            RoleManager<ApplicationRole> roleManager,
+            ApplicationDbContext context,
+            IWhatsAppService whatsAppService,
+            IWebHostEnvironment webHostEnvironment,
+            ILogger<AccountController> logger)
         {
+            _userManager = userManager;
+            _signInManager = signInManager;
+            _roleManager = roleManager;
             _context = context;
             _whatsAppService = whatsAppService;
             _webHostEnvironment = webHostEnvironment;
+            _logger = logger;
         }
 
         [HttpGet]
         public IActionResult Login()
         {
-            // تحقق من تسجيل الدخول المسبق
-            if (HttpContext.Session.GetString("IsLoggedIn") == "true")
+            // Check if user is already logged in
+            if (User.Identity?.IsAuthenticated == true)
             {
-                var userType = HttpContext.Session.GetString("UserType");
-                if (userType == "Admin")
+                if (User.IsInRole("Admin"))
                 {
                     return RedirectToAction("Index", "Dashboard", new { area = "Admin" });
                 }
@@ -47,42 +65,45 @@ namespace ReverseMarket.Controllers
         {
             if (ModelState.IsValid)
             {
-                // تنظيف رقم الهاتف
                 var cleanPhoneNumber = model.CountryCode + model.PhoneNumber.TrimStart('0');
 
-                // التحقق من الأدمن أولاً
-                if (cleanPhoneNumber == "+9647700227210") // رقم الأدمن
+                // Check for admin login
+                if (cleanPhoneNumber == "+9647700227210")
                 {
-                    // إنشاء جلسة أدمن مؤقتة للتحقق من OTP
                     var adminOtp = GenerateOTP();
                     HttpContext.Session.SetString("AdminOTP", adminOtp);
                     HttpContext.Session.SetString("AdminPhone", cleanPhoneNumber);
                     HttpContext.Session.SetString("LoginType", "Admin");
 
-                    // إرسال OTP للأدمن
                     await _whatsAppService.SendOTPAsync(cleanPhoneNumber, adminOtp);
 
                     TempData["InfoMessage"] = "تم إرسال رمز التحقق للأدمن";
                     return RedirectToAction("VerifyAdminOTP");
                 }
 
-                var user = await _context.Users
+                // Find user by phone number
+                var user = await _userManager.Users
                     .FirstOrDefaultAsync(u => u.PhoneNumber == cleanPhoneNumber);
 
                 if (user != null)
                 {
-                    // مستخدم موجود ومؤكد - إرسال OTP للدخول مباشرة
-                    if (user.IsPhoneVerified)
+                    // Check if account is active
+                    if (!user.IsActive)
                     {
+                        ModelState.AddModelError("", "تم إيقاف هذا الحساب. يرجى التواصل مع الإدارة.");
+                        return View(model);
+                    }
+
+                    if (user.PhoneNumberConfirmed)
+                    {
+                        // Verified user - send login OTP
                         var otp = GenerateOTP();
 
-                        // حفظ OTP في الجلسة
                         HttpContext.Session.SetString("OTP", otp);
                         HttpContext.Session.SetString("PhoneNumber", cleanPhoneNumber);
                         HttpContext.Session.SetString("LoginType", "ExistingVerifiedUser");
-                        HttpContext.Session.SetInt32("UserId", user.Id);
+                        HttpContext.Session.SetString("UserId", user.Id);
 
-                        // إرسال OTP للدخول عبر WhatsApp
                         await _whatsAppService.SendLoginOTPAsync(cleanPhoneNumber, otp, user.FirstName);
 
                         TempData["InfoMessage"] = $"مرحباً {user.FirstName}! تم إرسال رمز الدخول إلى واتساب.";
@@ -90,13 +111,13 @@ namespace ReverseMarket.Controllers
                     }
                     else
                     {
-                        // مستخدم موجود لكن غير مؤكد - إعادة التحقق
+                        // Unverified user - re-verify phone
                         var verificationCode = GenerateOTP();
 
                         HttpContext.Session.SetString("VerificationCode", verificationCode);
                         HttpContext.Session.SetString("PhoneNumber", cleanPhoneNumber);
                         HttpContext.Session.SetString("LoginType", "ExistingUnverifiedUser");
-                        HttpContext.Session.SetInt32("UserId", user.Id);
+                        HttpContext.Session.SetString("UserId", user.Id);
 
                         await _whatsAppService.SendPhoneVerificationAsync(cleanPhoneNumber, verificationCode, true);
 
@@ -106,15 +127,13 @@ namespace ReverseMarket.Controllers
                 }
                 else
                 {
-                    // مستخدم جديد - إرسال رمز التحقق للتسجيل
+                    // New user - send verification code for registration
                     var verificationCode = GenerateOTP();
 
-                    // حفظ معلومات التحقق في الجلسة
                     HttpContext.Session.SetString("VerificationCode", verificationCode);
                     HttpContext.Session.SetString("PhoneNumber", cleanPhoneNumber);
                     HttpContext.Session.SetString("LoginType", "NewUser");
 
-                    // إرسال رمز التحقق عبر WhatsApp
                     await _whatsAppService.SendPhoneVerificationAsync(cleanPhoneNumber, verificationCode, false);
 
                     TempData["InfoMessage"] = "رقم جديد! يرجى تأكيد رقم الهاتف أولاً.";
@@ -125,7 +144,6 @@ namespace ReverseMarket.Controllers
             return View(model);
         }
 
-        // تحقق من OTP الأدمن
         [HttpGet]
         public IActionResult VerifyAdminOTP()
         {
@@ -154,19 +172,18 @@ namespace ReverseMarket.Controllers
 
                 if (model.OTP == storedOTP && !string.IsNullOrEmpty(adminPhone) && loginType == "Admin")
                 {
-                    // تسجيل دخول الأدمن
-                    HttpContext.Session.SetString("UserId", "admin");
-                    HttpContext.Session.SetString("UserName", "المدير العام");
-                    HttpContext.Session.SetString("UserType", "Admin");
-                    HttpContext.Session.SetString("IsLoggedIn", "true");
+                    // Find admin user and sign in
+                    var adminUser = await _userManager.FindByNameAsync(adminPhone);
+                    if (adminUser != null)
+                    {
+                        await _signInManager.SignInAsync(adminUser, isPersistent: true);
 
-                    // تنظيف بيانات التحقق
-                    HttpContext.Session.Remove("AdminOTP");
-                    HttpContext.Session.Remove("AdminPhone");
-                    HttpContext.Session.Remove("LoginType");
+                        // Clear verification session
+                        ClearVerificationSession();
 
-                    TempData["SuccessMessage"] = "مرحباً بك في لوحة التحكم!";
-                    return RedirectToAction("Index", "Dashboard", new { area = "Admin" });
+                        TempData["SuccessMessage"] = "مرحباً بك في لوحة التحكم!";
+                        return RedirectToAction("Index", "Dashboard", new { area = "Admin" });
+                    }
                 }
 
                 ModelState.AddModelError("", "رمز التحقق غير صحيح");
@@ -182,7 +199,6 @@ namespace ReverseMarket.Controllers
             var phoneNumber = HttpContext.Session.GetString("PhoneNumber");
             var loginType = HttpContext.Session.GetString("LoginType");
 
-            // التحقق من صحة الجلسة للمستخدمين المؤكدين
             if (string.IsNullOrEmpty(phoneNumber) ||
                 (loginType != "ExistingVerifiedUser" && loginType != "ExistingUnverifiedUser"))
             {
@@ -190,11 +206,9 @@ namespace ReverseMarket.Controllers
                 return RedirectToAction("Login");
             }
 
-            var model = new VerifyOTPViewModel();
             ViewBag.PhoneNumber = phoneNumber;
             ViewBag.LoginType = loginType;
-
-            return View(model);
+            return View(new VerifyOTPViewModel());
         }
 
         [HttpPost]
@@ -206,37 +220,39 @@ namespace ReverseMarket.Controllers
                 var storedOTP = HttpContext.Session.GetString("OTP");
                 var phoneNumber = HttpContext.Session.GetString("PhoneNumber");
                 var loginType = HttpContext.Session.GetString("LoginType");
-                var userId = HttpContext.Session.GetInt32("UserId");
+                var userId = HttpContext.Session.GetString("UserId");
 
-                if (model.OTP == storedOTP && !string.IsNullOrEmpty(phoneNumber))
+                if (model.OTP == storedOTP && !string.IsNullOrEmpty(phoneNumber) && !string.IsNullOrEmpty(userId))
                 {
-                    if (loginType == "ExistingVerifiedUser" && userId.HasValue)
+                    var user = await _userManager.FindByIdAsync(userId);
+                    if (user != null)
                     {
-                        // دخول مستخدم مؤكد
-                        var user = await _context.Users.FindAsync(userId.Value);
-                        if (user != null)
+                        if (loginType == "ExistingVerifiedUser")
                         {
-                            await LoginUserAsync(user);
+                            // Sign in verified user
+                            await _signInManager.SignInAsync(user, isPersistent: true);
                             ClearVerificationSession();
 
                             TempData["SuccessMessage"] = $"مرحباً بعودتك {user.FirstName}!";
                             return RedirectToAction("Index", "Home");
                         }
-                    }
-                    else if (loginType == "ExistingUnverifiedUser" && userId.HasValue)
-                    {
-                        // تأكيد مستخدم غير مؤكد
-                        var user = await _context.Users.FindAsync(userId.Value);
-                        if (user != null)
+                        else if (loginType == "ExistingUnverifiedUser")
                         {
-                            user.IsPhoneVerified = true;
-                            await _context.SaveChangesAsync();
+                            // Confirm phone and sign in
+                            user.PhoneNumberConfirmed = true;
+                            var updateResult = await _userManager.UpdateAsync(user);
 
-                            await LoginUserAsync(user);
-                            ClearVerificationSession();
+                            if (updateResult.Succeeded)
+                            {
+                                // Add phone confirmation claim
+                                await _userManager.AddClaimAsync(user, new Claim("PhoneNumberConfirmed", "true"));
 
-                            TempData["SuccessMessage"] = $"تم تأكيد حسابك بنجاح! مرحباً بك {user.FirstName}";
-                            return RedirectToAction("Index", "Home");
+                                await _signInManager.SignInAsync(user, isPersistent: true);
+                                ClearVerificationSession();
+
+                                TempData["SuccessMessage"] = $"تم تأكيد حسابك بنجاح! مرحباً بك {user.FirstName}";
+                                return RedirectToAction("Index", "Home");
+                            }
                         }
                     }
                 }
@@ -262,10 +278,9 @@ namespace ReverseMarket.Controllers
                 return RedirectToAction("Login");
             }
 
-            var model = new VerifyPhoneViewModel();
             ViewBag.PhoneNumber = phoneNumber;
             ViewBag.LoginType = loginType;
-            return View(model);
+            return View(new VerifyPhoneViewModel());
         }
 
         [HttpPost]
@@ -282,27 +297,33 @@ namespace ReverseMarket.Controllers
                 {
                     if (loginType == "NewUser")
                     {
-                        // التحقق من الهاتف ناجح للمستخدم الجديد - انتقال لإنشاء الحساب
+                        // Phone verified for new user - proceed to account creation
                         HttpContext.Session.SetString("PhoneVerified", "true");
                         return RedirectToAction("CreateAccount");
                     }
                     else if (loginType == "ExistingUnverifiedUser")
                     {
-                        // تأكيد المستخدم الموجود غير المؤكد
-                        var userId = HttpContext.Session.GetInt32("UserId");
-                        if (userId.HasValue)
+                        // Confirm existing user's phone
+                        var userId = HttpContext.Session.GetString("UserId");
+                        if (!string.IsNullOrEmpty(userId))
                         {
-                            var user = await _context.Users.FindAsync(userId.Value);
+                            var user = await _userManager.FindByIdAsync(userId);
                             if (user != null)
                             {
-                                user.IsPhoneVerified = true;
-                                await _context.SaveChangesAsync();
+                                user.PhoneNumberConfirmed = true;
+                                var result = await _userManager.UpdateAsync(user);
 
-                                await LoginUserAsync(user);
-                                ClearVerificationSession();
+                                if (result.Succeeded)
+                                {
+                                    // Add phone confirmation claim
+                                    await _userManager.AddClaimAsync(user, new Claim("PhoneNumberConfirmed", "true"));
 
-                                TempData["SuccessMessage"] = $"تم تأكيد رقم هاتفك! مرحباً بك {user.FirstName}";
-                                return RedirectToAction("Index", "Home");
+                                    await _signInManager.SignInAsync(user, isPersistent: true);
+                                    ClearVerificationSession();
+
+                                    TempData["SuccessMessage"] = $"تم تأكيد رقم هاتفك! مرحباً بك {user.FirstName}";
+                                    return RedirectToAction("Index", "Home");
+                                }
                             }
                         }
                     }
@@ -332,8 +353,7 @@ namespace ReverseMarket.Controllers
             ViewBag.Categories = await _context.Categories.Where(c => c.IsActive).ToListAsync();
             ViewBag.PhoneNumber = phoneNumber;
 
-            var model = new CreateAccountViewModel();
-            return View(model);
+            return View(new CreateAccountViewModel());
         }
 
         [HttpPost]
@@ -352,23 +372,19 @@ namespace ReverseMarket.Controllers
                     return RedirectToAction("Login");
                 }
 
-                // التحقق من عدم وجود المستخدم (احتياط إضافي)
-                var existingUser = await _context.Users
-                    .FirstOrDefaultAsync(u => u.PhoneNumber == phoneNumber);
-
+                // Check if user already exists
+                var existingUser = await _userManager.FindByNameAsync(phoneNumber);
                 if (existingUser != null)
                 {
                     ModelState.AddModelError("", "هذا الرقم مسجل مسبقاً");
                     return RedirectToAction("Login");
                 }
 
-                // التحقق من البريد الإلكتروني إذا تم إدخاله
+                // Check email uniqueness if provided
                 if (!string.IsNullOrEmpty(model.Email))
                 {
-                    var emailExists = await _context.Users
-                        .AnyAsync(u => u.Email == model.Email);
-
-                    if (emailExists)
+                    var emailExists = await _userManager.FindByEmailAsync(model.Email);
+                    if (emailExists != null)
                     {
                         ModelState.AddModelError("Email", "هذا البريد الإلكتروني مستخدم مسبقاً");
                         ViewBag.Categories = await _context.Categories.Where(c => c.IsActive).ToListAsync();
@@ -376,9 +392,10 @@ namespace ReverseMarket.Controllers
                     }
                 }
 
-                // إنشاء المستخدم الجديد
-                var user = new User
+                // Create new user
+                var user = new ApplicationUser
                 {
+                    UserName = phoneNumber,
                     PhoneNumber = phoneNumber,
                     FirstName = model.FirstName,
                     LastName = model.LastName,
@@ -394,49 +411,66 @@ namespace ReverseMarket.Controllers
                     WebsiteUrl1 = model.WebsiteUrl1,
                     WebsiteUrl2 = model.WebsiteUrl2,
                     WebsiteUrl3 = model.WebsiteUrl3,
+                    PhoneNumberConfirmed = true,
                     IsPhoneVerified = true,
+                    IsActive = true,
                     CreatedAt = DateTime.Now
                 };
 
-                // حفظ صورة الملف الشخصي إذا تم رفعها
+                // Save profile image if provided
                 if (model.ProfileImage != null)
                 {
                     var imagePath = await SaveProfileImageAsync(model.ProfileImage);
                     user.ProfileImage = imagePath;
                 }
 
-                _context.Users.Add(user);
-                await _context.SaveChangesAsync();
+                // Create user with a temporary password (will be changed to OTP-based later)
+                var result = await _userManager.CreateAsync(user, "TempPassword@123");
 
-                // إضافة فئات المتجر إذا كان المستخدم بائع
-                if (model.UserType == UserType.Seller && model.StoreCategories?.Any() == true)
+                if (result.Succeeded)
                 {
-                    foreach (var categoryId in model.StoreCategories)
+                    // Assign role based on user type
+                    var roleName = model.UserType == UserType.Seller ? "Seller" : "Buyer";
+                    await _userManager.AddToRoleAsync(user, roleName);
+
+                    // Add phone confirmation claim
+                    await _userManager.AddClaimAsync(user, new Claim("PhoneNumberConfirmed", "true"));
+
+                    // Add store categories for sellers
+                    if (model.UserType == UserType.Seller && model.StoreCategories?.Any() == true)
                     {
-                        var storeCategory = new StoreCategory
+                        foreach (var categoryId in model.StoreCategories)
                         {
-                            UserId = user.Id,
-                            CategoryId = categoryId,
-                            CreatedAt = DateTime.Now
-                        };
-                        _context.StoreCategories.Add(storeCategory);
+                            var storeCategory = new StoreCategory
+                            {
+                                UserId = user.Id,
+                                CategoryId = categoryId,
+                                CreatedAt = DateTime.Now
+                            };
+                            _context.StoreCategories.Add(storeCategory);
+                        }
+                        await _context.SaveChangesAsync();
                     }
-                    await _context.SaveChangesAsync();
+
+                    // Sign in the user
+                    await _signInManager.SignInAsync(user, isPersistent: true);
+
+                    // Send welcome message
+                    await _whatsAppService.SendWelcomeMessageAsync(phoneNumber, user.FirstName, user.UserType.ToString());
+
+                    // Clear session
+                    ClearVerificationSession();
+
+                    TempData["SuccessMessage"] = $"مرحباً بك {user.FirstName}! تم إنشاء حسابك بنجاح";
+                    return RedirectToAction("Index", "Home");
                 }
-
-                // تسجيل دخول المستخدم
-                await LoginUserAsync(user);
-
-                // إرسال رسالة ترحيب
-                await _whatsAppService.SendWelcomeMessageAsync(phoneNumber, user.FirstName, user.UserType.ToString());
-
-                // تنظيف الجلسة
-                ClearVerificationSession();
-
-                // رسالة ترحيب
-                TempData["SuccessMessage"] = $"مرحباً بك {user.FirstName}! تم إنشاء حسابك بنجاح";
-
-                return RedirectToAction("Index", "Home");
+                else
+                {
+                    foreach (var error in result.Errors)
+                    {
+                        ModelState.AddModelError("", error.Description);
+                    }
+                }
             }
 
             ViewBag.Categories = await _context.Categories.Where(c => c.IsActive).ToListAsync();
@@ -452,7 +486,7 @@ namespace ReverseMarket.Controllers
                 var adminPhone = HttpContext.Session.GetString("AdminPhone");
                 var loginType = HttpContext.Session.GetString("LoginType");
 
-                // إعادة إرسال للأدمن
+                // Handle admin resend
                 if (loginType == "Admin" && !string.IsNullOrEmpty(adminPhone))
                 {
                     var newAdminOtp = GenerateOTP();
@@ -466,17 +500,17 @@ namespace ReverseMarket.Controllers
                     return Json(new { success = false, message = "جلسة منتهية الصلاحية" });
                 }
 
-                // إنشاء رمز جديد
                 var newCode = GenerateOTP();
 
                 if (loginType == "ExistingVerifiedUser")
                 {
-                    // إعادة إرسال OTP للمستخدم المؤكد
+                    // Resend login OTP
                     HttpContext.Session.SetString("OTP", newCode);
-                    var userId = HttpContext.Session.GetInt32("UserId");
-                    if (userId.HasValue)
+                    var userId = HttpContext.Session.GetString("UserId");
+
+                    if (!string.IsNullOrEmpty(userId))
                     {
-                        var user = await _context.Users.FindAsync(userId.Value);
+                        var user = await _userManager.FindByIdAsync(userId);
                         if (user != null)
                         {
                             await _whatsAppService.SendLoginOTPAsync(phoneNumber, newCode, user.FirstName);
@@ -486,16 +520,11 @@ namespace ReverseMarket.Controllers
                             await _whatsAppService.SendOTPAsync(phoneNumber, newCode);
                         }
                     }
-                    else
-                    {
-                        await _whatsAppService.SendOTPAsync(phoneNumber, newCode);
-                    }
                 }
                 else
                 {
-                    // إعادة إرسال رمز التحقق للمستخدمين الجدد أو غير المؤكدين
+                    // Resend verification code
                     HttpContext.Session.SetString("VerificationCode", newCode);
-
                     bool isExistingUser = loginType == "ExistingUnverifiedUser";
                     await _whatsAppService.SendPhoneVerificationAsync(phoneNumber, newCode, isExistingUser);
                 }
@@ -504,27 +533,24 @@ namespace ReverseMarket.Controllers
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"خطأ في إعادة الإرسال: {ex.Message}");
+                _logger.LogError(ex, "خطأ في إعادة الإرسال");
                 return Json(new { success = false, message = "حدث خطأ في إعادة الإرسال" });
             }
         }
 
         public async Task<IActionResult> Logout()
         {
-            HttpContext.Session.Clear();
+            await _signInManager.SignOutAsync();
             TempData["InfoMessage"] = "تم تسجيل الخروج بنجاح";
             return RedirectToAction("Index", "Home");
         }
 
-        #region Private Methods
-
-        private async Task LoginUserAsync(User user)
+        public IActionResult AccessDenied()
         {
-            HttpContext.Session.SetInt32("UserId", user.Id);
-            HttpContext.Session.SetString("UserName", $"{user.FirstName} {user.LastName}");
-            HttpContext.Session.SetString("UserType", user.UserType.ToString());
-            HttpContext.Session.SetString("IsLoggedIn", "true");
+            return View();
         }
+
+        #region Private Methods
 
         private void ClearVerificationSession()
         {
@@ -551,14 +577,12 @@ namespace ReverseMarket.Controllers
                 if (image == null || image.Length == 0)
                     return null;
 
-                // التحقق من نوع الملف
                 var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif" };
                 var extension = Path.GetExtension(image.FileName).ToLowerInvariant();
 
                 if (!allowedExtensions.Contains(extension))
                     return null;
 
-                // التحقق من حجم الملف (5MB)
                 if (image.Length > 5 * 1024 * 1024)
                     return null;
 
@@ -575,9 +599,9 @@ namespace ReverseMarket.Controllers
 
                 return $"/uploads/profiles/{fileName}";
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                // في حالة حدوث خطأ، إرجاع null
+                _logger.LogError(ex, "خطأ في حفظ صورة الملف الشخصي");
                 return null;
             }
         }

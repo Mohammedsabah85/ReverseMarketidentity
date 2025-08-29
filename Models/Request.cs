@@ -1,4 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿
+// Models/Request.cs - Updated for Identity
+using System.ComponentModel.DataAnnotations;
+using ReverseMarket.Models.Identity;
 
 namespace ReverseMarket.Models
 {
@@ -7,10 +10,10 @@ namespace ReverseMarket.Models
         public int Id { get; set; }
 
         [Required]
-        public string Title { get; set; }
+        public string Title { get; set; } = "";
 
         [Required]
-        public string Description { get; set; }
+        public string Description { get; set; } = "";
 
         [Required]
         public int CategoryId { get; set; }
@@ -20,15 +23,15 @@ namespace ReverseMarket.Models
         public int? SubCategory2Id { get; set; }
 
         [Required]
-        public string City { get; set; }
+        public string City { get; set; } = "";
 
         [Required]
-        public string District { get; set; }
+        public string District { get; set; } = "";
 
         public string? Location { get; set; }
 
         [Required]
-        public int UserId { get; set; }
+        public string UserId { get; set; } = ""; // Changed from int to string for Identity
 
         public RequestStatus Status { get; set; } = RequestStatus.Pending;
 
@@ -39,8 +42,8 @@ namespace ReverseMarket.Models
         public string? AdminNotes { get; set; }
 
         // Navigation properties
-        public virtual User User { get; set; }
-        public virtual Category Category { get; set; }
+        public virtual ApplicationUser User { get; set; } = null!;
+        public virtual Category Category { get; set; } = null!;
         public virtual SubCategory1? SubCategory1 { get; set; }
         public virtual SubCategory2? SubCategory2 { get; set; }
         public virtual ICollection<RequestImage> Images { get; set; } = new List<RequestImage>();
@@ -51,14 +54,14 @@ namespace ReverseMarket.Models
         public int Id { get; set; }
 
         [Required]
-        public string ImagePath { get; set; }
+        public string ImagePath { get; set; } = "";
 
         public int RequestId { get; set; }
 
         public DateTime CreatedAt { get; set; } = DateTime.Now;
 
         // Navigation properties
-        public virtual Request Request { get; set; }
+        public virtual Request Request { get; set; } = null!;
     }
 
     public enum RequestStatus
