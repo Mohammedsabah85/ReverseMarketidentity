@@ -1,0 +1,612 @@
+﻿@model CreateRequestViewModel
+@{
+    ViewData["Title"] = "إضافة طلب جديد";
+}
+
+<div class="container-custom">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card-custom">
+                <div class="text-center mb-4">
+                    <h1 class="display-6 text-primary">
+                        <i class="fas fa-plus-circle me-3"></i>
+                        إضافة طلب جديد
+                    </h1>
+                    <p class="text-muted">أضف طلبك بالتفصيل وسنجد لك أفضل المتاجر</p>
+                </div>
+
+                <form asp-action="Create" method="post" enctype="multipart/form-data" id="requestForm">
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                    <!-- Basic Information -->
+                    <div class="form-section">
+                        <h5 class="section-title">
+                            <i class="fas fa-info-circle me-2"></i>
+                            المعلومات الأساسية
+                        </h5>
+
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <label asp-for="Title" class="form-label">عنوان الطلب *</label>
+                                <input asp-for="Title" class="form-control" placeholder="مثال: مطلوب جهاز لابتوب للعمل" required>
+                                <span asp-validation-for="Title" class="text-danger"></span>
+                            </div>
+
+                            <div class="col-12">
+                                <label asp-for="Description" class="form-label">تفاصيل الطلب *</label>
+                                <textarea asp-for="Description" class="form-control" rows="5"
+                                          placeholder="اكتب تفاصيل دقيقة عما تحتاجه (المواصفات، الميزانية، الموعد المطلوب...)" required></textarea>
+                                <span asp-validation-for="Description" class="text-danger"></span>
+                                <div class="form-text">كلما كانت التفاصيل أوضح، كانت العروض أفضل</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Category Selection -->
+                    <div class="form-section">
+                        <h5 class="section-title">
+                            <i class="fas fa-tags me-2"></i>
+                            التصنيف
+                        </h5>
+
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <label asp-for="CategoryId" class="form-label">الفئة الرئيسية *</label>
+                                <select asp-for="CategoryId" class="form-control" id="categorySelect" required>
+                                    <option value="">اختر الفئة</option>
+                                    @foreach (var category in ViewBag.Categories as List<Category>)
+                                    {
+                                        <option value="@category.Id">@category.Name</option>
+                                    }
+                                </select>
+                                <span asp-validation-for="CategoryId" class="text-danger"></span>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label asp-for="SubCategory1Id" class="form-label">الفئة الفرعية الأولى</label>
+                                <select asp-for="SubCategory1Id" class="form-control" id="subCategory1Select">
+                                    <option value="">اختر التصنيف الفرعي الأول</option>
+                                </select>
+                                <span asp-validation-for="SubCategory1Id" class="text-danger"></span>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label asp-for="SubCategory2Id" class="form-label">الفئة الفرعية الثانية</label>
+                                <select asp-for="SubCategory2Id" class="form-control" id="subCategory2Select">
+                                    <option value="">اختر التصنيف الفرعي الثاني</option>
+                                </select>
+                                <span asp-validation-for="SubCategory2Id" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Location Information -->
+                    <div class="form-section">
+                        <h5 class="section-title">
+                            <i class="fas fa-map-marker-alt me-2"></i>
+                            معلومات الموقع
+                        </h5>
+
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <label asp-for="City" class="form-label">المحافظة *</label>
+                                <select asp-for="City" class="form-control" required>
+                                    <option value="">اختر المحافظة</option>
+                                    <option value="بغداد">بغداد</option>
+                                    <option value="البصرة">البصرة</option>
+                                    <option value="أربيل">أربيل</option>
+                                    <option value="النجف">النجف</option>
+                                    <option value="كربلاء">كربلاء</option>
+                                    <option value="الموصل">الموصل</option>
+                                    <option value="السليمانية">السليمانية</option>
+                                    <option value="بابل">بابل</option>
+                                    <option value="دهوك">دهوك</option>
+                                    <option value="كركوك">كركوك</option>
+                                    <option value="الأنبار">الأنبار</option>
+                                    <option value="ديالى">ديالى</option>
+                                    <option value="صلاح الدين">صلاح الدين</option>
+                                    <option value="واسط">واسط</option>
+                                    <option value="ذي قار">ذي قار</option>
+                                    <option value="المثنى">المثنى</option>
+                                    <option value="القادسية">القادسية</option>
+                                    <option value="ميسان">ميسان</option>
+                                </select>
+                                <span asp-validation-for="City" class="text-danger"></span>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label asp-for="District" class="form-label">المنطقة *</label>
+                                <input asp-for="District" class="form-control" placeholder="مثال: الكرادة، المعقل، عنكاوا" required>
+                                <span asp-validation-for="District" class="text-danger"></span>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label asp-for="Location" class="form-label">العنوان التفصيلي</label>
+                                <input asp-for="Location" class="form-control" placeholder="الشارع، رقم البناء (اختياري)">
+                                <span asp-validation-for="Location" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Image Upload -->
+                    <div class="form-section">
+                        <h5 class="section-title">
+                            <i class="fas fa-camera me-2"></i>
+                            الصور (اختياري)
+                        </h5>
+
+                        <div class="upload-area">
+                            <label for="images" class="form-label">رفع الصور</label>
+                            <input type="file" name="Images" id="images" class="form-control"
+                                   multiple accept="image/*" style="display: none;">
+
+                            <div class="upload-zone" onclick="document.getElementById('images').click()">
+                                <div class="upload-content">
+                                    <i class="fas fa-cloud-upload-alt fa-3x text-muted mb-3"></i>
+                                    <h5 class="text-muted">اضغط لرفع الصور</h5>
+                                    <p class="text-muted small mb-0">أو اسحب الصور هنا</p>
+                                    <small class="text-muted d-block mt-2">
+                                        يمكنك رفع حتى 3 صور بحجم أقصى 5 ميجابايت لكل صورة<br>
+                                        الأنواع المدعومة: JPG, PNG, GIF
+                                    </small>
+                                </div>
+                            </div>
+
+                            <!-- Image Preview Container -->
+                            <div id="imagePreview" class="row g-3 mt-3"></div>
+                        </div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-custom btn-lg px-5" id="submitBtn">
+                            <i class="fas fa-paper-plane me-2"></i>
+                            إرسال الطلب
+                        </button>
+                        <div class="mt-2">
+                            <small class="text-muted">
+                                سيتم مراجعة طلبك والموافقة عليه خلال 24 ساعة
+                            </small>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .form-section {
+        margin-bottom: 2.5rem;
+        padding-bottom: 2rem;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+        .form-section:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+
+    .section-title {
+        color: var(--primary-color);
+        margin-bottom: 1.5rem;
+        font-weight: 600;
+        font-size: 1.1rem;
+    }
+
+    .upload-area {
+        margin-top: 1rem;
+    }
+
+    .upload-zone {
+        border: 2px dashed var(--border-color);
+        border-radius: 15px;
+        padding: 3rem 2rem;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        background: #fafafa;
+    }
+
+        .upload-zone:hover {
+            border-color: var(--primary-color);
+            background: rgba(44, 90, 160, 0.05);
+        }
+
+        .upload-zone.dragover {
+            border-color: var(--secondary-color);
+            background: rgba(52, 199, 89, 0.1);
+            transform: scale(1.02);
+        }
+
+    .upload-content {
+        pointer-events: none;
+    }
+
+    .image-preview-item {
+        position: relative;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        transition: transform 0.3s ease;
+    }
+
+        .image-preview-item:hover {
+            transform: translateY(-2px);
+        }
+
+    .remove-image-btn {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+    }
+
+    .image-info {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: linear-gradient(transparent, rgba(0,0,0,0.8));
+        color: white;
+        padding: 1rem 0.5rem 0.5rem;
+    }
+
+    @@media (max-width: 768px) {
+        .upload-zone
+
+    {
+        padding: 2rem 1rem;
+    }
+
+    .form-section {
+        margin-bottom: 2rem;
+    }
+
+    }
+</style>
+
+@section Scripts {
+    <script>
+        // استخدام الكود JavaScript المحسن
+        @* تضمين الكود من الملف المنفصل *@
+
+        // متغيرات عامة
+        let uploadedFiles = [];
+        const maxFiles = 3;
+        const maxFileSize = 5 * 1024 * 1024; // 5MB
+        const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
+
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeImageUpload();
+            initializeCategoryDropdowns();
+            initializeDragAndDrop();
+            initializeFormValidation();
+        });
+
+        function initializeImageUpload() {
+            const imageInput = document.getElementById('images');
+            const previewContainer = document.getElementById('imagePreview');
+
+            if (imageInput) {
+                imageInput.addEventListener('change', function(e) {
+                    handleImageSelection(e.target.files, previewContainer);
+                });
+            }
+        }
+
+        function initializeDragAndDrop() {
+            const uploadZone = document.querySelector('.upload-zone');
+            if (!uploadZone) return;
+
+            // منع السلوك الافتراضي للمتصفح
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                uploadZone.addEventListener(eventName, preventDefaults, false);
+                document.body.addEventListener(eventName, preventDefaults, false);
+            });
+
+            // إضافة تأثيرات بصرية
+            ['dragenter', 'dragover'].forEach(eventName => {
+                uploadZone.addEventListener(eventName, highlight, false);
+            });
+
+            ['dragleave', 'drop'].forEach(eventName => {
+                uploadZone.addEventListener(eventName, unhighlight, false);
+            });
+
+            // معالجة إفلات الملفات
+            uploadZone.addEventListener('drop', handleDrop, false);
+        }
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        function highlight(e) {
+            e.currentTarget.classList.add('dragover');
+        }
+
+        function unhighlight(e) {
+            e.currentTarget.classList.remove('dragover');
+        }
+
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            const previewContainer = document.getElementById('imagePreview');
+
+            handleImageSelection(files, previewContainer);
+        }
+
+        function handleImageSelection(files, previewContainer) {
+            // مسح المعاينة السابقة
+            previewContainer.innerHTML = '';
+            uploadedFiles = [];
+
+            // معالجة الملفات الجديدة
+            Array.from(files).forEach((file, index) => {
+                if (index >= maxFiles) {
+                    showAlert(`يمكنك رفع ${maxFiles} صور كحد أقصى`, 'warning');
+                    return;
+                }
+
+                if (!validateFile(file)) {
+                    return;
+                }
+
+                uploadedFiles.push(file);
+                createImagePreview(file, index, previewContainer);
+            });
+
+            updateFileInput();
+        }
+
+        function validateFile(file) {
+            // التحقق من نوع الملف
+            if (!allowedTypes.includes(file.type)) {
+                showAlert(`نوع الملف ${file.name} غير مدعوم. الأنواع المدعومة: JPG, PNG, GIF`, 'error');
+                return false;
+            }
+
+            // التحقق من حجم الملف
+            if (file.size > maxFileSize) {
+                showAlert(`حجم الملف ${file.name} كبير جداً. الحد الأقصى: 5 ميجابايت`, 'error');
+                return false;
+            }
+
+            return true;
+        }
+
+        function createImagePreview(file, index, container) {
+            const reader = new FileReader();
+
+            reader.onload = function(e) {
+                const imageDiv = document.createElement('div');
+                imageDiv.className = 'col-md-4 mb-3';
+                imageDiv.dataset.index = index;
+
+                imageDiv.innerHTML = `
+                    <div class="image-preview-item">
+                        <img src="${e.target.result}"
+                             class="img-fluid w-100"
+                             style="height: 200px; object-fit: cover;"
+                             alt="معاينة الصورة ${index + 1}">
+                        <button type="button"
+                                class="btn btn-danger btn-sm remove-image-btn"
+                                onclick="removeImage(${index})"
+                                title="حذف الصورة">
+                            <i class="fas fa-times"></i>
+                        </button>
+                        <div class="image-info">
+                            <small class="d-block text-truncate fw-bold">${file.name}</small>
+                            <small class="text-light">${formatFileSize(file.size)}</small>
+                        </div>
+                    </div>
+                `;
+
+                container.appendChild(imageDiv);
+            };
+
+            reader.readAsDataURL(file);
+        }
+
+        function removeImage(index) {
+            // إزالة الملف من المصفوفة
+            uploadedFiles.splice(index, 1);
+
+            // إعادة إنشاء المعاينة
+            const previewContainer = document.getElementById('imagePreview');
+            previewContainer.innerHTML = '';
+
+            uploadedFiles.forEach((file, newIndex) => {
+                createImagePreview(file, newIndex, previewContainer);
+            });
+
+            updateFileInput();
+            showAlert('تم حذف الصورة', 'success');
+        }
+
+        function updateFileInput() {
+            // إنشاء DataTransfer جديد للملفات
+            const dt = new DataTransfer();
+            uploadedFiles.forEach(file => dt.items.add(file));
+
+            // تحديث input
+            const imageInput = document.getElementById('images');
+            if (imageInput) {
+                imageInput.files = dt.files;
+            }
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 بايت';
+
+            const k = 1024;
+            const sizes = ['بايت', 'كيلوبايت', 'ميجابايت'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+        }
+
+        // إعداد القوائم المنسدلة للفئات
+        function initializeCategoryDropdowns() {
+            const categorySelect = document.getElementById('categorySelect');
+            const subCategory1Select = document.getElementById('subCategory1Select');
+            const subCategory2Select = document.getElementById('subCategory2Select');
+
+            if (categorySelect) {
+                categorySelect.addEventListener('change', function() {
+                    const categoryId = this.value;
+                    loadSubCategories1(categoryId, subCategory1Select);
+
+                    // إعادة تعيين الفئة الفرعية الثانية
+                    if (subCategory2Select) {
+                        subCategory2Select.innerHTML = '<option value="">اختر التصنيف الفرعي الثاني</option>';
+                    }
+                });
+            }
+
+            if (subCategory1Select) {
+                subCategory1Select.addEventListener('change', function() {
+                    const subCategory1Id = this.value;
+                    loadSubCategories2(subCategory1Id, subCategory2Select);
+                });
+            }
+        }
+
+        function loadSubCategories1(categoryId, targetSelect) {
+            if (!categoryId || !targetSelect) {
+                if (targetSelect) {
+                    targetSelect.innerHTML = '<option value="">اختر التصنيف الفرعي الأول</option>';
+                }
+                return;
+            }
+
+            // إظهار حالة التحميل
+            targetSelect.innerHTML = '<option value="">جاري التحميل...</option>';
+
+            fetch(`/Requests/GetSubCategories1?categoryId=${categoryId}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('خطأ في الشبكة');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    targetSelect.innerHTML = '<option value="">اختر التصنيف الفرعي الأول</option>';
+                    data.forEach(item => {
+                        const option = document.createElement('option');
+                        option.value = item.id;
+                        option.textContent = item.name;
+                        targetSelect.appendChild(option);
+                    });
+                })
+                .catch(error => {
+                    console.error('خطأ في تحميل الفئات الفرعية:', error);
+                    targetSelect.innerHTML = '<option value="">خطأ في التحميل</option>';
+                    showAlert('خطأ في تحميل الفئات الفرعية', 'error');
+                });
+        }
+
+        function loadSubCategories2(subCategory1Id, targetSelect) {
+            if (!subCategory1Id || !targetSelect) {
+                if (targetSelect) {
+                    targetSelect.innerHTML = '<option value="">اختر التصنيف الفرعي الثاني</option>';
+                }
+                return;
+            }
+
+            // إظهار حالة التحميل
+            targetSelect.innerHTML = '<option value="">جاري التحميل...</option>';
+
+            fetch(`/Requests/GetSubCategories2?subCategory1Id=${subCategory1Id}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('خطأ في الشبكة');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    targetSelect.innerHTML = '<option value="">اختر التصنيف الفرعي الثاني</option>';
+                    data.forEach(item => {
+                        const option = document.createElement('option');
+                        option.value = item.id;
+                        option.textContent = item.name;
+                        targetSelect.appendChild(option);
+                    });
+                })
+                .catch(error => {
+                    console.error('خطأ في تحميل الفئات الفرعية الثانية:', error);
+                    targetSelect.innerHTML = '<option value="">خطأ في التحميل</option>';
+                    showAlert('خطأ في تحميل الفئات الفرعية', 'error');
+                });
+        }
+
+        function initializeFormValidation() {
+            const form = document.getElementById('requestForm');
+            const submitBtn = document.getElementById('submitBtn');
+
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    // إظهار حالة التحميل
+                    submitBtn.disabled = true;
+                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>جاري الإرسال...';
+
+                    // يمكن إضافة تحققات إضافية هنا
+
+                    // في حالة وجود خطأ، إعادة تفعيل الزر
+                    setTimeout(() => {
+                        if (submitBtn.disabled) {
+                            submitBtn.disabled = false;
+                            submitBtn.innerHTML = '<i class="fas fa-paper-plane me-2"></i>إرسال الطلب';
+                        }
+                    }, 10000); // 10 ثوان timeout
+                });
+            }
+        }
+
+        // دالة لإظهار الرسائل
+        function showAlert(message, type = 'info') {
+            // إزالة التنبيهات السابقة
+            const existingAlerts = document.querySelectorAll('.alert.auto-dismiss');
+            existingAlerts.forEach(alert => alert.remove());
+
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type === 'error' ? 'danger' : type} alert-dismissible fade show auto-dismiss`;
+            alertDiv.style.position = 'fixed';
+            alertDiv.style.top = '20px';
+            alertDiv.style.right = '20px';
+            alertDiv.style.zIndex = '9999';
+            alertDiv.style.maxWidth = '400px';
+
+            const iconClass = {
+                'success': 'fa-check-circle',
+                'error': 'fa-exclamation-circle',
+                'warning': 'fa-exclamation-triangle',
+                'info': 'fa-info-circle'
+            };
+
+            alertDiv.innerHTML = `
+                <i class="fas ${iconClass[type] || iconClass.info} me-2"></i>
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+
+            document.body.appendChild(alertDiv);
+
+            // إزالة التنبيه تلقائياً بعد 5 ثوان
+            setTimeout(() => {
+                if (alertDiv.parentNode) {
+                    alertDiv.remove();
+                }
+            }, 5000);
+        }
+    </script>
+}

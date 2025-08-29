@@ -1,0 +1,160 @@
+﻿@model RequestsViewModel
+@{
+    ViewData["Title"] = "جميع الطلبات";
+}
+
+<div class="container-custom">
+    <!-- Header Section -->
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h1 class="display-6 text-primary">
+                <i class="fas fa-list me-3"></i>
+                جميع الطلبات
+            </h1>
+            <p class="text-muted">تصفح الطلبات المتاحة من العملاء</p>
+        </div>
+        <div class="col-md-4 text-end">
+            <a href="/Requests/Create" class="btn btn-custom">
+                <i class="fas fa-plus me-2"></i>
+                إضافة طلب جديد
+            </a>
+        </div>
+    </div>
+
+    <!-- Filters Section -->
+    <div class="card-custom mb-4">
+        <form method="get" class="row g-3">
+            <div class="col-md-4">
+                <label for="search" class="form-label">البحث</label>
+                <input type="text" name="search" id="search" class="form-control"
+                       placeholder="ابحث في العنوان أو الوصف..." value="@Model.Search">
+            </div>
+            <div class="col-md-4">
+                <label for="categoryId" class="form-label">الفئة</label>
+                <select name="categoryId" id="categoryId" class="form-control">
+                    <option value="">جميع الفئات</option>
+                    @foreach (var category in Model.Categories)
+                    {
+                        if (Model.SelectedCategoryId == category.Id)
+                        {
+                            <option value="@category.Id" selected>@category.Name</option>
+                        }
+                        else
+                        {
+                            <option value="@category.Id">@category.Name</option>
+                        }
+                    }
+                </select>
+            </div>
+            <div class="col-md-4 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary me-2">
+                    <i class="fas fa-search me-1"></i>
+                    بحث
+                </button>
+                <a href="/Requests" class="btn btn-outline-secondary">
+                    <i class="fas fa-redo me-1"></i>
+                    إعادة تعيين
+                </a>
+            </div>
+        </form>
+    </div>
+
+    <!-- Results Section -->
+    @if (Model.Requests.Any())
+    {
+        <div class="row g-4">
+            @foreach (var request in Model.Requests)
+            {
+                <div class="col-lg-4 col-md-6">
+                    <div class="card h-100 shadow-sm">
+                        @if (request.Images.Any())
+                        {
+                            <img src="@request.Images.First().ImagePath" class="card-img-top"
+                                 style="height: 200px; object-fit: cover;" alt="@request.Title">
+                        }
+                        else
+                        {
+                            <div class="bg-light d-flex align-items-center justify-content-center"
+                                 style="height: 200px;">
+                                <i class="fas fa-image fa-3x text-muted"></i>
+                            </div>
+                        }
+
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <span class="badge bg-primary">@request.Category.Name</span>
+                            <small class="text-muted">
+                                <i class="fas fa-clock me-1"></i>
+                                @request.CreatedAt.ToString("dd/MM/yyyy")
+                            </small>
+                        </div>
+
+                        <h5 class="card-title">@request.Title</h5>
+
+                        <p class="card-text text-muted">
+                            @(request.Description.Length > 100 ?
+                                                    request.Description.Substring(0, 100) + "..." :
+                                                    request.Description)
+                    </p>
+
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small class="text-muted">
+                                    <i class="fas fa-map-marker-alt me-1"></i>
+                                    @request.City - @request.District
+                                </small>
+                                <a href="/Requests/Details/@request.Id" class="btn btn-outline-primary btn-sm">
+                                    عرض التفاصيل
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                }
+        </div>
+
+        <!-- Pagination -->
+        @if (Model.TotalPages > 1)
+        {
+            <nav aria-label="pagination" class="mt-4">
+                <ul class="pagination justify-content-center">
+                    @if (Model.CurrentPage > 1)
+                    {
+                        <li class="page-item">
+                            <a class="page-link" href="?page=@(Model.CurrentPage - 1)&search=@Model.Search&categoryId=@Model.SelectedCategoryId">
+                                <i class="fas fa-chevron-right"></i>
+                            </a>
+                        </li>
+                    }
+
+                    @for (int i = Math.Max(1, Model.CurrentPage - 2); i <= Math.Min(Model.TotalPages, Model.CurrentPage + 2); i++)
+                    {
+                        <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+                            <a class="page-link" href="?page=@i&search=@Model.Search&categoryId=@Model.SelectedCategoryId">@i</a>
+                        </li>
+                    }
+
+                    @if (Model.CurrentPage < Model.TotalPages)
+                    {
+                        <li class="page-item">
+                            <a class="page-link" href="?page=@(Model.CurrentPage + 1)&search=@Model.Search&categoryId=@Model.SelectedCategoryId">
+                                <i class="fas fa-chevron-left"></i>
+                            </a>
+                        </li>
+                    }
+                </ul>
+            </nav>
+        }
+    }
+    else
+    {
+        <div class="text-center py-5">
+            <i class="fas fa-search fa-4x text-muted mb-3"></i>
+            <h4 class="text-muted">لا توجد طلبات</h4>
+            <p class="text-muted">لم يتم العثور على طلبات تطابق معايير البحث</p>
+            <a href="/Requests/Create" class="btn btn-custom">
+                <i class="fas fa-plus me-2"></i>
+                أضف أول طلب
+            </a>
+        </div>
+    }
+</div>

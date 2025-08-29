@@ -1,0 +1,559 @@
+﻿@model HomeViewModel
+@{
+    ViewData["Title"] = "الرئيسية";
+}
+
+<!-- Advertisements Slider Section -->
+@if (Model.Advertisements.Any())
+{
+    <section class="advertisements-section">
+        <div class="container">
+            <div id="advertisementsCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="5000">
+                <div class="carousel-indicators">
+                    @for (int i = 0; i < Model.Advertisements.Count; i++)
+                    {
+                        <button type="button" data-bs-target="#advertisementsCarousel" data-bs-slide-to="@i"
+                                class="@(i == 0 ? "active" : "")" aria-current="@(i == 0 ? "true" : "false")"
+                                aria-label="إعلان @(i + 1)"></button>
+                    }
+                </div>
+                <div class="carousel-inner">
+                    @for (int i = 0; i < Model.Advertisements.Count; i++)
+                    {
+                        var ad = Model.Advertisements[i];
+                        <div class="carousel-item @(i == 0 ? "active" : "")">
+                            @if (!string.IsNullOrEmpty(ad.LinkUrl))
+                            {
+                                <a href="@ad.LinkUrl" target="_blank">
+                                    <img src="@ad.ImagePath" class="d-block w-100 advertisement-image" alt="@ad.Title">
+                                </a>
+                            }
+                            else
+                            {
+                                <img src="@ad.ImagePath" class="d-block w-100 advertisement-image" alt="@ad.Title">
+                            }
+
+                            @if (!string.IsNullOrEmpty(ad.Title) || !string.IsNullOrEmpty(ad.Description))
+                            {
+                                <div class="carousel-caption d-none d-md-block">
+                                    @if (!string.IsNullOrEmpty(ad.Title))
+                                    {
+                                        <h5>@ad.Title</h5>
+                                    }
+                                    @if (!string.IsNullOrEmpty(ad.Description))
+                                    {
+                                        <p>@ad.Description</p>
+                                    }
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+                @if (Model.Advertisements.Count > 1)
+                {
+                    <button class="carousel-control-prev" type="button" data-bs-target="#advertisementsCarousel" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">السابق</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#advertisementsCarousel" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">التالي</span>
+                    </button>
+                }
+            </div>
+        </div>
+    </section>
+}
+
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="container">
+        <h1>مرحباً بك في السوق العكسي</h1>
+        <p>أضف طلبك ودع المتاجر تتنافس لخدمتك</p>
+        <div class="d-flex gap-3 justify-content-center flex-wrap">
+            <a href="/Requests/Create" class="btn-custom">أضف طلبك الآن</a>
+            <a href="/Requests" class="btn-outline-custom">تصفح الطلبات</a>
+        </div>
+    </div>
+</section>
+
+<!-- Search Section -->
+<section class="search-section">
+    <div class="container">
+        <form class="search-form" method="get" action="/Requests">
+            <div class="flex-grow-1">
+                <input type="text" name="search" class="form-control" placeholder="ابحث عن طلب معين...">
+            </div>
+            <div>
+                <select name="categoryId" class="form-control">
+                    <option value="">جميع الفئات</option>
+                    @foreach (var category in Model.Categories)
+                    {
+                        <option value="@category.Id">@category.Name</option>
+                    }
+                </select>
+            </div>
+            <div>
+                <button type="submit" class="btn btn-custom">
+                    <i class="fas fa-search me-1"></i>
+                    بحث
+                </button>
+            </div>
+        </form>
+    </div>
+</section>
+
+<!-- Categories Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="section-title">
+            <h2>أفضل الفئات</h2>
+            <p>اختر من بين مجموعة واسعة من الفئات</p>
+        </div>
+
+        <div class="row g-4">
+            @foreach (var category in Model.Categories.Take(8))
+            {
+                <div class="col-lg-3 col-md-4 col-sm-6">
+                    <a href="/Requests?categoryId=@category.Id" class="text-decoration-none">
+                        <div class="category-card">
+                            <div class="category-image-container">
+                                @if (!string.IsNullOrEmpty(category.ImagePath))
+                                {
+                                    <img src="@category.ImagePath" alt="@category.Name" class="category-image">
+                                }
+                                else
+                                {
+                                    <div class="category-placeholder">
+                                        <i class="fas fa-tags"></i>
+                                    </div>
+                                }
+                            </div>
+                            <div class="category-content">
+                                <h5>@category.Name</h5>
+                                @if (!string.IsNullOrEmpty(category.Description))
+                                {
+                                    <p class="text-muted">@(category.Description.Length > 60 ? category.Description.Substring(0, 60) + "..." : category.Description)</p>
+                                }
+                                else
+                                {
+                                    <p class="text-muted">اكتشف المنتجات والخدمات</p>
+                                }
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            }
+        </div>
+    </div>
+</section>
+
+<!-- Recent Requests Section -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="section-title">
+            <h2>الطلبات المضافة مؤخراً</h2>
+            <p>آخر الطلبات المتاحة من العملاء</p>
+        </div>
+
+        @if (Model.RecentRequests.Any())
+        {
+            <div class="row g-4">
+                @foreach (var request in Model.RecentRequests.Take(6))
+                {
+                    <div class="col-lg-4 col-md-6">
+                        <div class="request-card">
+                            @if (request.Images.Any())
+                            {
+                                <img src="@request.Images.First().ImagePath" alt="@request.Title">
+                            }
+                            else
+                            {
+                                <div class="bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                                    <i class="fas fa-image fa-3x text-muted"></i>
+                                </div>
+                            }
+                        <div class="request-card-body">
+                            <span class="badge-custom">@request.Category.Name</span>
+                            <h6 class="mt-2">@request.Title</h6>
+                            <p class="text-muted small">@request.City - @request.District</p>
+                            <p class="text-muted">
+                                @(request.Description.Length > 80 ?
+                                                            request.Description.Substring(0, 80) + "..." :
+                                                            request.Description)
+                        </p>
+                        <a href="/Requests/Details/@request.Id" class="btn btn-outline-custom btn-sm">عرض التفاصيل</a>
+                    </div>
+                </div>
+            </div>
+                        }
+            </div>
+        }
+        else
+        {
+            <div class="text-center py-5">
+                <i class="fas fa-inbox fa-4x text-muted mb-3"></i>
+                <h5 class="text-muted">لا توجد طلبات حديثة</h5>
+                <p class="text-muted">كن أول من يضيف طلباً</p>
+                <a href="/Requests/Create" class="btn btn-custom">
+                    <i class="fas fa-plus me-2"></i>
+                    أضف أول طلب
+                </a>
+            </div>
+        }
+
+        @if (Model.RecentRequests.Any())
+        {
+            <div class="text-center mt-4">
+                <a href="/Requests" class="btn btn-custom">عرض جميع الطلبات</a>
+            </div>
+        }
+    </div>
+</section>
+
+<!-- How It Works Section -->
+<section class="how-it-works">
+    <div class="container">
+        <div class="section-title">
+            <h2>كيف يعمل السوق العكسي؟</h2>
+            <p>خطوات بسيطة للحصول على ما تريد</p>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-lg-3 col-md-6">
+                <div class="step-card">
+                    <div class="step-number">1</div>
+                    <h5>أضف طلبك</h5>
+                    <p>اكتب تفاصيل ما تحتاجه بوضوح</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="step-card">
+                    <div class="step-number">2</div>
+                    <h5>انتظر الموافقة</h5>
+                    <p>سيتم مراجعة طلبك والموافقة عليه</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="step-card">
+                    <div class="step-number">3</div>
+                    <h5>المتاجر تتواصل معك</h5>
+                    <p>ستحصل على عروض من المتاجر المختصة</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="step-card">
+                    <div class="step-number">4</div>
+                    <h5>اختر الأفضل</h5>
+                    <p>قارن العروض واختر الأنسب لك</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Stats Section -->
+<section class="stats-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-3 col-md-6">
+                <div class="stat-item">
+                    <h3>@(Model.RecentRequests.Count + 1500)</h3>
+                    <p>طلب منجز</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="stat-item">
+                    <h3>500+</h3>
+                    <p>متجر مسجل</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="stat-item">
+                    <h3>2000+</h3>
+                    <p>عميل راضي</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="stat-item">
+                    <h3>@Model.Categories.Count</h3>
+                    <p>فئة متاحة</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    .advertisements-section {
+        padding: 2rem 0;
+    }
+
+    .advertisement-image {
+        height: 300px;
+        object-fit: cover;
+        border-radius: 15px;
+    }
+
+    .carousel-caption {
+        background: rgba(0,0,0,0.6);
+        border-radius: 10px;
+        padding: 1rem;
+    }
+
+    .hero-section {
+        background: linear-gradient(135deg, rgba(44, 90, 160, 0.9), rgba(30, 64, 128, 0.9)), url('/images/hero-bg.jpg');
+        background-size: cover;
+        background-position: center;
+        padding: 4rem 0;
+        color: white;
+        text-align: center;
+    }
+
+        .hero-section h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .hero-section p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+    .btn-outline-custom {
+        border: 2px solid white;
+        color: white;
+        background: transparent;
+        padding: 0.75rem 2rem;
+        border-radius: 25px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+        .btn-outline-custom:hover {
+            background: white;
+            color: var(--primary-color);
+            transform: translateY(-2px);
+        }
+
+    .search-section {
+        background: white;
+        padding: 2rem 0;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        margin-top: -3rem;
+        border-radius: 15px;
+        position: relative;
+        z-index: 10;
+    }
+
+    .search-form {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+
+        .search-form .form-control {
+            border-radius: 25px;
+            border: 2px solid var(--border-color);
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+        }
+
+            .search-form .form-control:focus {
+                border-color: var(--primary-color);
+                box-shadow: 0 0 0 0.2rem rgba(44, 90, 160, 0.25);
+            }
+
+    .category-card {
+        background: white;
+        border-radius: 20px;
+        overflow: hidden;
+        transition: all 0.4s ease;
+        border: 1px solid var(--border-color);
+        height: 100%;
+        color: inherit;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        position: relative;
+    }
+
+        .category-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+            border-color: var(--primary-color);
+            color: inherit;
+            text-decoration: none;
+        }
+
+    .category-image-container {
+        height: 120px;
+        width: 100%;
+        overflow: hidden;
+        position: relative;
+        background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+    }
+
+    .category-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.4s ease;
+    }
+
+    .category-card:hover .category-image {
+        transform: scale(1.1);
+    }
+
+    .category-placeholder {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+        color: white;
+    }
+
+        .category-placeholder i {
+            font-size: 2.5rem;
+            opacity: 0.8;
+        }
+
+    .category-content {
+        padding: 1.5rem;
+        text-align: center;
+    }
+
+        .category-content h5 {
+            font-weight: 700;
+            color: var(--text-color);
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .category-content p {
+            font-size: 0.9rem;
+            margin: 0;
+            line-height: 1.4;
+        }
+
+    .request-card {
+        background: white;
+        border-radius: 15px;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        border: 1px solid var(--border-color);
+        height: 100%;
+    }
+
+        .request-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+
+        .request-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+    .request-card-body {
+        padding: 1.5rem;
+    }
+
+    .badge-custom {
+        background: var(--accent-color);
+        color: white;
+        padding: 0.3rem 0.8rem;
+        border-radius: 15px;
+        font-size: 0.8rem;
+    }
+
+    .section-title {
+        text-align: center;
+        margin-bottom: 3rem;
+    }
+
+        .section-title h2 {
+            font-weight: 700;
+            color: var(--text-color);
+            margin-bottom: 0.5rem;
+        }
+
+    .stats-section {
+        background: var(--primary-color);
+        color: white;
+        padding: 3rem 0;
+        margin: 3rem 0;
+    }
+
+    .stat-item {
+        text-align: center;
+        padding: 1rem;
+    }
+
+        .stat-item h3 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+    .how-it-works {
+        background: white;
+        padding: 4rem 0;
+    }
+
+    .step-card {
+        text-align: center;
+        padding: 2rem 1rem;
+    }
+
+    .step-number {
+        width: 60px;
+        height: 60px;
+        background: var(--secondary-color);
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin: 0 auto 1rem;
+    }
+
+    @@media (max-width: 768px) {
+        .hero-section h1
+
+    {
+        font-size: 2rem;
+    }
+
+    .search-form {
+        flex-direction: column;
+    }
+
+        .search-form .form-control,
+        .search-form .btn {
+            width: 100%;
+        }
+
+    .advertisement-image {
+        height: 200px;
+    }
+
+    .category-image-container {
+        height: 100px;
+    }
+
+    .category-content {
+        padding: 1rem;
+    }
+
+    }
+</style>

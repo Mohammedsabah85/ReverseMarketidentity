@@ -1,0 +1,230 @@
+﻿@model SiteSettings
+@{
+    ViewData["Title"] = "إعدادات الموقع";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h3>إعدادات الموقع</h3>
+</div>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<div class="card-admin">
+    <div class="card-body">
+        <form asp-action="Index" method="post" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+            <!-- Logo Section -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <h5 class="text-primary mb-3">
+                        <i class="fas fa-image me-2"></i>
+                        شعار الموقع
+                    </h5>
+
+                    @if (!string.IsNullOrEmpty(Model.SiteLogo))
+                    {
+                        <div class="mb-3">
+                            <img src="@Model.SiteLogo" alt="شعار الموقع" style="max-height: 100px;" class="img-thumbnail">
+                        </div>
+                    }
+
+                    <div class="mb-3">
+                        <label for="logoFile" class="form-label">تحديث الشعار</label>
+                        <input type="file" name="logoFile" id="logoFile" class="form-control" accept="image/*">
+                        <div class="form-text">اختر ملف صورة للشعار (PNG, JPG, GIF)</div>
+                    </div>
+                </div>
+            </div>
+
+            <hr>
+
+            <!-- About Section -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <h5 class="text-primary mb-3">
+                        <i class="fas fa-info-circle me-2"></i>
+                        معلومات الموقع
+                    </h5>
+
+                    <div class="mb-3">
+                        <label asp-for="AboutUs" class="form-label">من نحن</label>
+                        <textarea asp-for="AboutUs" class="form-control" rows="5"
+                                  placeholder="اكتب نبذة عن الموقع والخدمات التي يقدمها..."></textarea>
+                        <span asp-validation-for="AboutUs" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+
+            <hr>
+
+            <!-- Contact Information -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <h5 class="text-primary mb-3">
+                        <i class="fas fa-phone me-2"></i>
+                        معلومات التواصل
+                    </h5>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="mb-3">
+                        <label asp-for="ContactPhone" class="form-label">رقم الهاتف</label>
+                        <input asp-for="ContactPhone" class="form-control" placeholder="+964 770 123 4567">
+                        <span asp-validation-for="ContactPhone" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="mb-3">
+                        <label asp-for="ContactWhatsApp" class="form-label">رقم واتساب</label>
+                        <input asp-for="ContactWhatsApp" class="form-control" placeholder="+964 770 123 4567">
+                        <span asp-validation-for="ContactWhatsApp" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="mb-3">
+                        <label asp-for="ContactEmail" class="form-label">البريد الإلكتروني</label>
+                        <input asp-for="ContactEmail" type="email" class="form-control" placeholder="info@reversemarket.iq">
+                        <span asp-validation-for="ContactEmail" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+
+            <hr>
+
+            <!-- Social Media -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <h5 class="text-primary mb-3">
+                        <i class="fas fa-share-alt me-2"></i>
+                        روابط التواصل الاجتماعي
+                    </h5>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label asp-for="FacebookUrl" class="form-label">
+                            <i class="fab fa-facebook text-primary me-1"></i>
+                            فيسبوك
+                        </label>
+                        <input asp-for="FacebookUrl" class="form-control" placeholder="https://facebook.com/yourpage">
+                        <span asp-validation-for="FacebookUrl" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label asp-for="InstagramUrl" class="form-label">
+                            <i class="fab fa-instagram text-danger me-1"></i>
+                            إنستغرام
+                        </label>
+                        <input asp-for="InstagramUrl" class="form-control" placeholder="https://instagram.com/yourpage">
+                        <span asp-validation-for="InstagramUrl" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label asp-for="TwitterUrl" class="form-label">
+                            <i class="fab fa-twitter text-info me-1"></i>
+                            تويتر
+                        </label>
+                        <input asp-for="TwitterUrl" class="form-control" placeholder="https://twitter.com/yourpage">
+                        <span asp-validation-for="TwitterUrl" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label asp-for="YouTubeUrl" class="form-label">
+                            <i class="fab fa-youtube text-danger me-1"></i>
+                            يوتيوب
+                        </label>
+                        <input asp-for="YouTubeUrl" class="form-control" placeholder="https://youtube.com/yourchannel">
+                        <span asp-validation-for="YouTubeUrl" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+
+            <hr>
+
+            <!-- Legal Pages -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <h5 class="text-primary mb-3">
+                        <i class="fas fa-gavel me-2"></i>
+                        الصفحات القانونية
+                    </h5>
+                </div>
+
+                <div class="col-12">
+                    <div class="mb-3">
+                        <label asp-for="PrivacyPolicy" class="form-label">سياسة الخصوصية</label>
+                        <textarea asp-for="PrivacyPolicy" class="form-control" rows="5"
+                                  placeholder="اكتب سياسة الخصوصية الخاصة بالموقع..."></textarea>
+                        <span asp-validation-for="PrivacyPolicy" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="col-12">
+                    <div class="mb-3">
+                        <label asp-for="TermsOfUse" class="form-label">شروط الاستخدام</label>
+                        <textarea asp-for="TermsOfUse" class="form-control" rows="5"
+                                  placeholder="اكتب شروط الاستخدام الخاصة بالموقع..."></textarea>
+                        <span asp-validation-for="TermsOfUse" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="col-12">
+                    <div class="mb-3">
+                        <label asp-for="CopyrightInfo" class="form-label">معلومات حقوق الطبع</label>
+                        <input asp-for="CopyrightInfo" class="form-control"
+                               placeholder="© 2024 السوق العكسي. جميع الحقوق محفوظة.">
+                        <span asp-validation-for="CopyrightInfo" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="text-center">
+                <button type="submit" class="btn btn-admin btn-lg">
+                    <i class="fas fa-save me-2"></i>
+                    حفظ الإعدادات
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Image preview for logo
+        document.getElementById('logoFile').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    // Create or update preview image
+                    let preview = document.getElementById('logoPreview');
+                    if (!preview) {
+                        preview = document.createElement('img');
+                        preview.id = 'logoPreview';
+                        preview.className = 'img-thumbnail mt-2';
+                        preview.style.maxHeight = '100px';
+                        e.target.parentNode.appendChild(preview);
+                    }
+                    preview.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    </script>
+}

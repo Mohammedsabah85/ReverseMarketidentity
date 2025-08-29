@@ -1,0 +1,237 @@
+﻿@model LoginViewModel
+@{
+    ViewData["Title"] = "تسجيل الدخول";
+}
+
+<div class="container-custom">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="card-custom">
+                <div class="text-center mb-4">
+                    <i class="fas fa-sign-in-alt fa-3x text-primary mb-3"></i>
+                    <h1 class="h3 text-primary">تسجيل الدخول</h1>
+                    <p class="text-muted">أدخل رقم هاتفك للدخول أو إنشاء حساب جديد</p>
+                </div>
+
+                <!-- How it works info -->
+                <div class="alert alert-info mb-4">
+                    <h6 class="fw-bold mb-2">
+                        <i class="fas fa-info-circle me-1"></i>
+                        كيف يعمل النظام؟
+                    </h6>
+                    <ul class="small mb-0 ps-3">
+                        <li><strong>رقم مسجل ومؤكد:</strong> سيتم إرسال رمز دخول فوري</li>
+                        <li><strong>رقم مسجل غير مؤكد:</strong> ستحتاج تأكيد الرقم أولاً</li>
+                        <li><strong>رقم جديد:</strong> ستحتاج إنشاء حساب جديد</li>
+                    </ul>
+                </div>
+
+                <form asp-action="Login" method="post" id="loginForm">
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                    <div class="mb-3">
+                        <label asp-for="PhoneNumber" class="form-label">رقم الهاتف *</label>
+                        <div class="input-group">
+                            <span class="input-group-text">@(Model?.CountryCode ?? "+964")</span>
+                            <input asp-for="PhoneNumber" class="form-control" placeholder="7xxxxxxxxx" required
+                                   maxlength="10" pattern="[0-9]{10}" id="phoneInput">
+                        </div>
+                        <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                        <div class="form-text">
+                            <i class="fas fa-info-circle me-1"></i>
+                            أدخل رقم الهاتف بدون رمز البلد (10 أرقام)
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input asp-for="AcceptTerms" class="form-check-input" type="checkbox" required id="termsCheck">
+                            <label class="form-check-label" asp-for="AcceptTerms">
+                                أوافق على <a href="/Home/Terms" target="_blank">شروط الاستخدام</a> و
+                                <a href="/Home/Privacy" target="_blank">سياسة الخصوصية</a>
+                            </label>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-custom w-100" id="submitBtn">
+                        <i class="fas fa-paper-plane me-2"></i>
+                        متابعة
+                    </button>
+                </form>
+
+                <hr class="my-4">
+
+                <div class="text-center">
+                    <p class="text-muted small mb-3">
+                        <i class="fab fa-whatsapp text-success me-1"></i>
+                        سيتم إرسال رمز التحقق عبر واتساب إلى رقم هاتفك
+                    </p>
+
+                    <!-- Quick Demo -->
+                    <div class="mb-3">
+                        <p class="text-muted small mb-2">للتجربة السريعة:</p>
+                        <div class="d-flex gap-2 justify-content-center flex-wrap">
+                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="fillDemoNumber('7701234567')">
+                                <i class="fas fa-user me-1"></i>
+                                مستخدم تجريبي 1
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="fillDemoNumber('7509876543')">
+                                <i class="fas fa-store me-1"></i>
+                                متجر تجريبي
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Features -->
+                <div class="row g-3 mt-3">
+                    <div class="col-4">
+                        <div class="text-center">
+                            <i class="fas fa-shield-alt fa-2x text-success mb-2"></i>
+                            <small class="d-block text-muted">آمن ومحمي</small>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="text-center">
+                            <i class="fas fa-mobile-alt fa-2x text-primary mb-2"></i>
+                            <small class="d-block text-muted">تحقق فوري</small>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="text-center">
+                            <i class="fas fa-users fa-2x text-info mb-2"></i>
+                            <small class="d-block text-muted">للجميع</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const phoneInput = document.getElementById('phoneInput');
+            const form = document.getElementById('loginForm');
+            const submitBtn = document.getElementById('submitBtn');
+            const termsCheck = document.getElementById('termsCheck');
+
+            // تصفية إدخال الأرقام فقط
+            phoneInput.addEventListener('input', function(e) {
+                // إزالة أي شيء ليس رقم
+                let value = e.target.value.replace(/\D/g, '');
+
+                // إزالة الصفر الأول إذا وجد
+                if (value.startsWith('0')) {
+                    value = value.substring(1);
+                }
+
+                // الحد الأقصى 10 أرقام
+                if (value.length > 10) {
+                    value = value.substring(0, 10);
+                }
+
+                e.target.value = value;
+
+                // تحديث حالة الزر
+                updateSubmitButton();
+            });
+
+            // مراقبة checkbox الشروط
+            termsCheck.addEventListener('change', updateSubmitButton);
+
+            function updateSubmitButton() {
+                const phoneValid = phoneInput.value.length === 10;
+                const termsAccepted = termsCheck.checked;
+
+                if (phoneValid && termsAccepted) {
+                    submitBtn.disabled = false;
+                    submitBtn.classList.remove('btn-secondary');
+                    submitBtn.classList.add('btn-custom');
+                } else {
+                    submitBtn.disabled = true;
+                    submitBtn.classList.remove('btn-custom');
+                    submitBtn.classList.add('btn-secondary');
+                }
+            }
+
+            // تسليم النموذج
+            form.addEventListener('submit', function(e) {
+                if (!phoneInput.value || phoneInput.value.length !== 10) {
+                    e.preventDefault();
+                    showMessage('يرجى إدخال رقم هاتف صحيح (10 أرقام)', 'warning');
+                    return;
+                }
+
+                if (!termsCheck.checked) {
+                    e.preventDefault();
+                    showMessage('يجب الموافقة على الشروط والأحكام', 'warning');
+                    return;
+                }
+
+                // إظهار حالة التحميل
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>جاري المعالجة...';
+            });
+
+            // تحديث حالة الزر عند التحميل
+            updateSubmitButton();
+        });
+
+        function fillDemoNumber(number) {
+            const phoneInput = document.getElementById('phoneInput');
+            const termsCheck = document.getElementById('termsCheck');
+
+            phoneInput.value = number;
+            termsCheck.checked = true;
+
+            // تحديث حالة الزر
+            const event = new Event('input');
+            phoneInput.dispatchEvent(event);
+
+            const changeEvent = new Event('change');
+            termsCheck.dispatchEvent(changeEvent);
+
+            // تركيز على الزر
+            phoneInput.focus();
+
+            showMessage(`تم ملء رقم تجريبي: +964${number}`, 'info');
+        }
+
+        function showMessage(message, type) {
+            // إزالة الرسائل السابقة
+            const existingAlerts = document.querySelectorAll('.alert.temp-alert');
+            existingAlerts.forEach(alert => alert.remove());
+
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type === 'warning' ? 'warning' : type === 'info' ? 'info' : 'danger'} alert-dismissible fade show temp-alert`;
+            alertDiv.style.position = 'fixed';
+            alertDiv.style.top = '20px';
+            alertDiv.style.right = '20px';
+            alertDiv.style.zIndex = '9999';
+            alertDiv.style.maxWidth = '400px';
+
+            const iconClass = {
+                'warning': 'fa-exclamation-triangle',
+                'info': 'fa-info-circle',
+                'error': 'fa-exclamation-circle'
+            };
+
+            alertDiv.innerHTML = `
+                <i class="fas ${iconClass[type]} me-2"></i>
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+
+            document.body.appendChild(alertDiv);
+
+            // إزالة التنبيه تلقائياً بعد 4 ثوان
+            setTimeout(() => {
+                if (alertDiv.parentNode) {
+                    alertDiv.remove();
+                }
+            }, 4000);
+        }
+    </script>
+}

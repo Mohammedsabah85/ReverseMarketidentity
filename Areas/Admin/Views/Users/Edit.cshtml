@@ -1,0 +1,396 @@
+﻿@model EditUserViewModel
+@{
+    ViewData["Title"] = "تعديل المستخدم";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h3>تعديل المستخدم: @Model.FirstName @Model.LastName</h3>
+    <div class="btn-group">
+        <a href="/Admin/Users" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-right me-2"></i>
+            العودة للقائمة
+        </a>
+        <a href="/Admin/Users/Details/@Model.Id" class="btn btn-outline-info">
+            <i class="fas fa-eye me-2"></i>
+            عرض التفاصيل
+        </a>
+    </div>
+</div>
+
+<div class="card-admin">
+    <div class="card-body">
+        <form asp-action="Edit" method="post" id="editUserForm">
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+            <input asp-for="Id" type="hidden">
+
+            <!-- Personal Information -->
+            <div class="form-section">
+                <h5 class="section-title">
+                    <i class="fas fa-user me-2"></i>
+                    المعلومات الشخصية
+                </h5>
+
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label asp-for="FirstName" class="form-label">الاسم الأول *</label>
+                        <input asp-for="FirstName" class="form-control" required>
+                        <span asp-validation-for="FirstName" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="LastName" class="form-label">اسم العائلة *</label>
+                        <input asp-for="LastName" class="form-control" required>
+                        <span asp-validation-for="LastName" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="Email" class="form-label">البريد الإلكتروني</label>
+                        <input asp-for="Email" type="email" class="form-control">
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="PhoneNumber" class="form-label">رقم الهاتف *</label>
+                        <input asp-for="PhoneNumber" class="form-control" readonly>
+                        <div class="form-text">لا يمكن تعديل رقم الهاتف</div>
+                        <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label asp-for="DateOfBirth" class="form-label">تاريخ الميلاد *</label>
+                        <input asp-for="DateOfBirth" type="date" class="form-control" required>
+                        <span asp-validation-for="DateOfBirth" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label asp-for="Gender" class="form-label">الجنس *</label>
+                        <select asp-for="Gender" class="form-control" required>
+                            <option value="">اختر الجنس</option>
+                            <option value="ذكر">ذكر</option>
+                            <option value="أنثى">أنثى</option>
+                        </select>
+                        <span asp-validation-for="Gender" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label asp-for="UserType" class="form-label">نوع المستخدم</label>
+                        <select asp-for="UserType" class="form-control" id="userTypeSelect" onchange="toggleStoreFields()">
+                            <option value="1">مشتري</option>
+                            <option value="2">بائع</option>
+                        </select>
+                        <div class="form-text">تغيير النوع قد يؤثر على البيانات المرتبطة</div>
+                    </div>
+
+                    <!-- إصلاح Store Categories select -->
+                    <div class="col-md-6">
+                        <label asp-for="StoreCategories" class="form-label">فئات المتجر</label>
+                        <select asp-for="StoreCategories" class="form-control" multiple style="min-height: 120px;">
+                            @if (ViewBag.Categories != null)
+                            {
+                                @foreach (var category in ViewBag.Categories as List<Category>)
+                                {
+                                    var isSelected = Model.CurrentStoreCategories.Contains(category.Id);
+                                    <option value="@category.Id" selected="@isSelected">
+                                        @category.Name
+                                    </option>
+                                }
+                            }
+                        </select>
+                        <div class="form-text">اختر الفئات التي يتخصص بها المتجر (يمكن اختيار أكثر من فئة)</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Location Information -->
+            <div class="form-section">
+                <h5 class="section-title">
+                    <i class="fas fa-map-marker-alt me-2"></i>
+                    معلومات الموقع
+                </h5>
+
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label asp-for="City" class="form-label">المحافظة *</label>
+                        <select asp-for="City" class="form-control" required>
+                            <option value="">اختر المحافظة</option>
+                            <option value="بغداد">بغداد</option>
+                            <option value="البصرة">البصرة</option>
+                            <option value="أربيل">أربيل</option>
+                            <option value="النجف">النجف</option>
+                            <option value="كربلاء">كربلاء</option>
+                            <option value="الموصل">الموصل</option>
+                            <option value="السليمانية">السليمانية</option>
+                            <option value="بابل">بابل</option>
+                            <option value="دهوك">دهوك</option>
+                            <option value="كركوك">كركوك</option>
+                            <option value="الأنبار">الأنبار</option>
+                            <option value="ديالى">ديالى</option>
+                            <option value="صلاح الدين">صلاح الدين</option>
+                            <option value="واسط">واسط</option>
+                            <option value="ذي قار">ذي قار</option>
+                            <option value="المثنى">المثنى</option>
+                            <option value="القادسية">القادسية</option>
+                            <option value="ميسان">ميسان</option>
+                        </select>
+                        <span asp-validation-for="City" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label asp-for="District" class="form-label">المنطقة *</label>
+                        <input asp-for="District" class="form-control" required>
+                        <span asp-validation-for="District" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label asp-for="Location" class="form-label">العنوان التفصيلي</label>
+                        <input asp-for="Location" class="form-control">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Store Information (for Sellers) -->
+            <div id="storeInfo" class="form-section" style="@(Model.UserType == UserType.Seller ? "" : "display: none;")">
+                <h5 class="section-title">
+                    <i class="fas fa-store me-2"></i>
+                    معلومات المتجر
+                </h5>
+
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label asp-for="StoreName" class="form-label">اسم المتجر</label>
+                        <input asp-for="StoreName" class="form-control">
+                        <span asp-validation-for="StoreName" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="StoreCategories" class="form-label">فئات المتجر</label>
+                        <select asp-for="StoreCategories" class="form-control" multiple style="min-height: 120px;">
+                            <select asp-for="StoreCategories" class="form-control" multiple style="min-height: 120px;">
+                                @foreach (var category in ViewBag.Categories as List<Category>)
+                                {
+                                    var selected = Model.CurrentStoreCategories.Contains(category.Id) ? "selected" : "";
+                                    <option value="@category.Id" @@selected>
+                                        @category.Name
+                                    </option>
+                                }
+                            </select>
+                        </select>
+                        <div class="form-text">اختر الفئات التي يتخصص بها المتجر (يمكن اختيار أكثر من فئة)</div>
+                    </div>
+
+                    <div class="col-12">
+                        <label asp-for="StoreDescription" class="form-label">وصف المتجر</label>
+                        <textarea asp-for="StoreDescription" class="form-control" rows="3"></textarea>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label asp-for="WebsiteUrl1" class="form-label">رابط الموقع الأول</label>
+                        <input asp-for="WebsiteUrl1" class="form-control" placeholder="https://example.com">
+                    </div>
+
+                    <div class="col-md-4">
+                        <label asp-for="WebsiteUrl2" class="form-label">رابط الموقع الثاني</label>
+                        <input asp-for="WebsiteUrl2" class="form-control" placeholder="https://facebook.com/store">
+                    </div>
+
+                    <div class="col-md-4">
+                        <label asp-for="WebsiteUrl3" class="form-label">رابط الموقع الثالث</label>
+                        <input asp-for="WebsiteUrl3" class="form-control" placeholder="https://instagram.com/store">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Account Settings -->
+            <div class="form-section">
+                <h5 class="section-title">
+                    <i class="fas fa-cogs me-2"></i>
+                    إعدادات الحساب
+                </h5>
+
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="form-check">
+                            <input asp-for="IsActive" class="form-check-input" type="checkbox">
+                            <label asp-for="IsActive" class="form-check-label">
+                                <strong>حساب نشط</strong>
+                                <div class="form-text">إلغاء التحديد سيؤدي إلى إيقاف الحساب</div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-check">
+                            <input asp-for="IsPhoneVerified" class="form-check-input" type="checkbox">
+                            <label asp-for="IsPhoneVerified" class="form-check-label">
+                                <strong>رقم الهاتف مؤكد</strong>
+                                <div class="form-text">حالة تأكيد رقم الهاتف</div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <a href="/Admin/Users/Details/@Model.Id" class="btn btn-outline-secondary">
+                        <i class="fas fa-times me-2"></i>
+                        إلغاء
+                    </a>
+                </div>
+                <div>
+                    <button type="submit" class="btn btn-admin" id="saveBtn">
+                        <i class="fas fa-save me-2"></i>
+                        حفظ التغييرات
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+    .form-section {
+        margin-bottom: 2.5rem;
+        padding-bottom: 2rem;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+        .form-section:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+
+    .section-title {
+        color: var(--primary-color);
+        margin-bottom: 1.5rem;
+        font-weight: 600;
+        font-size: 1.1rem;
+    }
+
+    .form-check .form-text {
+        margin-top: 0.25rem;
+        font-size: 0.825rem;
+    }
+
+    #userTypeSelect {
+        border: 2px solid #ffc107;
+    }
+
+    @@media (max-width: 768px) {
+        .form-section {
+            margin-bottom: 2rem;
+        }
+
+        .d-flex.justify-content-between {
+            flex-direction: column;
+            gap: 1rem;
+        }
+    }
+</style>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize form
+            toggleStoreFields();
+            initializeFormValidation();
+        });
+
+        function toggleStoreFields() {
+            const userTypeSelect = document.getElementById('userTypeSelect');
+            const storeInfo = document.getElementById('storeInfo');
+            
+            if (userTypeSelect.value === '2') { // Seller
+                storeInfo.style.display = 'block';
+                storeInfo.classList.add('animate__animated', 'animate__fadeIn');
+            } else {
+                storeInfo.style.display = 'none';
+            }
+        }
+
+        function initializeFormValidation() {
+            const form = document.getElementById('editUserForm');
+            const saveBtn = document.getElementById('saveBtn');
+
+            form.addEventListener('submit', function(e) {
+                // Show loading state
+                saveBtn.disabled = true;
+                saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>جاري الحفظ...';
+
+                // Basic validation
+                const requiredFields = form.querySelectorAll('[required]');
+                let isValid = true;
+
+                requiredFields.forEach(field => {
+                    if (!field.value.trim()) {
+                        field.classList.add('is-invalid');
+                        isValid = false;
+                    } else {
+                        field.classList.remove('is-invalid');
+                    }
+                });
+
+                // Validate store name for sellers
+                const userType = document.getElementById('userTypeSelect').value;
+                const storeName = document.querySelector('[name="StoreName"]');
+                
+                if (userType === '2' && !storeName.value.trim()) {
+                    storeName.classList.add('is-invalid');
+                    isValid = false;
+                    e.preventDefault();
+                    saveBtn.disabled = false;
+                    saveBtn.innerHTML = '<i class="fas fa-save me-2"></i>حفظ التغييرات';
+                    alert('اسم المتجر مطلوب للبائعين');
+                    return;
+                }
+
+                if (!isValid) {
+                    e.preventDefault();
+                    saveBtn.disabled = false;
+                    saveBtn.innerHTML = '<i class="fas fa-save me-2"></i>حفظ التغييرات';
+                    alert('يرجى ملء جميع الحقول المطلوبة');
+                }
+            });
+
+            // Real-time validation
+            const inputs = form.querySelectorAll('input[required], select[required]');
+            inputs.forEach(input => {
+                input.addEventListener('blur', function() {
+                    if (this.value.trim()) {
+                        this.classList.remove('is-invalid');
+                        this.classList.add('is-valid');
+                    } else {
+                        this.classList.add('is-invalid');
+                        this.classList.remove('is-valid');
+                    }
+                });
+            });
+        }
+
+        // Prevent accidental form submission
+        window.addEventListener('beforeunload', function(e) {
+            const form = document.getElementById('editUserForm');
+            const formData = new FormData(form);
+            let hasChanges = false;
+
+            // Simple check for changes (can be enhanced)
+            for (let [key, value] of formData.entries()) {
+                if (value !== '') {
+                    hasChanges = true;
+                    break;
+                }
+            }
+
+            if (hasChanges) {
+                e.preventDefault();
+                e.returnValue = '';
+            }
+        });
+
+        // Remove beforeunload when form is submitted
+        document.getElementById('editUserForm').addEventListener('submit', function() {
+            window.removeEventListener('beforeunload', function() {});
+        });
+    </script>
+}

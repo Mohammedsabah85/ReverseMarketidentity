@@ -1,0 +1,1729 @@
+﻿@using Microsoft.Extensions.Localization
+@using ReverseMarket.Services
+@using ReverseMarket.Resources
+@inject IStringLocalizer<SharedResource> Localizer
+@inject ILanguageService LanguageService
+@{
+    var currentLanguage = LanguageService.GetCurrentLanguage();
+    var direction = LanguageService.GetDirection();
+    var supportedLanguages = LanguageService.GetSupportedLanguages();
+    var currentLangInfo = supportedLanguages.FirstOrDefault(l => l.Code == currentLanguage) ?? supportedLanguages.First();
+
+    var siteSettings = ViewBag.SiteSettings as ReverseMarket.Models.SiteSettings;
+    var isLoggedIn = Context.Session.GetString("IsLoggedIn") == "true";
+    var userName = Context.Session.GetString("UserName");
+    var userType = Context.Session.GetString("UserType");
+}
+
+<!DOCTYPE html>
+<html lang="@currentLanguage" dir="@direction">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="@Localizer["SiteDescription"]" />
+    <meta name="keywords" content="سوق عكسي, طلبات, متاجر, العراق" />
+    <meta name="author" content="@Localizer["SiteName"]" />
+
+    <title>@ViewData["Title"] - @Localizer["SiteName"]</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+
+    <!-- Bootstrap CSS with RTL/LTR support -->
+    @if (direction == "rtl")
+    {
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.rtl.min.css" rel="stylesheet" />
+    }
+    else
+    {
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    }
+
+    <!-- Font Awesome Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet" />
+
+    <!-- Google Fonts based on language -->
+    @if (currentLanguage == "ar" || currentLanguage == "ku")
+    {
+        <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+    }
+    else
+    {
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+    }
+
+    <!-- Animate.css for animations -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet" />
+
+    <!-- Custom CSS -->
+    <style>
+        :root {
+            --primary-color: #2c5aa0;
+            --primary-dark: #1e4080;
+            --primary-light: #4a7bc8;
+            --secondary-color: #34c759;
+            --secondary-dark: #28a745;
+            --accent-color: #ff6b35;
+            --accent-light: #ff8c65;
+            --text-color: #2c3e50;
+            --text-muted: #6c757d;
+            --light-bg: #f8f9fa;
+            --white: #ffffff;
+            --border-color: #e9ecef;
+            --shadow-light: 0 2px 10px rgba(0,0,0,0.1);
+            --shadow-medium: 0 4px 20px rgba(0,0,0,0.15);
+            --shadow-heavy: 0 8px 30px rgba(0,0,0,0.2);
+            --border-radius: 12px;
+            --border-radius-lg: 16px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            font-family: @if (currentLanguage == "ar" || currentLanguage == "ku")
+            {
+                <text>'Cairo', -apple-system, BlinkMacSystemFont, sans-serif;
+                </text>
+            }
+                        else
+            {
+
+                <text>'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+                </text>
+            }
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: var(--text-color);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header Styles */
+        .main-header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+            box-shadow: var(--shadow-medium);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+
+        .top-bar {
+            background: rgba(0,0,0,0.1);
+            padding: 0.5rem 0;
+            font-size: 0.875rem;
+        }
+
+            .top-bar .container {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+        .contact-info {
+            display: flex;
+            gap: 1.5rem;
+            color: rgba(255,255,255,0.8);
+        }
+
+            .contact-info a {
+                color: rgba(255,255,255,0.8);
+                text-decoration: none;
+                transition: var(--transition);
+            }
+
+                .contact-info a:hover {
+                    color: white;
+                    transform: translateY(-1px);
+                }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+        }
+
+            .social-links a {
+                color: rgba(255,255,255,0.8);
+                font-size: 1.1rem;
+                transition: var(--transition);
+            }
+
+                .social-links a:hover {
+                    color: white;
+                    transform: translateY(-2px) scale(1.1);
+                }
+
+        /* Main Navigation */
+        .main-navbar {
+            padding: 1rem 0;
+        }
+
+        .navbar-brand {
+            font-weight: 800;
+            font-size: 1.75rem;
+            color: white !important;
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+            .navbar-brand:hover {
+                transform: scale(1.02);
+            }
+
+            .navbar-brand img {
+                max-height: 45px;
+                @if (direction == "rtl")
+                {
+                    <text>margin-left: 12px;
+                    </text>
+                }
+                else
+                {
+
+                    <text>margin-right: 12px;
+                    </text>
+                }
+ filter: brightness(1.1);
+            }
+
+            .navbar-brand .brand-icon {
+                font-size: 2rem;
+                @if (direction == "rtl")
+                {
+                    <text>margin-left: 12px;
+                    </text>
+                }
+                else
+                {
+
+                    <text>margin-right: 12px;
+                    </text>
+                }
+ background: linear-gradient(45deg, var(--secondary-color), var(--accent-color));
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+            }
+
+        /* Navigation Links */
+        .navbar-nav {
+            gap: 0.5rem;
+        }
+
+            .navbar-nav .nav-link {
+                color: rgba(255,255,255,0.9) !important;
+                font-weight: 500;
+                padding: 0.75rem 1.25rem !important;
+                border-radius: 25px;
+                transition: var(--transition);
+                position: relative;
+                overflow: hidden;
+            }
+
+                .navbar-nav .nav-link::before {
+                    content: '';
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 0;
+                    height: 100%;
+                    background: rgba(255,255,255,0.1);
+                    transition: width 0.3s ease;
+                    z-index: -1;
+                }
+
+                .navbar-nav .nav-link:hover::before {
+                    width: 100%;
+                }
+
+                .navbar-nav .nav-link:hover,
+                .navbar-nav .nav-link.active {
+                    color: white !important;
+                    transform: translateY(-2px);
+                    box-shadow: 0 4px 15px rgba(255,255,255,0.2);
+                }
+
+        /* Language Selector */
+        .language-selector {
+            position: relative;
+        }
+
+        .language-dropdown {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 25px;
+            padding: 0.5rem 1rem;
+            color: white;
+            text-decoration: none;
+            transition: var(--transition);
+            font-size: 0.9rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            backdrop-filter: blur(5px);
+        }
+
+            .language-dropdown:hover {
+                background: rgba(255,255,255,0.2);
+                color: white;
+                transform: translateY(-2px);
+                box-shadow: 0 4px 15px rgba(255,255,255,0.2);
+            }
+
+            .language-dropdown .flag {
+                font-size: 1.2em;
+                filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+            }
+
+        .dropdown-menu {
+            border: none;
+            box-shadow: var(--shadow-heavy);
+            border-radius: var(--border-radius);
+            padding: 0.5rem;
+            min-width: 200px;
+            backdrop-filter: blur(10px);
+            background: rgba(255,255,255,0.95);
+        }
+
+        .language-form {
+            width: 100%;
+        }
+
+            .language-form button {
+                width: 100%;
+                text-align: @(direction == "rtl" ? "right" : "left");
+                border: none;
+                background: none;
+                display: flex;
+                align-items: center;
+                padding: 0.75rem 1rem;
+                transition: var(--transition);
+                border-radius: 8px;
+                margin: 2px 0;
+                font-weight: 500;
+            }
+
+                .language-form button:hover:not(:disabled) {
+                    background: var(--light-bg);
+                    transform: translateX( @(direction == "rtl" ? "5px" : "-5px") );
+                    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+                }
+
+                .language-form button.active {
+                    background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+                    color: white;
+                    box-shadow: 0 4px 15px rgba(44, 90, 160, 0.3);
+                }
+
+                .language-form button .flag {
+                    @if (direction == "rtl")
+                    {
+                        <text>margin-left: 0.75rem;
+                        </text>
+                    }
+                    else
+                    {
+
+                        <text>margin-right: 0.75rem;
+                        </text>
+                    }
+ font-size: 1.2em;
+                }
+
+        /* User Menu */
+        .user-dropdown {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 25px;
+            padding: 0.5rem 1rem;
+            color: white;
+            text-decoration: none;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            backdrop-filter: blur(5px);
+        }
+
+            .user-dropdown:hover {
+                background: rgba(255,255,255,0.2);
+                color: white;
+                transform: translateY(-2px);
+                box-shadow: 0 4px 15px rgba(255,255,255,0.2);
+            }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, var(--secondary-color), var(--accent-color));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+
+        /* Custom Button Styles */
+        .btn-custom {
+            background: linear-gradient(135deg, var(--secondary-color), var(--secondary-dark));
+            border: none;
+            color: white;
+            padding: 0.75rem 2rem;
+            border-radius: 25px;
+            font-weight: 600;
+            transition: var(--transition);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: 0 4px 15px rgba(52, 199, 89, 0.3);
+        }
+
+            .btn-custom:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 8px 25px rgba(52, 199, 89, 0.4);
+                color: white;
+                background: linear-gradient(135deg, var(--secondary-dark), var(--secondary-color));
+            }
+
+        .btn-outline-custom {
+            border: 2px solid white;
+            color: white;
+            background: transparent;
+            padding: 0.75rem 2rem;
+            border-radius: 25px;
+            font-weight: 600;
+            transition: var(--transition);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+            .btn-outline-custom:hover {
+                background: white;
+                color: var(--primary-color);
+                transform: translateY(-2px);
+                box-shadow: 0 4px 15px rgba(255,255,255,0.3);
+            }
+
+        /* Main Content */
+        main {
+            flex: 1;
+            padding: 2rem 0;
+        }
+
+        .container-custom {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        .card-custom {
+            background: white;
+            border-radius: var(--border-radius-lg);
+            padding: 2rem;
+            box-shadow: var(--shadow-light);
+            border: 1px solid var(--border-color);
+            transition: var(--transition);
+        }
+
+            .card-custom:hover {
+                box-shadow: var(--shadow-medium);
+                transform: translateY(-2px);
+            }
+
+        /* Alert Styles */
+        .alert {
+            border: none;
+            border-radius: var(--border-radius);
+            padding: 1rem 1.5rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            box-shadow: var(--shadow-light);
+        }
+
+        .alert-success {
+            background: linear-gradient(135deg, rgba(52, 199, 89, 0.1), rgba(52, 199, 89, 0.05));
+            color: var(--secondary-dark);
+            border-left: 4px solid var(--secondary-color);
+        }
+
+        .alert-danger {
+            background: linear-gradient(135deg, rgba(220, 53, 69, 0.1), rgba(220, 53, 69, 0.05));
+            color: #721c24;
+            border-left: 4px solid #dc3545;
+        }
+
+        .alert-warning {
+            background: linear-gradient(135deg, rgba(255, 193, 7, 0.1), rgba(255, 193, 7, 0.05));
+            color: #856404;
+            border-left: 4px solid #ffc107;
+        }
+
+        .alert-info {
+            background: linear-gradient(135deg, rgba(13, 202, 240, 0.1), rgba(13, 202, 240, 0.05));
+            color: #055160;
+            border-left: 4px solid #0dcaf0;
+        }
+
+        /* Form Controls */
+        .form-control {
+            border-radius: var(--border-radius);
+            border: 2px solid var(--border-color);
+            padding: 0.75rem 1rem;
+            transition: var(--transition);
+            font-weight: 500;
+        }
+
+            .form-control:focus {
+                border-color: var(--primary-color);
+                box-shadow: 0 0 0 0.2rem rgba(44, 90, 160, 0.25);
+                transform: translateY(-1px);
+            }
+
+        /* Footer */
+        .main-footer {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 3rem 0 1rem;
+            margin-top: auto;
+        }
+
+        .footer-section h5 {
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: var(--secondary-color);
+            position: relative;
+        }
+
+            .footer-section h5::after {
+                content: '';
+                position: absolute;
+                bottom: -8px;
+                left: 0;
+                width: 50px;
+                height: 3px;
+                background: linear-gradient(90deg, var(--secondary-color), var(--accent-color));
+                border-radius: 2px;
+            }
+
+        .footer-section a {
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.25rem 0;
+        }
+
+            .footer-section a:hover {
+                color: var(--secondary-color);
+                transform: translateX( @(direction == "rtl" ? "5px" : "-5px") );
+            }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255,255,255,0.1);
+            margin-top: 2rem;
+            padding-top: 2rem;
+            text-align: center;
+            color: rgba(255,255,255,0.7);
+        }
+
+        /* Loading States */
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
+            position: relative;
+        }
+
+            .loading::after {
+                content: '';
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                width: 20px;
+                height: 20px;
+                margin: -10px 0 0 -10px;
+                border: 2px solid #fff;
+                border-radius: 50%;
+                border-top-color: transparent;
+                animation: spin 1s linear infinite;
+            }
+
+        @@keyframes spin {
+            to
+
+        {
+            transform: rotate(360deg);
+        }
+
+        }
+
+        /* Responsive Design */
+        @@media (max-width: 768px) {
+            .top-bar
+
+        {
+            display: none;
+        }
+
+        .contact-info {
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .navbar-brand {
+            font-size: 1.5rem;
+        }
+
+        .navbar-nav {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+            .navbar-nav .nav-link {
+                padding: 0.5rem 1rem !important;
+                margin: 0.25rem 0;
+            }
+
+        .container-custom {
+            padding: 0 0.75rem;
+        }
+
+        .card-custom {
+            padding: 1.5rem;
+        }
+
+        .main-footer {
+            padding: 2rem 0 1rem;
+        }
+
+        }
+
+        @@media (max-width: 576px) {
+            .language-dropdown, .user-dropdown
+
+        {
+            padding: 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        .btn-custom,
+        .btn-outline-custom {
+            padding: 0.5rem 1.5rem;
+            font-size: 0.875rem;
+        }
+
+        }
+
+        /* Animation Classes */
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        @@keyframes fadeIn {
+            from
+
+        {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        }
+
+        .slide-in- @(direction == "rtl" ? "right" : "left") {
+            animation: slideIn @(direction == "rtl" ? "Right" : "Left") 0.3s ease-out;
+        }
+
+        @@keyframes slideInLeft {
+            from
+
+        {
+            opacity: 0;
+            transform: translateX(-30px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        }
+
+        @@keyframes slideInRight {
+            from
+
+        {
+            opacity: 0;
+            transform: translateX(30px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="main-header">
+        <!-- Top Bar -->
+        <div class="top-bar d-none d-md-block">
+            <div class="container">
+                <div class="contact-info">
+                    @if (!string.IsNullOrEmpty(siteSettings?.ContactPhone))
+                    {
+                        <a href="tel:@siteSettings.ContactPhone">
+                            <i class="fas fa-phone"></i>
+                            @siteSettings.ContactPhone
+                        </a>
+                    }
+                    @if (!string.IsNullOrEmpty(siteSettings?.ContactEmail))
+                    {
+                        <a href="mailto:@siteSettings.ContactEmail">
+                            <i class="fas fa-envelope"></i>
+                            @siteSettings.ContactEmail
+                        </a>
+                    }
+                </div>
+
+                <div class="social-links">
+                    @if (!string.IsNullOrEmpty(siteSettings?.FacebookUrl))
+                    {
+                        <a href="@siteSettings.FacebookUrl" target="_blank" title="Facebook">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                    }
+                    @if (!string.IsNullOrEmpty(siteSettings?.InstagramUrl))
+                    {
+                        <a href="@siteSettings.InstagramUrl" target="_blank" title="Instagram">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                    }
+                    @if (!string.IsNullOrEmpty(siteSettings?.TwitterUrl))
+                    {
+                        <a href="@siteSettings.TwitterUrl" target="_blank" title="Twitter">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                    }
+                    @if (!string.IsNullOrEmpty(siteSettings?.YouTubeUrl))
+                    {
+                        <a href="@siteSettings.YouTubeUrl" target="_blank" title="YouTube">
+                            <i class="fab fa-youtube"></i>
+                        </a>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Navigation -->
+        <nav class="navbar navbar-expand-lg main-navbar">
+            <div class="container">
+                <!-- Brand -->
+                <a class="navbar-brand" href="/">
+                    @if (!string.IsNullOrEmpty(siteSettings?.SiteLogo))
+                    {
+                        <img src="@siteSettings.SiteLogo" alt="@Localizer["SiteName"]" />
+                    }
+                    else
+                    {
+                        <i class="fas fa-store brand-icon"></i>
+                    }
+                    @Localizer["SiteName"]
+                </a>
+
+                <!-- Mobile Toggle -->
+                <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- Navigation Menu -->
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <!-- Main Links -->
+                    <ul class="navbar-nav @(direction == "rtl" ? "ms-auto" : "me-auto")">
+                        <li class="nav-item">
+                            <a class="nav-link @(ViewContext.RouteData.Values["action"]?.ToString() == "Index" && ViewContext.RouteData.Values["controller"]?.ToString() == "Home" ? "active" : "")"
+                               href="/">
+                                <i class="fas fa-home @(direction == "rtl" ? "ms-1" : "me-1")"></i>
+                                @Localizer["Home"]
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Requests" ? "active" : "")"
+                               href="/Requests">
+                                <i class="fas fa-list @(direction == "rtl" ? "ms-1" : "me-1")"></i>
+                                @Localizer["Requests"]
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Stores" ? "active" : "")"
+                               href="/Stores">
+                                <i class="fas fa-store @(direction == "rtl" ? "ms-1" : "me-1")"></i>
+                                @Localizer["Stores"]
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link @(ViewContext.RouteData.Values["action"]?.ToString() == "About" ? "active" : "")"
+                               href="/Home/About">
+                                <i class="fas fa-info-circle @(direction == "rtl" ? "ms-1" : "me-1")"></i>
+                                @Localizer["About"]
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link @(ViewContext.RouteData.Values["action"]?.ToString() == "Contact" ? "active" : "")"
+                               href="/Home/Contact">
+                                <i class="fas fa-envelope @(direction == "rtl" ? "ms-1" : "me-1")"></i>
+                                @Localizer["Contact"]
+                            </a>
+                        </li>
+                    </ul>
+
+                    <!-- Right Side Menu -->
+                    <ul class="navbar-nav">
+                        <!-- Language Selector -->
+                        <li class="nav-item dropdown language-selector">
+                            <a class="nav-link dropdown-toggle language-dropdown" href="#" id="languageMenu"
+                               role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <span class="flag">@currentLangInfo.Flag</span>
+                                <span class="d-none d-sm-inline">@currentLangInfo.NativeName</span>
+                                <i class="fas fa-globe @(direction == "rtl" ? "me-1" : "ms-1") d-sm-none"></i>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end animate__animated animate__fadeIn animate__faster" id="languageDropdown">
+                                @foreach (var language in supportedLanguages)
+                                {
+                                    <li>
+                                        <form method="post" action="/Language/SetLanguage"
+                                              class="language-form" data-language="@language.Code">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="culture" value="@language.Code" />
+                                            <input type="hidden" name="returnUrl"
+                                                   value="@(Context.Request.Path + Context.Request.QueryString)" />
+                                            <button type="submit"
+                                                    class="dropdown-item @(currentLanguage == language.Code ? "active" : "")"
+                                                    @(currentLanguage == language.Code ? "disabled" : "")>
+                                                <span class="flag">@language.Flag</span>
+                                                <span class="flex-grow-1">@language.NativeName</span>
+                                                @if (currentLanguage == language.Code)
+                                                {
+                                                    <i class="fas fa-check @(direction == "rtl" ? "me-auto" : "ms-auto") text-success"></i>
+                                                }
+                                            </button>
+                                        </form>
+                                    </li>
+                                }
+                            </ul>
+                        </li>
+
+                        <!-- User Menu or Login -->
+                        @if (isLoggedIn)
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle user-dropdown" href="#" id="userMenu"
+                                   role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <div class="user-avatar">
+                                        @(userName?.FirstOrDefault() ?? 'U')
+                                    </div>
+                                    <span class="d-none d-md-inline">@userName</span>
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end animate__animated animate__fadeIn animate__faster">
+                                    @if (userType == "Admin")
+                                    {
+                                        <li>
+                                            <a class="dropdown-item" href="/Admin/Dashboard">
+                                                <i class="fas fa-tachometer-alt @(direction == "rtl" ? "ms-2" : "me-2")"></i>
+                                                @Localizer["AdminPanel"]
+                                            </a>
+                                        </li>
+                                    }
+                                    else
+                                    {
+                                        <li>
+                                            <a class="dropdown-item" href="/Account/Profile">
+                                                <i class="fas fa-user @(direction == "rtl" ? "ms-2" : "me-2")"></i>
+                                                @Localizer["Profile"]
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="/Requests/Create">
+                                                <i class="fas fa-plus @(direction == "rtl" ? "ms-2" : "me-2")"></i>
+                                                @Localizer["AddRequest"]
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="/Requests/MyRequests">
+                                                <i class="fas fa-list-alt @(direction == "rtl" ? "ms-2" : "me-2")"></i>
+                                                @Localizer["MyRequests"]
+                                            </a>
+                                        </li>
+                                    }
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li>
+                                        <a class="dropdown-item text-danger" href="/Account/Logout">
+                                            <i class="fas fa-sign-out-alt @(direction == "rtl" ? "ms-2" : "me-2")"></i>
+                                            @Localizer["Logout"]
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" href="/Requests/Create">
+                                    <i class="fas fa-plus @(direction == "rtl" ? "ms-1" : "me-1")"></i>
+                                    @Localizer["AddRequest"]
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="btn btn-outline-custom" href="/Account/Login">
+                                    <i class="fas fa-sign-in-alt"></i>
+                                    @Localizer["Login"]
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main role="main" class="fade-in">
+        <!-- Messages Section -->
+        <div class="messages-container">
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="container mt-3">
+                    <div class="alert alert-success alert-dismissible fade show animate__animated animate__slideInDown" role="alert">
+                        <i class="fas fa-check-circle"></i>
+                        <div>
+                            <strong>@Localizer["Success"]!</strong>
+                            @TempData["SuccessMessage"]
+                        </div>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                </div>
+            }
+
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <div class="container mt-3">
+                    <div class="alert alert-danger alert-dismissible fade show animate__animated animate__slideInDown" role="alert">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <div>
+                            <strong>@Localizer["Error"]!</strong>
+                            @TempData["ErrorMessage"]
+                        </div>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                </div>
+            }
+
+            @if (TempData["WarningMessage"] != null)
+            {
+                <div class="container mt-3">
+                    <div class="alert alert-warning alert-dismissible fade show animate__animated animate__slideInDown" role="alert">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <div>
+                            <strong>تنبيه!</strong>
+                            @TempData["WarningMessage"]
+                        </div>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                </div>
+            }
+
+            @if (TempData["InfoMessage"] != null)
+            {
+                <div class="container mt-3">
+                    <div class="alert alert-info alert-dismissible fade show animate__animated animate__slideInDown" role="alert">
+                        <i class="fas fa-info-circle"></i>
+                        <div>
+                            <strong>معلومة!</strong>
+                            @TempData["InfoMessage"]
+                        </div>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <!-- Page Content -->
+        @RenderBody()
+    </main>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <div class="container">
+            <div class="row g-4">
+                <!-- About Section -->
+                <div class="col-lg-4 footer-section">
+                    <h5>@Localizer["About"]</h5>
+                    <p class="mb-3">
+                        @if (!string.IsNullOrEmpty(siteSettings?.AboutUs))
+                        {
+                            @siteSettings.AboutUs
+                        }
+                        else
+                        {
+                            @Localizer["SiteDescription"]
+                        }
+                    </p>
+                    <div class="social-links">
+                        @if (!string.IsNullOrEmpty(siteSettings?.FacebookUrl))
+                        {
+                            <a href="@siteSettings.FacebookUrl" target="_blank" title="Facebook">
+                                <i class="fab fa-facebook-f"></i>
+                            </a>
+                        }
+                        @if (!string.IsNullOrEmpty(siteSettings?.InstagramUrl))
+                        {
+                            <a href="@siteSettings.InstagramUrl" target="_blank" title="Instagram">
+                                <i class="fab fa-instagram"></i>
+                            </a>
+                        }
+                        @if (!string.IsNullOrEmpty(siteSettings?.TwitterUrl))
+                        {
+                            <a href="@siteSettings.TwitterUrl" target="_blank" title="Twitter">
+                                <i class="fab fa-twitter"></i>
+                            </a>
+                        }
+                        @if (!string.IsNullOrEmpty(siteSettings?.YouTubeUrl))
+                        {
+                            <a href="@siteSettings.YouTubeUrl" target="_blank" title="YouTube">
+                                <i class="fab fa-youtube"></i>
+                            </a>
+                        }
+                    </div>
+                </div>
+
+                <!-- Contact Section -->
+                <div class="col-lg-4 footer-section">
+                    <h5>@Localizer["ContactInfo"]</h5>
+                    <ul class="list-unstyled">
+                        @if (!string.IsNullOrEmpty(siteSettings?.ContactPhone))
+                        {
+                            <li class="mb-2">
+                                <a href="tel:@siteSettings.ContactPhone">
+                                    <i class="fas fa-phone"></i>
+                                    @siteSettings.ContactPhone
+                                </a>
+                            </li>
+                        }
+                        @if (!string.IsNullOrEmpty(siteSettings?.ContactWhatsApp))
+                        {
+                            <li class="mb-2">
+                                <a href="https://wa.me/@siteSettings.ContactWhatsApp.Replace("+", "")" target="_blank">
+                                    <i class="fab fa-whatsapp"></i>
+                                    @siteSettings.ContactWhatsApp
+                                </a>
+                            </li>
+                        }
+                        @if (!string.IsNullOrEmpty(siteSettings?.ContactEmail))
+                        {
+                            <li class="mb-2">
+                                <a href="mailto:@siteSettings.ContactEmail">
+                                    <i class="fas fa-envelope"></i>
+                                    @siteSettings.ContactEmail
+                                </a>
+                            </li>
+                        }
+                        <li class="mb-2">
+                            <i class="fas fa-clock"></i>
+                            السبت - الخميس: 9:00 ص - 6:00 م
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Links Section -->
+                <div class="col-lg-4 footer-section">
+                    <h5>@Localizer["ImportantLinks"]</h5>
+                    <div class="row">
+                        <div class="col-6">
+                            <ul class="list-unstyled">
+                                <li><a href="/"><i class="fas fa-home"></i> @Localizer["Home"]</a></li>
+                                <li><a href="/Requests"><i class="fas fa-list"></i> @Localizer["Requests"]</a></li>
+                                <li><a href="/Stores"><i class="fas fa-store"></i> @Localizer["Stores"]</a></li>
+                                <li><a href="/Home/About"><i class="fas fa-info-circle"></i> @Localizer["About"]</a></li>
+                            </ul>
+                        </div>
+                        <div class="col-6">
+                            <ul class="list-unstyled">
+                                <li><a href="/Home/Contact"><i class="fas fa-envelope"></i> @Localizer["Contact"]</a></li>
+                                <li><a href="/Home/Privacy"><i class="fas fa-shield-alt"></i> @Localizer["PrivacyPolicy"]</a></li>
+                                <li><a href="/Account/Login"><i class="fas fa-sign-in-alt"></i> @Localizer["Login"]</a></li>
+                                <li><a href="/Requests/Create"><i class="fas fa-plus"></i> @Localizer["AddRequest"]</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer Bottom -->
+            <div class="footer-bottom">
+                <div class="row align-items-center">
+                    <div class="col-md-6 text-center text-md-start">
+                        <p class="mb-0">
+                            @if (!string.IsNullOrEmpty(siteSettings?.CopyrightInfo))
+                            {
+                                @siteSettings.CopyrightInfo
+                            }
+                            else
+                            {
+                                @Localizer["Copyright"]
+                            }
+                        </p>
+                    </div>
+                    <div class="col-md-6 text-center text-md-end">
+                        <p class="mb-0">
+                            <i class="fas fa-heart text-danger"></i>
+                            صُنع بحب في العراق
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Back to Top Button -->
+    <button id="backToTop" class="btn btn-custom position-fixed"
+            style="bottom: 2rem; @(direction == "rtl" ? "left" : "right"): 2rem; z-index: 1000; display: none; border-radius: 50%; width: 50px; height: 50px;">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <!-- Scripts -->
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Custom JavaScript -->
+    <script>
+
+
+                // Global Configuration
+           const siteConfig = {
+            currentLanguage: '@currentLanguage',
+            direction: '@direction',
+            isRTL: @(direction == "rtl" ? "true" : "false")
+        };
+
+        // DOM Ready Functions
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeAlerts();
+            initializeBackToTop();
+            initializeNavigation();
+            initializeLanguageSelector();
+            initializeAnimations();
+        });
+
+        // Language Selector Enhancement
+        function initializeLanguageSelector() {
+            const languageForms = document.querySelectorAll('.language-form');
+            const languageDropdown = document.getElementById('languageDropdown');
+
+            languageForms.forEach(form => {
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault(); // منع الإرسال الافتراضي
+
+                    const button = this.querySelector('button[type="submit"]');
+                    const cultureInput = this.querySelector('input[name="culture"]');
+                    const returnUrlInput = this.querySelector('input[name="returnUrl"]');
+
+                    if (!button || !cultureInput) {
+                        console.error('Required form elements not found');
+                        showLanguageError('عناصر النموذج المطلوبة غير موجودة');
+                        return;
+                    }
+
+                    const languageCode = cultureInput.value;
+                    const returnUrl = returnUrlInput ? returnUrlInput.value : window.location.href;
+
+                    // التحقق من صحة رمز اللغة
+                    if (!languageCode || !isValidLanguageCode(languageCode)) {
+                        showLanguageError('رمز اللغة غير صحيح');
+                        return;
+                    }
+
+                    // التحقق من أن اللغة مختلفة عن الحالية
+                    if (languageCode === siteConfig.currentLanguage) {
+                        console.log('Language is already selected:', languageCode);
+                        return;
+                    }
+
+                    // تحديث UI
+                    handleLanguageChange(button, languageCode);
+
+                    // إرسال الطلب
+                    submitLanguageForm(this, languageCode, returnUrl);
+                });
+            });
+
+            // إضافة معالج للنقر خارج القائمة
+            document.addEventListener('click', function(e) {
+                if (languageDropdown && !e.target.closest('.language-selector')) {
+                    const dropdownInstance = bootstrap.Dropdown.getInstance(
+                        document.getElementById('languageMenu')
+                    );
+                    if (dropdownInstance) {
+                        dropdownInstance.hide();
+                    }
+                }
+            });
+        }
+
+        // التحقق من صحة رمز اللغة
+        function isValidLanguageCode(code) {
+            const validCodes = ['ar', 'en', 'ku'];
+            return validCodes.includes(code);
+        }
+
+        // معالج تغيير اللغة
+        function handleLanguageChange(button, languageCode) {
+            if (!button) return;
+
+            // حفظ المحتوى الأصلي
+            const originalContent = button.innerHTML;
+            button.dataset.originalContent = originalContent;
+
+            // إضافة حالة التحميل
+            const loadingText = getLoadingText(languageCode);
+            button.innerHTML = `<i class="fas fa-spinner fa-spin me-2"></i>${loadingText}`;
+            button.disabled = true;
+
+            // تعطيل جميع أزرار اللغة
+            const allButtons = document.querySelectorAll('.language-form button');
+            allButtons.forEach(btn => {
+                btn.disabled = true;
+                btn.classList.add('loading');
+            });
+
+            // إضافة كلاس التحميل للقائمة
+            const dropdown = document.getElementById('languageDropdown');
+            if (dropdown) {
+                dropdown.classList.add('loading');
+            }
+
+            // إخفاء القائمة المنسدلة
+            const dropdownInstance = bootstrap.Dropdown.getInstance(
+                document.getElementById('languageMenu')
+            );
+            if (dropdownInstance) {
+                dropdownInstance.hide();
+            }
+
+            // إضافة timeout للأمان
+            setTimeout(() => {
+                resetLanguageButtons();
+                showLanguageError('انتهت مهلة تغيير اللغة. يرجى المحاولة مرة أخرى.');
+            }, 15000); // 15 ثانية
+        }
+
+        // إرسال نموذج اللغة
+        function submitLanguageForm(form, languageCode, returnUrl) {
+            const formData = new FormData(form);
+
+            // التأكد من وجود returnUrl
+            if (!formData.has('returnUrl')) {
+                formData.append('returnUrl', returnUrl || window.location.href);
+            }
+
+            console.log('Submitting language change request:', {
+                culture: languageCode,
+                returnUrl: returnUrl,
+                action: form.action
+            });
+
+            fetch(form.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Cache-Control': 'no-cache'
+                },
+                credentials: 'same-origin'
+            })
+            .then(response => {
+                console.log('Language change response status:', response.status);
+
+                if (response.ok) {
+                    // حفظ اللغة في localStorage
+                    try {
+                        localStorage.setItem('preferredLanguage', languageCode);
+                        console.log('Language preference saved:', languageCode);
+                    } catch (e) {
+                        console.log('LocalStorage not available:', e);
+                    }
+
+                    // إعادة تحميل الصفحة لتطبيق اللغة الجديدة
+                    console.log('Reloading page to apply new language...');
+                    setTimeout(() => {
+                        window.location.reload(true);
+                    }, 300);
+                } else {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+            })
+            .catch(error => {
+                console.error('Language change error:', error);
+                showLanguageError('حدث خطأ أثناء تغيير اللغة: ' + error.message);
+                resetLanguageButtons();
+            });
+        }
+
+        // إعادة تعيين أزرار اللغة
+        function resetLanguageButtons() {
+            const allButtons = document.querySelectorAll('.language-form button');
+            allButtons.forEach(btn => {
+                btn.disabled = false;
+                btn.classList.remove('loading');
+
+                // استعادة المحتوى الأصلي
+                if (btn.dataset.originalContent) {
+                    btn.innerHTML = btn.dataset.originalContent;
+                    delete btn.dataset.originalContent;
+                }
+            });
+
+            // إزالة كلاس التحميل من القائمة
+            const dropdown = document.getElementById('languageDropdown');
+            if (dropdown) {
+                dropdown.classList.remove('loading');
+            }
+        }
+
+        // الحصول على نص التحميل حسب اللغة
+        function getLoadingText(languageCode) {
+            switch (languageCode) {
+                case 'ar':
+                    return 'جاري التحميل...';
+                case 'en':
+                    return 'Loading...';
+                case 'ku':
+                    return 'لودكردن...';
+                default:
+                    return 'جاري التحميل...';
+            }
+        }
+
+        // عرض خطأ اللغة
+        function showLanguageError(message) {
+            console.error('Language Error:', message);
+
+            // إزالة الأخطاء السابقة
+            const existingErrors = document.querySelectorAll('.language-error-alert');
+            existingErrors.forEach(alert => alert.remove());
+
+            // إنشاء تنبيه مؤقت
+            const alertDiv = document.createElement('div');
+            alertDiv.className = 'alert alert-danger alert-dismissible fade show position-fixed language-error-alert';
+            alertDiv.style.cssText = 'top: 20px; right: 20px; z-index: 9999; max-width: 400px;';
+            alertDiv.innerHTML = `
+                <i class="fas fa-exclamation-circle me-2"></i>
+                <strong>خطأ في تغيير اللغة:</strong> ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+
+            document.body.appendChild(alertDiv);
+
+            // إزالة التنبيه تلقائياً
+            setTimeout(() => {
+                if (alertDiv.parentNode) {
+                    alertDiv.remove();
+                }
+            }, 8000);
+        }
+
+        // معالج النقر على أزرار اللغة (للاستدعاء من HTML إذا لزم الأمر)
+        function handleLanguageClick(button, languageCode) {
+            const form = button.closest('form');
+            if (form) {
+                const event = new Event('submit', {
+                    bubbles: true,
+                    cancelable: true
+                });
+                form.dispatchEvent(event);
+            }
+        }
+
+        // تطبيق اللغة المفضلة تلقائياً
+        function autoApplyPreferredLanguage() {
+            try {
+                const preferredLang = localStorage.getItem('preferredLanguage');
+                if (preferredLang &&
+                    preferredLang !== siteConfig.currentLanguage &&
+                    isValidLanguageCode(preferredLang)) {
+
+                    console.log(`Auto-applying preferred language: ${preferredLang} (current: ${siteConfig.currentLanguage})`);
+
+                    // البحث عن النموذج المناسب
+                    const cultureInput = document.querySelector(`.language-form input[value="${preferredLang}"]`);
+                    const form = cultureInput?.closest('form');
+
+                    if (form && cultureInput) {
+                        console.log('Found form for preferred language, applying...');
+                        setTimeout(() => {
+                            const submitEvent = new Event('submit', {
+                                bubbles: true,
+                                cancelable: true
+                            });
+                            form.dispatchEvent(submitEvent);
+                        }, 200);
+                    } else {
+                        console.log('Form not found for preferred language:', preferredLang);
+                    }
+                } else {
+                    console.log('No auto-language change needed:', {
+                        preferred: preferredLang,
+                        current: siteConfig.currentLanguage,
+                        valid: preferredLang ? isValidLanguageCode(preferredLang) : false
+                    });
+                }
+            } catch (e) {
+                console.log('Error auto-applying language:', e);
+            }
+        }
+
+        // باقي الدوال (initializeAlerts, initializeBackToTop, etc.)
+        function initializeAlerts() {
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(alert => {
+                setTimeout(() => {
+                    if (alert.parentNode) {
+                        const bsAlert = new bootstrap.Alert(alert);
+                        bsAlert.close();
+                    }
+                }, 5000);
+
+                alert.addEventListener('closed.bs.alert', function() {
+                    this.style.transform = 'translateX(' + (siteConfig.isRTL ? '-' : '') + '100%)';
+                });
+            });
+        }
+
+        function initializeBackToTop() {
+            const backToTop = document.getElementById('backToTop');
+            if (!backToTop) return;
+
+            window.addEventListener('scroll', function() {
+                if (window.pageYOffset > 300) {
+                    backToTop.style.display = 'block';
+                    backToTop.classList.add('animate__animated', 'animate__fadeInUp');
+                } else {
+                    backToTop.style.display = 'none';
+                }
+            });
+
+            backToTop.addEventListener('click', function() {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            });
+        }
+
+        function initializeNavigation() {
+            const currentPath = window.location.pathname;
+            const navLinks = document.querySelectorAll('.navbar-nav .nav-link');
+
+            navLinks.forEach(link => {
+                if (link.getAttribute('href') === currentPath) {
+                    link.classList.add('active');
+                }
+            });
+
+            const navbarToggler = document.querySelector('.navbar-toggler');
+            const navbarCollapse = document.querySelector('.navbar-collapse');
+
+            if (navbarToggler && navbarCollapse) {
+                navbarToggler.addEventListener('click', function() {
+                    navbarCollapse.classList.toggle('animate__animated');
+                    navbarCollapse.classList.toggle('animate__slideInDown');
+                });
+            }
+        }
+
+        function initializeAnimations() {
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+
+            const observer = new IntersectionObserver(function(entries) {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('animate__animated', 'animate__fadeInUp');
+                    }
+                });
+            }, observerOptions);
+
+            const animatedElements = document.querySelectorAll('.card-custom, .footer-section');
+            animatedElements.forEach(el => observer.observe(el));
+        }
+
+        // تطبيق اللغة المفضلة بعد تحميل الصفحة
+        setTimeout(autoApplyPreferredLanguage, 500);
+
+        // معالج الأخطاء العامة
+        window.addEventListener('error', function(e) {
+            console.error('Global error:', e.error);
+        });
+
+        // مراقبة الأداء
+        window.addEventListener('load', function() {
+            const loadTime = performance.timing.loadEventEnd - performance.timing.navigationStart;
+            console.log('Page load time:', loadTime + 'ms');
+        });
+        // // Global Configuration
+        // const siteConfig = {
+        //     currentLanguage: '@currentLanguage',
+        //     direction: '@direction',
+        //     isRTL: @(direction == "rtl" ? "true" : "false")
+        // };
+
+        // // DOM Ready Functions
+        // document.addEventListener('DOMContentLoaded', function() {
+        //     initializeAlerts();
+        //     initializeBackToTop();
+        //     initializeNavigation();
+        //     initializeLanguageSelector();
+        //     initializeAnimations();
+        // });
+
+        // // Alert Management
+        // function initializeAlerts() {
+        //     const alerts = document.querySelectorAll('.alert');
+        //     alerts.forEach(alert => {
+        //         // Auto-dismiss after 5 seconds
+        //         setTimeout(() => {
+        //             if (alert.parentNode) {
+        //                 const bsAlert = new bootstrap.Alert(alert);
+        //                 bsAlert.close();
+        //             }
+        //         }, 5000);
+
+        //         // Add dismiss animation
+        //         alert.addEventListener('closed.bs.alert', function() {
+        //             this.style.transform = 'translateX(' + (siteConfig.isRTL ? '-' : '') + '100%)';
+        //         });
+        //     });
+        // }
+
+        // // Back to Top Button
+        // function initializeBackToTop() {
+        //     const backToTop = document.getElementById('backToTop');
+
+        //     window.addEventListener('scroll', function() {
+        //         if (window.pageYOffset > 300) {
+        //             backToTop.style.display = 'block';
+        //             backToTop.classList.add('animate__animated', 'animate__fadeInUp');
+        //         } else {
+        //             backToTop.style.display = 'none';
+        //         }
+        //     });
+
+        //     backToTop.addEventListener('click', function() {
+        //         window.scrollTo({
+        //             top: 0,
+        //             behavior: 'smooth'
+        //         });
+        //     });
+        // }
+
+        // // Navigation Enhancement
+        // function initializeNavigation() {
+        //     // Active page highlighting
+        //     const currentPath = window.location.pathname;
+        //     const navLinks = document.querySelectorAll('.navbar-nav .nav-link');
+
+        //     navLinks.forEach(link => {
+        //         if (link.getAttribute('href') === currentPath) {
+        //             link.classList.add('active');
+        //         }
+        //     });
+
+        //     // Mobile menu enhancements
+        //     const navbarToggler = document.querySelector('.navbar-toggler');
+        //     const navbarCollapse = document.querySelector('.navbar-collapse');
+
+        //     if (navbarToggler && navbarCollapse) {
+        //         navbarToggler.addEventListener('click', function() {
+        //             navbarCollapse.classList.toggle('animate__animated');
+        //             navbarCollapse.classList.toggle('animate__slideInDown');
+        //         });
+        //     }
+        // }
+
+        // // Language Selector
+        // function initializeLanguageSelector() {
+        //     const languageForms = document.querySelectorAll('.language-form');
+
+        //     languageForms.forEach(form => {
+        //         form.addEventListener('submit', function(e) {
+        //             const button = this.querySelector('button[type="submit"]');
+        //             const languageCode = this.dataset.language;
+
+        //             // Store language preference
+        //             try {
+        //                 localStorage.setItem('preferredLanguage', languageCode);
+        //             } catch (e) {
+        //                 console.log('LocalStorage not available');
+        //             }
+        //         });
+        //     });
+
+        //     // Auto-apply preferred language
+        //     try {
+        //         const preferredLang = localStorage.getItem('preferredLanguage');
+        //         if (preferredLang && preferredLang !== siteConfig.currentLanguage) {
+        //             const form = document.querySelector(`.language-form[data-language="${preferredLang}"]`);
+        //             if (form) {
+        //                 setTimeout(() => form.submit(), 100);
+        //             }
+        //         }
+        //     } catch (e) {
+        //         console.log('LocalStorage not available');
+        //     }
+        // }
+
+        // // Language Change Handler
+        // function handleLanguageChange(button, languageCode) {
+        //     // Add loading state
+        //     const originalContent = button.innerHTML;
+        //     button.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>جاري التحميل...';
+        //     button.disabled = true;
+
+        //     // Disable all language buttons
+        //     const allButtons = document.querySelectorAll('.language-form button');
+        //     allButtons.forEach(btn => btn.disabled = true);
+
+        //     // Add loading class to dropdown
+        //     const dropdown = document.getElementById('languageDropdown');
+        //     dropdown.classList.add('loading');
+
+        //     // Reset if form submission fails
+        //     setTimeout(() => {
+        //         button.innerHTML = originalContent;
+        //         button.disabled = false;
+        //         allButtons.forEach(btn => btn.disabled = false);
+        //         dropdown.classList.remove('loading');
+        //     }, 5000);
+        // }
+
+        // // Animation Initialization
+        // function initializeAnimations() {
+        //     // Intersection Observer for scroll animations
+        //     const observerOptions = {
+        //         threshold: 0.1,
+        //         rootMargin: '0px 0px -50px 0px'
+        //     };
+
+        //     const observer = new IntersectionObserver(function(entries) {
+        //         entries.forEach(entry => {
+        //             if (entry.isIntersecting) {
+        //                 entry.target.classList.add('animate__animated', 'animate__fadeInUp');
+        //             }
+        //         });
+        //     }, observerOptions);
+
+        //     // Observe elements with animation class
+        //     const animatedElements = document.querySelectorAll('.card-custom, .footer-section');
+        //     animatedElements.forEach(el => observer.observe(el));
+        // }
+
+        // // Keyboard Shortcuts
+        // document.addEventListener('keydown', function(e) {
+        //     // Alt + L: Open language menu
+        //     if (e.altKey && e.key === 'l') {
+        //         e.preventDefault();
+        //         const languageMenu = document.getElementById('languageMenu');
+        //         if (languageMenu) {
+        //             languageMenu.click();
+        //         }
+        //     }
+
+        //     // Ctrl + K: Focus search (if available)
+        //     if (e.ctrlKey && e.key === 'k') {
+        //         e.preventDefault();
+        //         const searchInput = document.querySelector('input[type="search"], input[name="search"]');
+        //         if (searchInput) {
+        //             searchInput.focus();
+        //         }
+        //     }
+
+        //     // Escape: Close dropdowns
+        //     if (e.key === 'Escape') {
+        //         const openDropdowns = document.querySelectorAll('.dropdown-menu.show');
+        //         openDropdowns.forEach(dropdown => {
+        //             const bsDropdown = new bootstrap.Dropdown(dropdown.previousElementSibling);
+        //             bsDropdown.hide();
+        //         });
+        //     }
+        // });
+
+        // // Form Enhancement
+        // function enhanceFormElements() {
+        //     // Add floating labels effect
+        //     const formControls = document.querySelectorAll('.form-control');
+        //     formControls.forEach(control => {
+        //         control.addEventListener('focus', function() {
+        //             this.parentElement.classList.add('focused');
+        //         });
+
+        //         control.addEventListener('blur', function() {
+        //             if (!this.value) {
+        //                 this.parentElement.classList.remove('focused');
+        //             }
+        //         });
+        //     });
+        // }
+
+        // // Call form enhancement
+        // enhanceFormElements();
+
+        // // Global Error Handler
+        // window.addEventListener('error', function(e) {
+        //     console.error('Global error:', e.error);
+        //     // Could send to logging service here
+        // });
+
+        // // Performance Monitoring
+        // window.addEventListener('load', function() {
+        //     const loadTime = performance.timing.loadEventEnd - performance.timing.navigationStart;
+        //     console.log('Page load time:', loadTime + 'ms');
+        // });
+
+        // // Service Worker Registration (if needed)
+        // if ('serviceWorker' in navigator) {
+        //     window.addEventListener('load', function() {
+        //         // Uncomment if you have a service worker
+        //         // navigator.serviceWorker.register('/sw.js');
+        //     });
+        // }
+    </script>
+
+    <!-- Page-specific Scripts -->
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

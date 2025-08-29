@@ -1,0 +1,328 @@
+﻿@* Views/Diagnostic/LanguageDiagnostic.cshtml *@
+@using ReverseMarket.Controllers
+@model LanguageDiagnosticInfo
+@{
+    ViewData["Title"] = "تشخيص نظام اللغات";
+}
+
+<div class="container-custom">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="display-6 text-primary mb-4">
+                <i class="fas fa-language me-3"></i>
+                تشخيص نظام اللغات
+            </h1>
+
+            <!-- حالة النظام العامة -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        @if (Model.Success)
+                        {
+                            <i class="fas fa-check-circle text-success me-2"></i>
+                            <span class="text-success">النظام يعمل بشكل صحيح</span>
+                        }
+                        else
+                        {
+                            <i class="fas fa-exclamation-triangle text-warning me-2"></i>
+                            <span class="text-warning">توجد مشاكل في النظام (@Model.Issues.Count)</span>
+                        }
+                    </h5>
+                </div>
+                @if (!Model.Success)
+                {
+                    <div class="card-body">
+                        <h6 class="text-danger">المشاكل المكتشفة:</h6>
+                        <ul class="text-danger">
+                            @foreach (var issue in Model.Issues)
+                            {
+                                <li>@issue</li>
+                            }
+                        </ul>
+                    </div>
+                }
+            </div>
+
+            <!-- معلومات اللغة الحالية -->
+            <div class="row g-4 mb-4">
+                <div class="col-md-4">
+                    <div class="card h-100">
+                        <div class="card-header">
+                            <h6><i class="fas fa-globe me-2"></i>اللغة الحالية</h6>
+                        </div>
+                        <div class="card-body">
+                            <p><strong>اللغة:</strong> @Model.CurrentLanguage</p>
+                            <p><strong>الاتجاه:</strong> @Model.CurrentDirection</p>
+                            <p><strong>اللغات المدعومة:</strong></p>
+                            <ul>
+                                @foreach (var lang in Model.SupportedLanguages)
+                                {
+                                    <li>
+                                        @lang.Flag @lang.NativeName (@lang.Code)
+                                        @if (lang.Code == Model.CurrentLanguage)
+                                        {
+                                            <span class="badge bg-success">حالية</span>
+                                        }
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="card h-100">
+                        <div class="card-header">
+                            <h6><i class="fas fa-cog me-2"></i>معلومات Culture</h6>
+                        </div>
+                        <div class="card-body">
+                            <p><strong>Current Culture:</strong> <code>@Model.CurrentCulture</code></p>
+                            <p><strong>Current UI Culture:</strong> <code>@Model.CurrentUICulture</code></p>
+                            <p><strong>Thread Culture:</strong> <code>@Model.ThreadCulture</code></p>
+                            <p><strong>Thread UI Culture:</strong> <code>@Model.ThreadUICulture</code></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="card h-100">
+                        <div class="card-header">
+                            <h6><i class="fas fa-server me-2"></i>معلومات Request</h6>
+                        </div>
+                        <div class="card-body">
+                            <p><strong>Request Culture:</strong> <code>@(Model.RequestCulture ?? "غير محدد")</code></p>
+                            <p><strong>Request UI Culture:</strong> <code>@(Model.RequestUICulture ?? "غير محدد")</code></p>
+                            <p><strong>Provider:</strong> <code>@(Model.ProviderResultCulture ?? "غير محدد")</code></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- معلومات Cookie -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h6><i class="fas fa-cookie-bite me-2"></i>معلومات Cookie</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Cookie Value:</strong></p>
+                            @if (!string.IsNullOrEmpty(Model.CookieValue))
+                            {
+                                <pre class="bg-light p-2 rounded"><code>@Model.CookieValue</code></pre>
+                            }
+                            else
+                            {
+                                <p class="text-muted">لا يوجد cookie</p>
+                            }
+                        </div>
+                        <div class="col-md-6">
+                            <p>
+                                <strong>Cookie Parse Status:</strong>
+                                @if (Model.CookieParseSuccess)
+                                {
+                                    <span class="badge bg-success">نجح</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-danger">فشل</span>
+                                }
+                            </p>
+                            @if (Model.CookieParseSuccess)
+                            {
+                                <p><strong>Cookie Culture:</strong> <code>@Model.CookieCulture</code></p>
+                                <p><strong>Cookie UI Culture:</strong> <code>@Model.CookieUICulture</code></p>
+                            }
+                            else if (!string.IsNullOrEmpty(Model.CookieParseError))
+                            {
+                                <p class="text-danger"><strong>خطأ:</strong> @Model.CookieParseError</p>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- معلومات Headers -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h6><i class="fas fa-code me-2"></i>معلومات Headers</h6>
+                </div>
+                <div class="card-body">
+                    <p>
+                        <strong>Accept-Language:</strong>
+                        @if (!string.IsNullOrEmpty(Model.AcceptLanguageHeader))
+                        {
+                            <code>@Model.AcceptLanguageHeader</code>
+                        }
+                        else
+                        {
+                            <span class="text-muted">غير موجود</span>
+                        }
+                    </p>
+                </div>
+            </div>
+
+            <!-- إعدادات Localization -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h6><i class="fas fa-settings me-2"></i>إعدادات Localization</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Default Culture:</strong> <code>@Model.DefaultCulture</code></p>
+                            <p><strong>Default UI Culture:</strong> <code>@Model.DefaultUICulture</code></p>
+                            <p><strong>Supported Cultures:</strong></p>
+                            <ul>
+                                @foreach (var culture in Model.SupportedCultures)
+                                {
+                                    <li><code>@culture</code></li>
+                                }
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Supported UI Cultures:</strong></p>
+                            <ul>
+                                @foreach (var culture in Model.SupportedUICultures)
+                                {
+                                    <li><code>@culture</code></li>
+                                }
+                            </ul>
+                            <p><strong>Culture Providers:</strong></p>
+                            <ol>
+                                @foreach (var provider in Model.CultureProviders)
+                                {
+                                    <li><code>@provider</code></li>
+                                }
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- أدوات الاختبار -->
+            <div class="card">
+                <div class="card-header">
+                    <h6><i class="fas fa-tools me-2"></i>أدوات الاختبار</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <h6>اختبار تغيير اللغة:</h6>
+                            @foreach (var lang in Model.SupportedLanguages)
+                            {
+                                <button class="btn btn-outline-primary btn-sm me-2 mb-2"
+                                        onclick="testLanguageChange('@lang.Code')">
+                                    @lang.Flag @lang.NativeName
+                                </button>
+                            }
+                        </div>
+                        <div class="col-md-4">
+                            <h6>إدارة Cookie:</h6>
+                            <button class="btn btn-warning btn-sm" onclick="clearLanguageCookie()">
+                                <i class="fas fa-trash me-1"></i>
+                                مسح Cookie
+                            </button>
+                        </div>
+                        <div class="col-md-4">
+                            <h6>أدوات أخرى:</h6>
+                            <button class="btn btn-secondary btn-sm" onclick="location.reload()">
+                                <i class="fas fa-sync me-1"></i>
+                                إعادة فحص
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- منطقة النتائج -->
+                    <div id="testResults" class="mt-3"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function testLanguageChange(culture) {
+        const resultDiv = document.getElementById('testResults');
+        resultDiv.innerHTML = `<div class="alert alert-info"><i class="fas fa-spinner fa-spin me-2"></i>اختبار تغيير اللغة إلى ${culture}...</div>`;
+
+        fetch('/Diagnostic/TestLanguageChange', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]')?.value
+            },
+            body: JSON.stringify({ culture: culture })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                resultDiv.innerHTML = `
+                    <div class="alert alert-success">
+                        <i class="fas fa-check-circle me-2"></i>
+                        <strong>نجح الاختبار!</strong><br>
+                        اللغة الجديدة: ${data.newCulture}<br>
+                        Cookie تم تعيينه: ${data.cookieSet ? 'نعم' : 'لا'}
+                    </div>`;
+
+                // إعادة تحميل الصفحة بعد 2 ثانية لرؤية التغيير
+                setTimeout(() => {
+                    window.location.reload();
+                }, 2000);
+            } else {
+                resultDiv.innerHTML = `
+                    <div class="alert alert-danger">
+                        <i class="fas fa-exclamation-circle me-2"></i>
+                        <strong>فشل الاختبار:</strong> ${data.message}
+                    </div>`;
+            }
+        })
+        .catch(error => {
+            resultDiv.innerHTML = `
+                <div class="alert alert-danger">
+                    <i class="fas fa-exclamation-circle me-2"></i>
+                    <strong>خطأ في الشبكة:</strong> ${error.message}
+                </div>`;
+        });
+    }
+
+    function clearLanguageCookie() {
+        const resultDiv = document.getElementById('testResults');
+        resultDiv.innerHTML = `<div class="alert alert-info"><i class="fas fa-spinner fa-spin me-2"></i>مسح Cookie...</div>`;
+
+        fetch('/Diagnostic/ClearLanguageCookie', {
+            method: 'POST',
+            headers: {
+                'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]')?.value
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                resultDiv.innerHTML = `
+                    <div class="alert alert-success">
+                        <i class="fas fa-check-circle me-2"></i>
+                        <strong>تم مسح Cookie بنجاح!</strong>
+                    </div>`;
+
+                // إعادة تحميل الصفحة بعد 1 ثانية
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1000);
+            } else {
+                resultDiv.innerHTML = `
+                    <div class="alert alert-danger">
+                        <i class="fas fa-exclamation-circle me-2"></i>
+                        <strong>فشل مسح Cookie:</strong> ${data.message}
+                    </div>`;
+            }
+        })
+        .catch(error => {
+            resultDiv.innerHTML = `
+                <div class="alert alert-danger">
+                    <i class="fas fa-exclamation-circle me-2"></i>
+                    <strong>خطأ في الشبكة:</strong> ${error.message}
+                </div>`;
+        });
+    }
+</script>

@@ -1,0 +1,214 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+    <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+        <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+        <xsd:element name="root" msdata:IsDataSet="true">
+            <xsd:complexType>
+                <xsd:choice maxOccurs="unbounded">
+                    <xsd:element name="metadata">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+                            </xsd:sequence>
+                            <xsd:attribute name="name" use="required" type="xsd:string" />
+                            <xsd:attribute name="type" type="xsd:string" />
+                            <xsd:attribute name="mimetype" type="xsd:string" />
+                            <xsd:attribute ref="xml:space" />
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="assembly">
+                        <xsd:complexType>
+                            <xsd:attribute name="alias" type="xsd:string" />
+                            <xsd:attribute name="name" type="xsd:string" />
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="data">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+                            </xsd:sequence>
+                            <xsd:attribute name="name" use="required" type="xsd:string" />
+                            <xsd:attribute name="type" type="xsd:string" />
+                            <xsd:attribute name="mimetype" type="xsd:string" />
+                            <xsd:attribute ref="xml:space" />
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="resheader">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                            </xsd:sequence>
+                            <xsd:attribute name="name" use="required" type="xsd:string" />
+                        </xsd:complexType>
+                    </xsd:element>
+                </xsd:choice>
+            </xsd:complexType>
+        </xsd:element>
+    </xsd:schema>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>2.0</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <data name="Home" xml:space="preserve">
+    <value>ماڵەوە</value>
+  </data>
+    <data name="Requests" xml:space="preserve">
+    <value>داواکاریەکان</value>
+  </data>
+    <data name="Stores" xml:space="preserve">
+    <value>دوکانەکان</value>
+  </data>
+    <data name="About" xml:space="preserve">
+    <value>دەربارەمان</value>
+  </data>
+    <data name="Contact" xml:space="preserve">
+    <value>پەیوەندی</value>
+  </data>
+    <data name="Login" xml:space="preserve">
+    <value>چوونە ژوورەوە</value>
+  </data>
+    <data name="Register" xml:space="preserve">
+    <value>خۆتۆمارکردن</value>
+  </data>
+    <data name="Welcome" xml:space="preserve">
+    <value>بەخێربێیت بۆ بازاڕی پێچەوانە</value>
+  </data>
+    <data name="AddRequest" xml:space="preserve">
+    <value>ئێستا داواکارییەکەت زیادبکە</value>
+  </data>
+    <data name="BrowseRequests" xml:space="preserve">
+    <value>گەڕان لە داواکاریەکان</value>
+  </data>
+    <data name="SearchPlaceholder" xml:space="preserve">
+    <value>گەڕان بۆ داواکارییەکی تایبەت...</value>
+  </data>
+    <data name="AllCategories" xml:space="preserve">
+    <value>هەموو پۆلەکان</value>
+  </data>
+    <data name="Search" xml:space="preserve">
+    <value>گەڕان</value>
+  </data>
+    <data name="RequestDetails" xml:space="preserve">
+    <value>وردەکاریی داواکاری</value>
+  </data>
+    <data name="ContactInfo" xml:space="preserve">
+    <value>زانیاریی پەیوەندی</value>
+  </data>
+    <data name="Location" xml:space="preserve">
+    <value>شوێن</value>
+  </data>
+    <data name="Category" xml:space="preserve">
+    <value>پۆل</value>
+  </data>
+    <data name="Title" xml:space="preserve">
+    <value>ناونیشان</value>
+  </data>
+    <data name="Description" xml:space="preserve">
+    <value>پێناسە</value>
+  </data>
+    <data name="City" xml:space="preserve">
+    <value>شار</value>
+  </data>
+    <data name="District" xml:space="preserve">
+    <value>ناوچە</value>
+  </data>
+    <data name="Phone" xml:space="preserve">
+    <value>تەلەفۆن</value>
+  </data>
+    <data name="WhatsApp" xml:space="preserve">
+    <value>واتساپ</value>
+  </data>
+    <data name="Email" xml:space="preserve">
+    <value>ئیمەیڵ</value>
+  </data>
+    <data name="Save" xml:space="preserve">
+    <value>پاشەکەوتکردن</value>
+  </data>
+    <data name="Cancel" xml:space="preserve">
+    <value>هەڵوەشاندنەوە</value>
+  </data>
+    <data name="Edit" xml:space="preserve">
+    <value>دەستکاری</value>
+  </data>
+    <data name="Delete" xml:space="preserve">
+    <value>سڕینەوە</value>
+  </data>
+    <data name="ConfirmDelete" xml:space="preserve">
+    <value>دڵنیایت لە سڕینەوە؟</value>
+  </data>
+    <data name="Success" xml:space="preserve">
+    <value>سەرکەوتوو بوو</value>
+  </data>
+    <data name="Error" xml:space="preserve">
+    <value>هەڵەیەک ڕوویدا</value>
+  </data>
+    <data name="Required" xml:space="preserve">
+    <value>پێویست</value>
+  </data>
+    <data name="Optional" xml:space="preserve">
+    <value>ئیختیاری</value>
+  </data>
+    <data name="ChooseFile" xml:space="preserve">
+    <value>فایل هەڵبژێرە</value>
+  </data>
+    <data name="Upload" xml:space="preserve">
+    <value>بارکردن</value>
+  </data>
+    <data name="Image" xml:space="preserve">
+    <value>وێنە</value>
+  </data>
+    <data name="Name" xml:space="preserve">
+    <value>ناو</value>
+  </data>
+    <data name="Active" xml:space="preserve">
+    <value>چالاک</value>
+  </data>
+    <data name="Inactive" xml:space="preserve">
+    <value>ناچالاک</value>
+  </data>
+    <data name="CreatedAt" xml:space="preserve">
+    <value>بەرواری دروستکردن</value>
+  </data>
+    <data name="UpdatedAt" xml:space="preserve">
+    <value>بەرواری نوێکردنەوە</value>
+  </data>
+    <data name="SiteName" xml:space="preserve">
+    <value>بازاڕی پێچەوانە</value>
+</data>
+    <data name="SiteDescription" xml:space="preserve">
+    <value>پلاتفۆرمێکی نوێ بۆ بەستنەوەی کڕیاران و فرۆشیاران لە عێراق</value>
+</data>
+    <data name="AdminPanel" xml:space="preserve">
+    <value>پانێڵی بەڕێوەبەر</value>
+</data>
+    <data name="Profile" xml:space="preserve">
+    <value>پڕۆفایل</value>
+</data>
+    <data name="AddRequest" xml:space="preserve">
+    <value>داواکاری زیادبکە</value>
+</data>
+    <data name="MyRequests" xml:space="preserve">
+    <value>داواکاریەکانم</value>
+</data>
+    <data name="Logout" xml:space="preserve">
+    <value>چوونە دەرەوە</value>
+</data>
+    <data name="ImportantLinks" xml:space="preserve">
+    <value>بەستەرە گرنگەکان</value>
+</data>
+    <data name="PrivacyPolicy" xml:space="preserve">
+    <value>سیاسەتی تایبەتی</value>
+</data>
+    <data name="Copyright" xml:space="preserve">
+    <value>© 2025 بازاڕی پێچەوانە. هەموو مافەکان پارێزراون.</value>
+</data>
+</root>

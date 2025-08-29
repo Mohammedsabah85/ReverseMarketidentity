@@ -1,0 +1,111 @@
+﻿
+@model User
+@{
+    var isLoggedIn = Context.Session.GetString("IsLoggedIn") == "true";
+    var currentUserId = Context.Session.GetInt32("UserId");
+    var userType = Context.Session.GetString("UserType");
+    
+    // تحديد ما إذا كان المستخدم يمكنه رؤية معلومات التواصل
+    bool canViewContact = isLoggedIn && (userType == "Admin" || currentUserId.HasValue);
+}
+
+@if (canViewContact)
+{
+    <!-- معلومات التواصل للمستخدمين المسجلين -->
+    <div class="contact-info-verified">
+        <h5 class="text-primary mb-3">
+            <i class="fas fa-phone me-2"></i>
+            التواصل
+        </h5>
+        <div class="d-grid gap-2">
+            <a href="tel:@Model.PhoneNumber" class="btn btn-outline-primary">
+                <i class="fas fa-phone me-2"></i>
+                @Model.PhoneNumber
+            </a>
+            <a href="https://wa.me/@Model.PhoneNumber.Replace("+", "")" target="_blank" class="btn btn-success">
+                <i class="fab fa-whatsapp me-2"></i>
+                واتساب
+            </a>
+            @if (!string.IsNullOrEmpty(Model.Email))
+            {
+                <a href="mailto:@Model.Email" class="btn btn-outline-info">
+                    <i class="fas fa-envelope me-2"></i>
+                    بريد إلكتروني
+                </a>
+            }
+        </div>
+    </div>
+}
+else
+{
+    <!-- رسالة للمستخدمين غير المسجلين -->
+    <div class="contact-info-hidden">
+        <h5 class="text-warning mb-3">
+            <i class="fas fa-lock me-2"></i>
+            معلومات التواصل محمية
+        </h5>
+        <div class="alert alert-warning">
+            <i class="fas fa-info-circle me-2"></i>
+            <strong>تسجيل الدخول مطلوب</strong><br>
+            لعرض معلومات التواصل والتفاعل مع هذا العضو، يجب تسجيل الدخول أولاً.
+        </div>
+        
+        <div class="contact-preview mb-3">
+            <p class="text-muted mb-2">
+                <i class="fas fa-phone me-2"></i>
+                <span class="blurred-text">+964 *** *** ***</span>
+            </p>
+            <p class="text-muted mb-2">
+                <i class="fab fa-whatsapp me-2"></i>
+                <span class="blurred-text">واتساب متاح</span>
+            </p>
+            @if (!string.IsNullOrEmpty(Model.Email))
+            {
+                <p class="text-muted mb-0">
+                    <i class="fas fa-envelope me-2"></i>
+                    <span class="blurred-text"></span>
+                </p>
+            }
+        </div>
+
+        <div class="d-grid gap-2">
+            <a href="/Account/Login" class="btn btn-primary">
+                <i class="fas fa-sign-in-alt me-2"></i>
+                تسجيل الدخول لرؤية التفاصيل
+            </a>
+            <a href="/Account/Login" class="btn btn-outline-secondary">
+                <i class="fas fa-user-plus me-2"></i>
+                إنشاء حساب جديد
+            </a>
+        </div>
+    </div>
+}
+
+<style>
+.blurred-text {
+    filter: blur(4px);
+    -webkit-filter: blur(4px);
+    user-select: none;
+    pointer-events: none;
+}
+
+.contact-preview {
+    background: #f8f9fa;
+    padding: 1rem;
+    border-radius: 10px;
+    border: 1px dashed #dee2e6;
+}
+
+.contact-info-hidden .alert {
+    font-size: 0.9rem;
+}
+
+.contact-info-verified {
+    animation: fadeIn 0.3s ease-in;
+}
+
+@@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+</style>
