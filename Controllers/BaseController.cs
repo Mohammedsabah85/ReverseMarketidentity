@@ -1,10 +1,8 @@
-﻿// Controllers/BaseController.cs - Updated for Identity
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.EntityFrameworkCore;
 using ReverseMarket.Data;
 using ReverseMarket.Models;
-using ReverseMarket.Services;
 
 namespace ReverseMarket.Controllers
 {
@@ -29,7 +27,18 @@ namespace ReverseMarket.Controllers
         // Helper method to get current user ID
         protected string? GetCurrentUserId()
         {
-            return User.Identity?.IsAuthenticated == true ? User.FindFirst("sub")?.Value ?? User.FindFirst("id")?.Value : null;
+            return User.Identity?.IsAuthenticated == true
+                ? User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value
+                : null;
+        }
+
+        // Helper method to get current user
+        protected async Task<ReverseMarket.Models.Identity.ApplicationUser?> GetCurrentUserAsync()
+        {
+            var userId = GetCurrentUserId();
+            if (string.IsNullOrEmpty(userId)) return null;
+
+            return await _context.Users.FindAsync(userId);
         }
 
         // Helper method to check if user is in role

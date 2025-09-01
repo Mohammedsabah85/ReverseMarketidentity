@@ -70,7 +70,7 @@ namespace ReverseMarket.Areas.Admin.Models
 
     public class EditUserViewModel
     {
-        public int Id { get; set; }
+        public string Id { get; set; } = ""; // تغيير من int إلى string
 
         [Required(ErrorMessage = "الاسم الأول مطلوب")]
         [StringLength(50, ErrorMessage = "الاسم الأول لا يجب أن يزيد عن 50 حرف")]
@@ -121,10 +121,11 @@ namespace ReverseMarket.Areas.Admin.Models
 
     public class UserDetailsViewModel
     {
-        public User User { get; set; } = new();
+        public ReverseMarket.Models.Identity.ApplicationUser User { get; set; } = new();
         public UserStatistics Statistics { get; set; } = new();
         public List<Request> RecentRequests { get; set; } = new();
     }
+ 
 
     public class UserStatistics
     {

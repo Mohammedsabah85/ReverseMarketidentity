@@ -1,4 +1,4 @@
-﻿// Controllers/AccountController.cs - Updated for Identity
+﻿// Controllers/AccountController.cs - النسخة المحدثة والمكملة
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -6,7 +6,6 @@ using ReverseMarket.Data;
 using ReverseMarket.Models;
 using ReverseMarket.Models.Identity;
 using ReverseMarket.Services;
-using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 
 namespace ReverseMarket.Controllers
@@ -569,6 +568,7 @@ namespace ReverseMarket.Controllers
             var random = new Random();
             return random.Next(1000, 9999).ToString();
         }
+ 
 
         private async Task<string?> SaveProfileImageAsync(IFormFile image)
         {

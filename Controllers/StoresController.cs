@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ReverseMarket.Data;
-using ReverseMarket.Models; // تأكد من استيراد الـ Models namespace
+using ReverseMarket.Models;
+using ReverseMarket.Models.Identity;
 
 namespace ReverseMarket.Controllers
 {
@@ -19,14 +20,17 @@ namespace ReverseMarket.Controllers
             var pageSize = 12;
 
             var query = _context.Users
-                .Where(u => u.UserType == UserType.Seller && !string.IsNullOrEmpty(u.StoreName))
+                .Where(u => u.UserType == UserType.Seller &&
+                           !string.IsNullOrEmpty(u.StoreName) &&
+                           u.IsActive)
                 .Include(u => u.StoreCategories)
                 .ThenInclude(sc => sc.Category)
                 .AsQueryable();
 
             if (!string.IsNullOrEmpty(search))
             {
-                query = query.Where(u => u.StoreName.Contains(search) || u.StoreDescription.Contains(search));
+                query = query.Where(u => u.StoreName.Contains(search) ||
+                                        u.StoreDescription.Contains(search));
             }
 
             if (categoryId.HasValue)
@@ -41,10 +45,9 @@ namespace ReverseMarket.Controllers
                 .Take(pageSize)
                 .ToListAsync();
 
-            // استخدم النوع الصحيح من ReverseMarket.Models
-            var model = new ReverseMarket.Models.StoresViewModel
+            var model = new StoresViewModel
             {
-                Stores = stores,
+                Stores = stores.Cast<User>().ToList(), // تحويل مؤقت
                 Categories = await _context.Categories.Where(c => c.IsActive).ToListAsync(),
                 CurrentPage = page,
                 TotalPages = (int)Math.Ceiling((double)totalStores / pageSize),
@@ -64,7 +67,9 @@ namespace ReverseMarket.Controllers
                 .ThenInclude(sc => sc.SubCategory1)
                 .Include(u => u.StoreCategories)
                 .ThenInclude(sc => sc.SubCategory2)
-                .FirstOrDefaultAsync(u => u.Id == id && u.UserType == UserType.Seller);
+                .FirstOrDefaultAsync(u => u.Id == id.ToString() &&
+                                         u.UserType == UserType.Seller &&
+                                         u.IsActive);
 
             if (store == null)
             {

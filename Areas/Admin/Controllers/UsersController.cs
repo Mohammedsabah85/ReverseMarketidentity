@@ -1,26 +1,37 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ReverseMarket.Data;
 using ReverseMarket.Models;
+using ReverseMarket.Models.Identity;
 using ReverseMarket.Areas.Admin.Models;
 
 namespace ReverseMarket.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = "Admin")]
     public class UsersController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly ILogger<UsersController> _logger;
 
-        public UsersController(ApplicationDbContext context)
+        public UsersController(
+            ApplicationDbContext context,
+            UserManager<ApplicationUser> userManager,
+            ILogger<UsersController> logger)
         {
             _context = context;
+            _userManager = userManager;
+            _logger = logger;
         }
 
         public async Task<IActionResult> Index(string search, UserType? userType, bool? isActive, int page = 1)
         {
             var pageSize = 20;
 
-            var query = _context.Users.AsQueryable();
+            var query = _userManager.Users.AsQueryable();
 
             // تطبيق الفلاتر
             if (!string.IsNullOrEmpty(search))
@@ -54,25 +65,25 @@ namespace ReverseMarket.Areas.Admin.Controllers
 
             var model = new AdminUsersViewModel
             {
-                Users = users,
+                Users = users.Select(u => ConvertToUser(u)).ToList(),
                 CurrentPage = page,
                 TotalPages = (int)Math.Ceiling((double)totalUsers / pageSize),
                 Search = search,
                 UserTypeFilter = userType,
                 IsActiveFilter = isActive,
                 TotalUsers = totalUsers,
-                ActiveUsers = await _context.Users.CountAsync(u => u.IsActive),
-                InactiveUsers = await _context.Users.CountAsync(u => !u.IsActive),
-                BuyersCount = await _context.Users.CountAsync(u => u.UserType == UserType.Buyer),
-                SellersCount = await _context.Users.CountAsync(u => u.UserType == UserType.Seller)
+                ActiveUsers = await _userManager.Users.CountAsync(u => u.IsActive),
+                InactiveUsers = await _userManager.Users.CountAsync(u => !u.IsActive),
+                BuyersCount = await _userManager.Users.CountAsync(u => u.UserType == UserType.Buyer),
+                SellersCount = await _userManager.Users.CountAsync(u => u.UserType == UserType.Seller)
             };
 
             return View(model);
         }
 
-        public async Task<IActionResult> Details(int id)
+        public async Task<IActionResult> Details(string id)
         {
-            var user = await _context.Users
+            var user = await _userManager.Users
                 .Include(u => u.StoreCategories)
                 .ThenInclude(sc => sc.Category)
                 .Include(u => u.StoreCategories)
@@ -92,20 +103,22 @@ namespace ReverseMarket.Areas.Admin.Controllers
                 TotalRequests = await _context.Requests.CountAsync(r => r.UserId == id),
                 ApprovedRequests = await _context.Requests.CountAsync(r => r.UserId == id && r.Status == RequestStatus.Approved),
                 PendingRequests = await _context.Requests.CountAsync(r => r.UserId == id && r.Status == RequestStatus.Pending),
-                RejectedRequests = await _context.Requests.CountAsync(r => r.UserId == id && r.Status == RequestStatus.Rejected)
+                RejectedRequests = await _context.Requests.CountAsync(r => r.UserId == id && r.Status == RequestStatus.Rejected),
+                LastActivity = user.UpdatedAt ?? user.CreatedAt,
+                DaysSinceRegistration = (DateTime.Now - user.CreatedAt).Days
             };
 
             ViewBag.UserStats = userStats;
-            return View(user);
+            return View(ConvertToUser(user));
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ToggleStatus(int id)
+        public async Task<IActionResult> ToggleStatus(string id)
         {
             try
             {
-                var user = await _context.Users.FindAsync(id);
+                var user = await _userManager.FindByIdAsync(id);
                 if (user == null)
                 {
                     TempData["ErrorMessage"] = "المستخدم غير موجود";
@@ -121,16 +134,25 @@ namespace ReverseMarket.Areas.Admin.Controllers
                 }
 
                 user.IsActive = !user.IsActive;
-                await _context.SaveChangesAsync();
+                user.UpdatedAt = DateTime.Now;
 
-                var statusText = user.IsActive ? "تفعيل" : "إيقاف";
-                TempData["SuccessMessage"] = $"تم {statusText} المستخدم بنجاح";
+                var result = await _userManager.UpdateAsync(user);
+
+                if (result.Succeeded)
+                {
+                    var statusText = user.IsActive ? "تفعيل" : "إيقاف";
+                    TempData["SuccessMessage"] = $"تم {statusText} المستخدم بنجاح";
+                }
+                else
+                {
+                    TempData["ErrorMessage"] = "حدث خطأ أثناء تحديث حالة المستخدم";
+                }
 
                 return RedirectToAction("Details", new { id });
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"خطأ في تغيير حالة المستخدم: {ex.Message}");
+                _logger.LogError(ex, "خطأ في تغيير حالة المستخدم: {UserId}", id);
                 TempData["ErrorMessage"] = "حدث خطأ أثناء تحديث حالة المستخدم";
                 return RedirectToAction("Index");
             }
@@ -138,11 +160,11 @@ namespace ReverseMarket.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> Delete(string id)
         {
             try
             {
-                var user = await _context.Users.FindAsync(id);
+                var user = await _userManager.FindByIdAsync(id);
                 if (user == null)
                 {
                     TempData["ErrorMessage"] = "المستخدم غير موجود";
@@ -173,27 +195,35 @@ namespace ReverseMarket.Areas.Admin.Controllers
                 if (storeCategories.Any())
                 {
                     _context.StoreCategories.RemoveRange(storeCategories);
+                    await _context.SaveChangesAsync();
                 }
 
                 // حذف المستخدم
-                _context.Users.Remove(user);
-                await _context.SaveChangesAsync();
+                var result = await _userManager.DeleteAsync(user);
 
-                TempData["SuccessMessage"] = "تم حذف المستخدم بنجاح";
+                if (result.Succeeded)
+                {
+                    TempData["SuccessMessage"] = "تم حذف المستخدم بنجاح";
+                }
+                else
+                {
+                    TempData["ErrorMessage"] = "حدث خطأ أثناء حذف المستخدم";
+                }
+
                 return RedirectToAction("Index");
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"خطأ في حذف المستخدم: {ex.Message}");
+                _logger.LogError(ex, "خطأ في حذف المستخدم: {UserId}", id);
                 TempData["ErrorMessage"] = "حدث خطأ أثناء حذف المستخدم";
                 return RedirectToAction("Index");
             }
         }
 
         [HttpGet]
-        public async Task<IActionResult> Edit(int id)
+        public async Task<IActionResult> Edit(string id)
         {
-            var user = await _context.Users
+            var user = await _userManager.Users
                 .Include(u => u.StoreCategories)
                 .FirstOrDefaultAsync(u => u.Id == id);
 
@@ -204,7 +234,7 @@ namespace ReverseMarket.Areas.Admin.Controllers
 
             var model = new EditUserViewModel
             {
-                Id = user.Id,
+                Id = int.Parse(user.Id), // تحويل مؤقت
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 Email = user.Email,
@@ -237,9 +267,9 @@ namespace ReverseMarket.Areas.Admin.Controllers
             {
                 try
                 {
-                    var user = await _context.Users
+                    var user = await _userManager.Users
                         .Include(u => u.StoreCategories)
-                        .FirstOrDefaultAsync(u => u.Id == model.Id);
+                        .FirstOrDefaultAsync(u => u.Id == model.Id.ToString());
 
                     if (user == null)
                     {
@@ -262,6 +292,8 @@ namespace ReverseMarket.Areas.Admin.Controllers
                     user.WebsiteUrl3 = model.WebsiteUrl3;
                     user.IsActive = model.IsActive;
                     user.IsPhoneVerified = model.IsPhoneVerified;
+                    user.PhoneNumberConfirmed = model.IsPhoneVerified;
+                    user.UpdatedAt = DateTime.Now;
 
                     // تحديث فئات المتجر للبائعين
                     if (user.UserType == UserType.Seller && model.StoreCategories?.Any() == true)
@@ -280,13 +312,25 @@ namespace ReverseMarket.Areas.Admin.Controllers
                         }
                     }
 
-                    await _context.SaveChangesAsync();
-                    TempData["SuccessMessage"] = "تم تحديث بيانات المستخدم بنجاح";
-                    return RedirectToAction("Details", new { id = model.Id });
+                    var result = await _userManager.UpdateAsync(user);
+
+                    if (result.Succeeded)
+                    {
+                        await _context.SaveChangesAsync();
+                        TempData["SuccessMessage"] = "تم تحديث بيانات المستخدم بنجاح";
+                        return RedirectToAction("Details", new { id = model.Id.ToString() });
+                    }
+                    else
+                    {
+                        foreach (var error in result.Errors)
+                        {
+                            ModelState.AddModelError("", error.Description);
+                        }
+                    }
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"خطأ في تحديث المستخدم: {ex.Message}");
+                    _logger.LogError(ex, "خطأ في تحديث المستخدم: {UserId}", model.Id);
                     TempData["ErrorMessage"] = "حدث خطأ أثناء تحديث البيانات";
                 }
             }
@@ -303,32 +347,55 @@ namespace ReverseMarket.Areas.Admin.Controllers
             {
                 var stats = new
                 {
-                    TotalUsers = await _context.Users.CountAsync(),
-                    ActiveUsers = await _context.Users.CountAsync(u => u.IsActive),
-                    InactiveUsers = await _context.Users.CountAsync(u => !u.IsActive),
-                    BuyersCount = await _context.Users.CountAsync(u => u.UserType == UserType.Buyer),
-                    SellersCount = await _context.Users.CountAsync(u => u.UserType == UserType.Seller),
-                    VerifiedUsers = await _context.Users.CountAsync(u => u.IsPhoneVerified),
-                    UnverifiedUsers = await _context.Users.CountAsync(u => !u.IsPhoneVerified),
-                    NewUsersThisMonth = await _context.Users.CountAsync(u => u.CreatedAt.Month == DateTime.Now.Month && u.CreatedAt.Year == DateTime.Now.Year)
+                    TotalUsers = await _userManager.Users.CountAsync(),
+                    ActiveUsers = await _userManager.Users.CountAsync(u => u.IsActive),
+                    InactiveUsers = await _userManager.Users.CountAsync(u => !u.IsActive),
+                    BuyersCount = await _userManager.Users.CountAsync(u => u.UserType == UserType.Buyer),
+                    SellersCount = await _userManager.Users.CountAsync(u => u.UserType == UserType.Seller),
+                    VerifiedUsers = await _userManager.Users.CountAsync(u => u.IsPhoneVerified),
+                    UnverifiedUsers = await _userManager.Users.CountAsync(u => !u.IsPhoneVerified),
+                    NewUsersThisMonth = await _userManager.Users.CountAsync(u =>
+                        u.CreatedAt.Month == DateTime.Now.Month &&
+                        u.CreatedAt.Year == DateTime.Now.Year)
                 };
 
                 return Json(stats);
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"خطأ في جلب الإحصائيات: {ex.Message}");
+                _logger.LogError(ex, "خطأ في جلب الإحصائيات");
                 return BadRequest("حدث خطأ في جلب الإحصائيات");
             }
         }
-    }
 
-    // نماذج البيانات المطلوبة
-    //public class UserStatistics
-    //{
-    //    public int TotalRequests { get; set; }
-    //    public int ApprovedRequests { get; set; }
-    //    public int PendingRequests { get; set; }
-    //    public int RejectedRequests { get; set; }
-    //}
+        // Helper method to convert ApplicationUser to User (for view compatibility)
+        private User ConvertToUser(ApplicationUser appUser)
+        {
+            return new User
+            {
+                Id = int.Parse(appUser.Id),
+                PhoneNumber = appUser.PhoneNumber ?? "",
+                FirstName = appUser.FirstName,
+                LastName = appUser.LastName,
+                DateOfBirth = appUser.DateOfBirth,
+                Gender = appUser.Gender,
+                City = appUser.City,
+                District = appUser.District,
+                Location = appUser.Location,
+                Email = appUser.Email,
+                ProfileImage = appUser.ProfileImage,
+                UserType = appUser.UserType,
+                IsPhoneVerified = appUser.IsPhoneVerified,
+                IsEmailVerified = appUser.IsEmailVerified,
+                CreatedAt = appUser.CreatedAt,
+                StoreName = appUser.StoreName,
+                StoreDescription = appUser.StoreDescription,
+                WebsiteUrl1 = appUser.WebsiteUrl1,
+                WebsiteUrl2 = appUser.WebsiteUrl2,
+                WebsiteUrl3 = appUser.WebsiteUrl3,
+                IsActive = appUser.IsActive,
+                UpdatedAt = appUser.UpdatedAt
+            };
+        }
+    }
 }

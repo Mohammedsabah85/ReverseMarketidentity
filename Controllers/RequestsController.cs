@@ -1,10 +1,12 @@
 ﻿// تحديث RequestsController
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ReverseMarket.Data;
 using ReverseMarket.Models;
 using ReverseMarket.Services;
-using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Identity;
+using ReverseMarket.Models.Identity;
 
 namespace ReverseMarket.Controllers
 {
@@ -12,12 +14,18 @@ namespace ReverseMarket.Controllers
     {
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly IWhatsAppService _whatsAppService;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public RequestsController(ApplicationDbContext context, IWebHostEnvironment webHostEnvironment, IWhatsAppService whatsAppService)
+        public RequestsController(
+            ApplicationDbContext context,
+            IWebHostEnvironment webHostEnvironment,
+            IWhatsAppService whatsAppService,
+            UserManager<ApplicationUser> userManager)
             : base(context)
         {
             _webHostEnvironment = webHostEnvironment;
             _whatsAppService = whatsAppService;
+            _userManager = userManager;
         }
 
         public async Task<IActionResult> Index(string search, int? categoryId, int page = 1)
@@ -30,6 +38,7 @@ namespace ReverseMarket.Controllers
                 .Include(r => r.SubCategory1)
                 .Include(r => r.SubCategory2)
                 .Include(r => r.Images)
+                .Include(r => r.User)
                 .AsQueryable();
 
             if (!string.IsNullOrEmpty(search))
@@ -49,7 +58,7 @@ namespace ReverseMarket.Controllers
                 .Take(pageSize)
                 .ToListAsync();
 
-            var model = new ReverseMarket.Models.RequestsViewModel
+            var model = new RequestsViewModel
             {
                 Requests = requests,
                 Categories = await _context.Categories.Where(c => c.IsActive).ToListAsync(),
@@ -81,28 +90,22 @@ namespace ReverseMarket.Controllers
         }
 
         [HttpGet]
+        [Authorize] // يتطلب تسجيل الدخول
         public async Task<IActionResult> Create()
         {
-            // التحقق من تسجيل الدخول
-            var userId = HttpContext.Session.GetInt32("UserId");
-            if (!userId.HasValue)
-            {
-                TempData["ErrorMessage"] = "يجب تسجيل الدخول أولاً";
-                return RedirectToAction("Login", "Account");
-            }
-
             ViewBag.Categories = await _context.Categories.Where(c => c.IsActive).ToListAsync();
             return View();
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> Create(CreateRequestViewModel model)
         {
             if (ModelState.IsValid)
             {
-                var userId = HttpContext.Session.GetInt32("UserId");
-                if (!userId.HasValue)
+                var userId = GetCurrentUserId();
+                if (string.IsNullOrEmpty(userId))
                 {
                     TempData["ErrorMessage"] = "جلسة المستخدم منتهية الصلاحية";
                     return RedirectToAction("Login", "Account");
@@ -120,7 +123,7 @@ namespace ReverseMarket.Controllers
                         City = model.City,
                         District = model.District,
                         Location = model.Location,
-                        UserId = userId.Value,
+                        UserId = userId,
                         Status = RequestStatus.Pending,
                         CreatedAt = DateTime.Now
                     };
@@ -139,7 +142,7 @@ namespace ReverseMarket.Controllers
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"خطأ في إنشاء الطلب: {ex.Message}");
+                    _logger.LogError(ex, "خطأ في إنشاء الطلب");
                     TempData["ErrorMessage"] = "حدث خطأ أثناء إرسال الطلب. يرجى المحاولة مرة أخرى.";
                 }
             }
@@ -147,6 +150,7 @@ namespace ReverseMarket.Controllers
             ViewBag.Categories = await _context.Categories.Where(c => c.IsActive).ToListAsync();
             return View(model);
         }
+
 
         private async Task SaveRequestImagesAsync(int requestId, List<IFormFile> images)
         {
