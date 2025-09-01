@@ -1,5 +1,5 @@
 ﻿using ReverseMarket.Models;
-using ReverseMarket.Models.Identity; // استخدام UserType الصحيح
+using ReverseMarket.Models.Identity; // الـ namespace الصحيح
 using System.ComponentModel.DataAnnotations;
 
 namespace ReverseMarket.Areas.Admin.Models
