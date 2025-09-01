@@ -47,6 +47,16 @@ namespace ReverseMarket.Services
             return langOption?.Direction ?? "rtl";
         }
 
+           public class LanguageOption
+    {
+        public string Code { get; set; } = "";
+        public string Name { get; set; } = "";
+        public string NativeName { get; set; } = "";
+        public string Flag { get; set; } = ""; // إضافة خاصية Flag
+        public string Direction { get; set; } = "ltr";
+    }
+
+  
         public List<LanguageOption> GetSupportedLanguages()
         {
             return _supportedLanguages;
@@ -78,5 +88,8 @@ namespace ReverseMarket.Services
                     Secure = context.Request.IsHttps
                 });
         }
+
+
+
     }
 }

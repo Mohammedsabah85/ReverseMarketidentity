@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using ReverseMarket.Data;
 using ReverseMarket.Models;
+using ReverseMarket.Models.Identity; // إضافة هذا
 using ReverseMarket.Areas.Admin.Models;
 
 namespace ReverseMarket.Areas.Admin.Controllers
@@ -10,11 +11,15 @@ namespace ReverseMarket.Areas.Admin.Controllers
     public class RequestsController : Controller
     {
         private readonly ApplicationDbContext _dbContext;
+        private readonly ILogger<RequestsController> _logger; // إضافة Logger
 
-        public RequestsController(ApplicationDbContext context)
+        public RequestsController(ApplicationDbContext context, ILogger<RequestsController> logger)
         {
             _dbContext = context;
+            _logger = logger; // تهيئة Logger
         }
+
+        // باقي الكود كما هو...
 
         public async Task<IActionResult> Index(RequestStatus? status = null, int page = 1)
         {
@@ -121,7 +126,7 @@ namespace ReverseMarket.Areas.Admin.Controllers
             catch (Exception ex)
             {
                 // تسجيل الخطأ
-                Console.WriteLine($"خطأ في تحديث حالة الطلب: {ex.Message}");
+                _logger.LogError(ex, "خطأ في تحديث حالة الطلب: {RequestId}", id);
                 TempData["ErrorMessage"] = "حدث خطأ أثناء تحديث حالة الطلب";
 
                 return RedirectToAction("Details", new { id });
@@ -141,12 +146,12 @@ namespace ReverseMarket.Areas.Admin.Controllers
                                  $"شكراً لاستخدامك السوق العكسي";
 
                     // إرسال إشعار واتساب
-                    Console.WriteLine($"WhatsApp إلى {user.PhoneNumber}: {message}");
+                    _logger.LogInformation("WhatsApp إلى {PhoneNumber}: {Message}", user.PhoneNumber, message);
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"خطأ في إرسال إشعار الموافقة: {ex.Message}");
+                _logger.LogError(ex, "خطأ في إرسال إشعار الموافقة");
             }
         }
 
@@ -175,13 +180,13 @@ namespace ReverseMarket.Areas.Admin.Controllers
                                      $"السوق العكسي";
 
                         // إرسال إشعار واتساب
-                        Console.WriteLine($"WhatsApp إلى {store.PhoneNumber}: {message}");
+                        _logger.LogInformation("WhatsApp إلى {PhoneNumber}: {Message}", store.PhoneNumber, message);
                     }
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"خطأ في إرسال إشعارات المتاجر: {ex.Message}");
+                _logger.LogError(ex, "خطأ في إرسال إشعارات المتاجر");
             }
         }
     }

@@ -1,5 +1,4 @@
-﻿// تحديث RequestsController
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ReverseMarket.Data;
@@ -15,17 +14,20 @@ namespace ReverseMarket.Controllers
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly IWhatsAppService _whatsAppService;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly ILogger<RequestsController> _logger; // إضافة Logger
 
         public RequestsController(
             ApplicationDbContext context,
             IWebHostEnvironment webHostEnvironment,
             IWhatsAppService whatsAppService,
-            UserManager<ApplicationUser> userManager)
+            UserManager<ApplicationUser> userManager,
+            ILogger<RequestsController> logger) // إضافة Logger
             : base(context)
         {
             _webHostEnvironment = webHostEnvironment;
             _whatsAppService = whatsAppService;
             _userManager = userManager;
+            _logger = logger; // تهيئة Logger
         }
 
         public async Task<IActionResult> Index(string search, int? categoryId, int page = 1)

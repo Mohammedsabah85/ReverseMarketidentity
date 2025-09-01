@@ -1,47 +1,42 @@
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
 using ReverseMarket.Data;
+using ReverseMarket.Extensions;
 using ReverseMarket.Models.Identity;
 using ReverseMarket.Services;
-using Microsoft.AspNetCore.Localization;
 using System.Globalization;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+// ≈⁄œ«œ Entity Framework
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(connectionString));
-builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Identity Configuration
-builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
-{
-    // Password settings
-    options.Password.RequireDigit = false;
-    options.Password.RequireLowercase = false;
-    options.Password.RequireNonAlphanumeric = false;
-    options.Password.RequireUppercase = false;
-    options.Password.RequiredLength = 6;
-    options.Password.RequiredUniqueChars = 1;
-
-    // Lockout settings
-    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
-    options.Lockout.MaxFailedAccessAttempts = 5;
-    options.Lockout.AllowedForNewUsers = true;
-
-    // User settings
-    options.User.AllowedUserNameCharacters = "0123456789+";
-    options.User.RequireUniqueEmail = false;
-
-    // Email settings
+// ≈÷«›… Identity Services
+builder.Services.AddDefaultIdentity<ApplicationUser>(options => {
+    options.SignIn.RequireConfirmedAccount = false;
     options.SignIn.RequireConfirmedEmail = false;
     options.SignIn.RequireConfirmedPhoneNumber = false;
+    options.Password.RequireDigit = false;
+    options.Password.RequiredLength = 4;
+    options.Password.RequireNonAlphanumeric = false;
+    options.Password.RequireUppercase = false;
+    options.Password.RequireLowercase = false;
 })
 .AddRoles<ApplicationRole>()
 .AddEntityFrameworkStores<ApplicationDbContext>();
 
-// Session Configuration
+// ›Ì »Ì∆… «· ÿÊÌ— ›ﬁÿ
+if (builder.Environment.IsDevelopment())
+{
+    builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+}
+
+// ≈÷«›… MVC
+builder.Services.AddControllersWithViews();
+
+// ≈÷«›… Session
 builder.Services.AddSession(options =>
 {
     options.IdleTimeout = TimeSpan.FromMinutes(30);
@@ -49,107 +44,61 @@ builder.Services.AddSession(options =>
     options.Cookie.IsEssential = true;
 });
 
-// Localization Configuration
+// ≈÷«›… Œœ„«  «· ÿ»Ìﬁ
+builder.Services.AddApplicationServices(builder.Configuration);
+
+// ≈⁄œ«œ Localization
 builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
+
+var supportedCultures = new[]
+{
+    new CultureInfo("ar"),
+    new CultureInfo("en"),
+    new CultureInfo("ku")
+};
 
 builder.Services.Configure<RequestLocalizationOptions>(options =>
 {
-    var supportedCultures = new[]
-    {
-        new CultureInfo("ar-IQ"),
-        new CultureInfo("en-US")
-    };
-
-    options.DefaultRequestCulture = new RequestCulture("ar-IQ");
+    options.DefaultRequestCulture = new RequestCulture("ar");
     options.SupportedCultures = supportedCultures;
     options.SupportedUICultures = supportedCultures;
-
-    // Configure culture providers
-    options.RequestCultureProviders = new List<IRequestCultureProvider>
-    {
-        new CookieRequestCultureProvider(),
-        new AcceptLanguageHeaderRequestCultureProvider(),
-        new QueryStringRequestCultureProvider()
-    };
 });
-
-// Custom Services
-builder.Services.AddScoped<ILanguageService, LanguageService>();
-builder.Services.AddScoped<IWhatsAppService, WhatsAppService>();
-builder.Services.AddScoped<IEmailService, EmailService>();
-builder.Services.AddScoped<IFileService, FileService>();
-
-// Email Configuration
-builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
-
-// File Upload Configuration
-builder.Services.Configure<Dictionary<string, object>>("FileUploadSettings", builder.Configuration.GetSection("FileUploadSettings"));
-
-builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+// ≈⁄œ«œ Pipeline
+if (!app.Environment.IsDevelopment())
 {
-    app.UseMigrationsEndPoint();
+    app.UseExceptionHandler("/Home/Error");
+    app.UseHsts();
 }
 else
 {
-    app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios.
-    app.UseHsts();
+    // ›Ì »Ì∆… «· ÿÊÌ— ›ﬁÿ
+    app.UseMigrationsEndPoint();
 }
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
-// Localization
-app.UseRequestLocalization();
-
 app.UseRouting();
 
-app.UseSession();
+app.UseRequestLocalization();
+
 app.UseAuthentication();
 app.UseAuthorization();
 
-// Admin Area Route
-app.MapControllerRoute(
-    name: "admin",
-    pattern: "{area:exists}/{controller=Dashboard}/{action=Index}/{id?}");
+app.UseSession();
 
-// Default Route
+app.MapControllerRoute(
+    name: "areas",
+    pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
+
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.MapRazorPages();
-
-// Database Seeding
-using (var scope = app.Services.CreateScope())
-{
-    var services = scope.ServiceProvider;
-    try
-    {
-        var context = services.GetRequiredService<ApplicationDbContext>();
-        var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
-        var roleManager = services.GetRequiredService<RoleManager<ApplicationRole>>();
-
-        // Ensure database is created
-        await context.Database.EnsureCreatedAsync();
-
-        // Seed roles if they don't exist
-        await SeedRolesAsync(roleManager);
-
-        // Seed admin user if it doesn't exist
-        await SeedAdminUserAsync(userManager, roleManager);
-    }
-    catch (Exception ex)
-    {
-        var logger = services.GetRequiredService<ILogger<Program>>();
-        logger.LogError(ex, "An error occurred while seeding the database.");
-    }
-}
 
 app.Run();
 
