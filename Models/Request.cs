@@ -1,5 +1,4 @@
-﻿
-// Models/Request.cs - Updated for Identity
+﻿// Models/Request.cs - Updated for Identity
 using System.ComponentModel.DataAnnotations;
 using ReverseMarket.Models.Identity;
 

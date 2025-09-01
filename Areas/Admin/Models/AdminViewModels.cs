@@ -1,6 +1,6 @@
 ﻿using ReverseMarket.Models;
+using ReverseMarket.Models.Identity; // استخدام UserType الصحيح
 using System.ComponentModel.DataAnnotations;
-
 
 namespace ReverseMarket.Areas.Admin.Models
 {
@@ -121,11 +121,10 @@ namespace ReverseMarket.Areas.Admin.Models
 
     public class UserDetailsViewModel
     {
-        public ReverseMarket.Models.Identity.ApplicationUser User { get; set; } = new();
+        public ApplicationUser User { get; set; } = new();
         public UserStatistics Statistics { get; set; } = new();
         public List<Request> RecentRequests { get; set; } = new();
     }
- 
 
     public class UserStatistics
     {

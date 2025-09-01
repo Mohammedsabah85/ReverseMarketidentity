@@ -1,4 +1,3 @@
-// Program.cs - Updated for ASP.NET Core Identity
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using ReverseMarket.Data;
@@ -9,49 +8,40 @@ using System.Globalization;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// ≈⁄œ«œ ﬁ«⁄œ… «·»Ì«‰« 
+// Add services to the container.
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlServer(connectionString));
+builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-// ≈⁄œ«œ Identity
-builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
+// Identity Configuration
+builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
 {
-    // ≈⁄œ«œ«  ﬂ·„… «·„—Ê— („ƒﬁ  - ”Ì „ ≈“«· Â« ·«Õﬁ« ·‰Ÿ«„ OTP)
+    // Password settings
     options.Password.RequireDigit = false;
     options.Password.RequireLowercase = false;
-    options.Password.RequireUppercase = false;
     options.Password.RequireNonAlphanumeric = false;
+    options.Password.RequireUppercase = false;
     options.Password.RequiredLength = 6;
+    options.Password.RequiredUniqueChars = 1;
 
-    // ≈⁄œ«œ«  «·„” Œœ„
-    options.User.RequireUniqueEmail = false;
-    options.User.AllowedUserNameCharacters = "0123456789+";
-
-    // ≈⁄œ«œ«   √ﬂÌœ «·Õ”«»
-    options.SignIn.RequireConfirmedEmail = false;
-    options.SignIn.RequireConfirmedPhoneNumber = false;
-
-    // ≈⁄œ«œ«  «·ﬁ›·
-    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(30);
+    // Lockout settings
+    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
     options.Lockout.MaxFailedAccessAttempts = 5;
     options.Lockout.AllowedForNewUsers = true;
+
+    // User settings
+    options.User.AllowedUserNameCharacters = "0123456789+";
+    options.User.RequireUniqueEmail = false;
+
+    // Email settings
+    options.SignIn.RequireConfirmedEmail = false;
+    options.SignIn.RequireConfirmedPhoneNumber = false;
 })
-.AddEntityFrameworkStores<ApplicationDbContext>()
-.AddDefaultTokenProviders();
+.AddRoles<ApplicationRole>()
+.AddEntityFrameworkStores<ApplicationDbContext>();
 
-// ≈⁄œ«œ Cookie
-builder.Services.ConfigureApplicationCookie(options =>
-{
-    options.LoginPath = "/Account/Login";
-    options.LogoutPath = "/Account/Logout";
-    options.AccessDeniedPath = "/Account/AccessDenied";
-    options.ExpireTimeSpan = TimeSpan.FromDays(30);
-    options.SlidingExpiration = true;
-    options.Cookie.HttpOnly = true;
-    options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
-});
-
-//  ﬂÊÌ‰ Session
+// Session Configuration
 builder.Services.AddSession(options =>
 {
     options.IdleTimeout = TimeSpan.FromMinutes(30);
@@ -59,7 +49,9 @@ builder.Services.AddSession(options =>
     options.Cookie.IsEssential = true;
 });
 
-//  ﬂÊÌ‰ Localization
+// Localization Configuration
+builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
+
 builder.Services.Configure<RequestLocalizationOptions>(options =>
 {
     var supportedCultures = new[]
@@ -72,52 +64,68 @@ builder.Services.Configure<RequestLocalizationOptions>(options =>
     options.SupportedCultures = supportedCultures;
     options.SupportedUICultures = supportedCultures;
 
-    options.RequestCultureProviders.Insert(0, new CookieRequestCultureProvider());
+    // Configure culture providers
+    options.RequestCultureProviders = new List<IRequestCultureProvider>
+    {
+        new CookieRequestCultureProvider(),
+        new AcceptLanguageHeaderRequestCultureProvider(),
+        new QueryStringRequestCultureProvider()
+    };
 });
 
-// ≈÷«›… «·Œœ„« 
-builder.Services.AddScoped<IWhatsAppService, WhatsAppService>();
+// Custom Services
 builder.Services.AddScoped<ILanguageService, LanguageService>();
+builder.Services.AddScoped<IWhatsAppService, WhatsAppService>();
+builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<IFileService, FileService>();
 
-// ≈÷«›… MVC
-builder.Services.AddControllersWithViews()
-    .AddViewLocalization()
-    .AddDataAnnotationsLocalization();
+// Email Configuration
+builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
+
+// File Upload Configuration
+builder.Services.Configure<Dictionary<string, object>>("FileUploadSettings", builder.Configuration.GetSection("FileUploadSettings"));
+
+builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
-// ≈⁄œ«œ pipeline
-if (!app.Environment.IsDevelopment())
+// Configure the HTTP request pipeline.
+if (app.Environment.IsDevelopment())
+{
+    app.UseMigrationsEndPoint();
+}
+else
 {
     app.UseExceptionHandler("/Home/Error");
+    // The default HSTS value is 30 days. You may want to change this for production scenarios.
     app.UseHsts();
 }
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
-// ≈÷«›… Localization middleware
+// Localization
 app.UseRequestLocalization();
 
 app.UseRouting();
 
-// ≈÷«›… Identity middleware
+app.UseSession();
 app.UseAuthentication();
 app.UseAuthorization();
 
-// ≈÷«›… Session
-app.UseSession();
-
-// ≈⁄œ«œ «·„”«—« 
+// Admin Area Route
 app.MapControllerRoute(
-    name: "areas",
+    name: "admin",
     pattern: "{area:exists}/{controller=Dashboard}/{action=Index}/{id?}");
 
+// Default Route
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
-//  ÂÌ∆… ﬁ«⁄œ… «·»Ì«‰«  Ê«·√œÊ«—
+app.MapRazorPages();
+
+// Database Seeding
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
@@ -127,40 +135,52 @@ using (var scope = app.Services.CreateScope())
         var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
         var roleManager = services.GetRequiredService<RoleManager<ApplicationRole>>();
 
-        await SeedDatabaseAsync(context, userManager, roleManager);
+        // Ensure database is created
+        await context.Database.EnsureCreatedAsync();
+
+        // Seed roles if they don't exist
+        await SeedRolesAsync(roleManager);
+
+        // Seed admin user if it doesn't exist
+        await SeedAdminUserAsync(userManager, roleManager);
     }
     catch (Exception ex)
     {
         var logger = services.GetRequiredService<ILogger<Program>>();
-        logger.LogError(ex, "Œÿ√ ›Ì  ÂÌ∆… ﬁ«⁄œ… «·»Ì«‰« ");
+        logger.LogError(ex, "An error occurred while seeding the database.");
     }
 }
 
 app.Run();
 
-// œ«·…  ÂÌ∆… ﬁ«⁄œ… «·»Ì«‰« 
-static async Task SeedDatabaseAsync(ApplicationDbContext context, UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager)
+// Seeding Methods
+static async Task SeedRolesAsync(RoleManager<ApplicationRole> roleManager)
 {
-    // ≈‰‘«¡ ﬁ«⁄œ… «·»Ì«‰«  ≈–« ·„  ﬂ‰ „ÊÃÊœ…
-    await context.Database.EnsureCreatedAsync();
-
-    // ≈‰‘«¡ «·√œÊ«—
     var roles = new[]
     {
-        new ApplicationRole { Name = "Admin", Description = "„œÌ— «·‰Ÿ«„" },
-        new ApplicationRole { Name = "Seller", Description = "»«∆⁄/’«Õ» „ Ã—" },
-        new ApplicationRole { Name = "Buyer", Description = "„‘ —Ì/⁄„Ì·" }
+        new { Name = "Admin", Description = "„œÌ— «·‰Ÿ«„" },
+        new { Name = "Seller", Description = "»«∆⁄/’«Õ» „ Ã—" },
+        new { Name = "Buyer", Description = "„‘ —Ì/⁄„Ì·" }
     };
 
-    foreach (var role in roles)
+    foreach (var roleInfo in roles)
     {
-        if (!await roleManager.RoleExistsAsync(role.Name))
+        if (!await roleManager.RoleExistsAsync(roleInfo.Name))
         {
+            var role = new ApplicationRole
+            {
+                Name = roleInfo.Name,
+                Description = roleInfo.Description,
+                CreatedAt = DateTime.Now
+            };
+
             await roleManager.CreateAsync(role);
         }
     }
+}
 
-    // ≈‰‘«¡ «·„œÌ— ≈–« ·„ Ìﬂ‰ „ÊÃÊœ«
+static async Task SeedAdminUserAsync(UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager)
+{
     var adminPhone = "+9647700227210";
     var adminUser = await userManager.FindByNameAsync(adminPhone);
 
@@ -170,59 +190,34 @@ static async Task SeedDatabaseAsync(ApplicationDbContext context, UserManager<Ap
         {
             UserName = adminPhone,
             PhoneNumber = adminPhone,
+            Email = "admin@reversemarket.iq",
+            EmailConfirmed = true,
+            PhoneNumberConfirmed = true,
             FirstName = "„œÌ—",
             LastName = "«·‰Ÿ«„",
-            Email = "admin@reversemarket.iq",
             DateOfBirth = new DateTime(1990, 1, 1),
             Gender = "–ﬂ—",
             City = "»€œ«œ",
             District = "«·ﬂ—«œ…",
-            UserType = UserType.Buyer,
-            PhoneNumberConfirmed = true,
-            EmailConfirmed = true,
+            UserType = UserType.Buyer, // Admin doesn't need specific user type
             IsPhoneVerified = true,
             IsEmailVerified = true,
-            IsActive = true
+            IsActive = true,
+            CreatedAt = DateTime.Now
         };
 
-        var result = await userManager.CreateAsync(adminUser, "Admin@123456");
+        var result = await userManager.CreateAsync(adminUser, "Admin@123");
         if (result.Succeeded)
         {
             await userManager.AddToRoleAsync(adminUser, "Admin");
         }
     }
-
-    // ≈‰‘«¡ ≈⁄œ«œ«  «·„Êﬁ⁄ «·«› —«÷Ì…
-    if (!await context.SiteSettings.AnyAsync())
+    else
     {
-        var siteSettings = new ReverseMarket.Models.SiteSettings
+        // Ensure admin has the Admin role
+        if (!await userManager.IsInRoleAsync(adminUser, "Admin"))
         {
-            ContactPhone = "+9647700227210",
-            ContactWhatsApp = "+9647700227210",
-            ContactEmail = "info@reversemarket.iq",
-            AboutUs = "„‰’… «·”Êﬁ «·⁄ﬂ”Ì - ‰—»ÿ «·„‘ —Ì‰ »«·»«∆⁄Ì‰",
-            CopyrightInfo = "© 2025 «·”Êﬁ «·⁄ﬂ”Ì. Ã„Ì⁄ «·ÕﬁÊﬁ „Õ›ÊŸ….",
-            PrivacyPolicy = "”Ì«”… «·Œ’Ê’Ì… ﬁÌœ «·≈⁄œ«œ",
-            TermsOfUse = "‘—Êÿ «·«” Œœ«„ ﬁÌœ «·≈⁄œ«œ"
-        };
-
-        context.SiteSettings.Add(siteSettings);
-        await context.SaveChangesAsync();
-    }
-
-    // ≈‰‘«¡ ›∆«  «› —«÷Ì…
-    if (!await context.Categories.AnyAsync())
-    {
-        var categories = new[]
-        {
-            new ReverseMarket.Models.Category { Name = "≈·ﬂ —Ê‰Ì« ", Description = "√ÃÂ“… ≈·ﬂ —Ê‰Ì… Ê ﬁ‰Ì…" },
-            new ReverseMarket.Models.Category { Name = "√“Ì«¡ Ê„ÃÊÂ—« ", Description = "„·«»” Ê≈ﬂ””Ê«—« " },
-            new ReverseMarket.Models.Category { Name = "„‰“· ÊÕœÌﬁ…", Description = "√À«À Ê„” ·“„«  „‰“·Ì…" },
-            new ReverseMarket.Models.Category { Name = "”Ì«—«  Ê„—ﬂ»« ", Description = "„—ﬂ»«  Êﬁÿ⁄ €Ì«—" },
-            new ReverseMarket.Models.Category { Name = "Œœ„« ", Description = "Œœ„«  „ ‰Ê⁄…" }
-        };
-
-        context.Categories.AddRange(categories);
-        await context.SaveChangesAsync();
+            await userManager.AddToRoleAsync(adminUser, "Admin");
+        }
     }
 }

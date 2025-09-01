@@ -1,8 +1,10 @@
-﻿namespace ReverseMarket.Models
+﻿using ReverseMarket.Models.Identity;
+
+namespace ReverseMarket.Models
 {
     public class StoresViewModel
     {
-        public List<ApplicationUserStore> Stores { get; set; } = new();
+        public List<User> Stores { get; set; } = new();
         public List<Category> Categories { get; set; } = new();
         public int CurrentPage { get; set; }
         public int TotalPages { get; set; }
@@ -10,27 +12,19 @@
         public int? SelectedCategoryId { get; set; }
     }
 
-    // Helper class للعرض
-    public class ApplicationUserStore
+    /// <summary>
+    /// Extension methods for ApplicationUser to Store conversion
+    /// </summary>
+    public static class StoreExtensions
     {
-        public string Id { get; set; } = "";
-        public string StoreName { get; set; } = "";
-        public string? StoreDescription { get; set; }
-        public string FirstName { get; set; } = "";
-        public string LastName { get; set; } = "";
-        public string PhoneNumber { get; set; } = "";
-        public string? Email { get; set; }
-        public string City { get; set; } = "";
-        public string District { get; set; } = "";
-        public string? Location { get; set; }
-        public string? ProfileImage { get; set; }
-        public string? WebsiteUrl1 { get; set; }
-        public string? WebsiteUrl2 { get; set; }
-        public string? WebsiteUrl3 { get; set; }
-        public DateTime CreatedAt { get; set; }
-        public List<StoreCategory> StoreCategories { get; set; } = new();
+        public static List<User> ToStoreList(this IEnumerable<ApplicationUser> applicationUsers)
+        {
+            return applicationUsers.Select(User.FromApplicationUser).ToList();
+        }
 
-        public string FullName => $"{FirstName} {LastName}";
-        public string DisplayName => !string.IsNullOrEmpty(StoreName) ? StoreName : FullName;
+        public static User ToStore(this ApplicationUser applicationUser)
+        {
+            return User.FromApplicationUser(applicationUser);
+        }
     }
 }

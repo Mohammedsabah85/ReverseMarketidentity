@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using ReverseMarket.Models.Identity; // استخدام UserType من Identity
 
 namespace ReverseMarket.Models
 {

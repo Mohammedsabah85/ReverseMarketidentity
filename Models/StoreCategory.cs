@@ -1,4 +1,5 @@
-﻿using ReverseMarket.Models.Identity;
+﻿// Models/StoreCategory.cs
+using ReverseMarket.Models.Identity;
 
 namespace ReverseMarket.Models
 {
