@@ -1,9 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using ReverseMarket.Data;
 using ReverseMarket.Areas.Admin.Models;
+using ReverseMarket.Data;
 using ReverseMarket.Models;
+using ReverseMarket.Models.Identity;
 
 
 namespace ReverseMarket.Areas.Admin.Controllers
@@ -26,7 +27,7 @@ namespace ReverseMarket.Areas.Admin.Controllers
                 TotalUsers = await _context.Users.CountAsync(),
                 TotalRequests = await _context.Requests.CountAsync(),
                 PendingRequests = await _context.Requests.CountAsync(r => r.Status == RequestStatus.Pending),
-                TotalStores = await _context.Users.CountAsync(u => u.UserType == Models.Identity.UserType.Seller &&
+                TotalStores = await _context.Users.CountAsync(u => u.UserType == UserType.Seller &&
                                                                   !string.IsNullOrEmpty(u.StoreName)),
                 TotalCategories = await _context.Categories.CountAsync(c => c.IsActive),
                 RecentRequests = await _context.Requests

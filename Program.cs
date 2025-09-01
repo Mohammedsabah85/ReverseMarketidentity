@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using ReverseMarket.Data;
 using ReverseMarket.Extensions;
 using ReverseMarket.Models.Identity;
@@ -9,34 +11,60 @@ using System.Globalization;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// ≈⁄œ«œ Entity Framework
+// ≈⁄œ«œ ﬁ«⁄œ… «·»Ì«‰« 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// ≈÷«›… Identity Services
-builder.Services.AddDefaultIdentity<ApplicationUser>(options => {
+// ≈⁄œ«œ Identity „⁄ «·√œÊ«—
+builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
+{
+    // ≈⁄œ«œ«   ”ÃÌ· «·œŒÊ·
     options.SignIn.RequireConfirmedAccount = false;
     options.SignIn.RequireConfirmedEmail = false;
     options.SignIn.RequireConfirmedPhoneNumber = false;
+
+    // ≈⁄œ«œ«  ﬂ·„… «·„—Ê— („»”ÿ… ·· ÿÊÌ—)
     options.Password.RequireDigit = false;
     options.Password.RequiredLength = 4;
     options.Password.RequireNonAlphanumeric = false;
     options.Password.RequireUppercase = false;
     options.Password.RequireLowercase = false;
 })
-.AddRoles<ApplicationRole>()
-.AddEntityFrameworkStores<ApplicationDbContext>();
+.AddEntityFrameworkStores<ApplicationDbContext>()
+.AddDefaultTokenProviders();
 
-// ›Ì »Ì∆… «· ÿÊÌ— ›ﬁÿ
-if (builder.Environment.IsDevelopment())
+// ≈⁄œ«œ «· —Ã„… Ê«· œÊÌ·
+var supportedCultures = new[]
 {
-    builder.Services.AddDatabaseDeveloperPageExceptionFilter();
-}
+    new CultureInfo("ar-IQ"),
+    new CultureInfo("en-US"),
+    new CultureInfo("ku")
+};
 
-// ≈÷«›… MVC
+builder.Services.Configure<RequestLocalizationOptions>(options =>
+{
+    options.DefaultRequestCulture = new RequestCulture("ar-IQ");
+    options.SupportedCultures = supportedCultures;
+    options.SupportedUICultures = supportedCultures;
+
+    options.RequestCultureProviders = new List<IRequestCultureProvider>
+    {
+        new CookieRequestCultureProvider(),
+        new AcceptLanguageHeaderRequestCultureProvider()
+    };
+});
+
+builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
+
+// ≈⁄œ«œ «·Œœ„«  «·„Œ’’…
+builder.Services.AddScoped<ILanguageService, LanguageService>();
+builder.Services.AddHttpContextAccessor();
+
+// ≈⁄œ«œ MVC Ê«·’›Õ« 
 builder.Services.AddControllersWithViews();
+builder.Services.AddRazorPages();
 
-// ≈÷«›… Session
+// ≈⁄œ«œ Session
 builder.Services.AddSession(options =>
 {
     options.IdleTimeout = TimeSpan.FromMinutes(30);
@@ -47,35 +75,23 @@ builder.Services.AddSession(options =>
 // ≈÷«›… Œœ„«  «· ÿ»Ìﬁ
 builder.Services.AddApplicationServices(builder.Configuration);
 
-// ≈⁄œ«œ Localization
-builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
-
-var supportedCultures = new[]
+// ›Ì »Ì∆… «· ÿÊÌ— ›ﬁÿ
+if (builder.Environment.IsDevelopment())
 {
-    new CultureInfo("ar"),
-    new CultureInfo("en"),
-    new CultureInfo("ku")
-};
-
-builder.Services.Configure<RequestLocalizationOptions>(options =>
-{
-    options.DefaultRequestCulture = new RequestCulture("ar");
-    options.SupportedCultures = supportedCultures;
-    options.SupportedUICultures = supportedCultures;
-});
+    builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+}
 
 var app = builder.Build();
 
-// ≈⁄œ«œ Pipeline
-if (!app.Environment.IsDevelopment())
+// ≈⁄œ«œ Pipeline ··ÿ·»« 
+if (app.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler("/Home/Error");
-    app.UseHsts();
+    app.UseMigrationsEndPoint();
 }
 else
 {
-    // ›Ì »Ì∆… «· ÿÊÌ— ›ﬁÿ
-    app.UseMigrationsEndPoint();
+    app.UseExceptionHandler("/Home/Error");
+    app.UseHsts();
 }
 
 app.UseHttpsRedirection();
@@ -83,6 +99,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+//  — Ì» „Â„: Localization ﬁ»· Authentication
 app.UseRequestLocalization();
 
 app.UseAuthentication();
@@ -90,6 +107,7 @@ app.UseAuthorization();
 
 app.UseSession();
 
+// ≈⁄œ«œ «·„”«—« 
 app.MapControllerRoute(
     name: "areas",
     pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
@@ -100,9 +118,28 @@ app.MapControllerRoute(
 
 app.MapRazorPages();
 
+//  ÂÌ∆… «·»Ì«‰«  «·√”«”Ì…
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
+        var roleManager = services.GetRequiredService<RoleManager<ApplicationRole>>();
+
+        await SeedRolesAsync(roleManager);
+        await SeedAdminUserAsync(userManager, roleManager);
+    }
+    catch (Exception ex)
+    {
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "ÕœÀ Œÿ√ √À‰«¡  ÂÌ∆… «·»Ì«‰«  «·√”«”Ì…");
+    }
+}
+
 app.Run();
 
-// Seeding Methods
+// œÊ«·  ÂÌ∆… «·»Ì«‰«  «·√”«”Ì…
 static async Task SeedRolesAsync(RoleManager<ApplicationRole> roleManager)
 {
     var roles = new[]
@@ -123,7 +160,11 @@ static async Task SeedRolesAsync(RoleManager<ApplicationRole> roleManager)
                 CreatedAt = DateTime.Now
             };
 
-            await roleManager.CreateAsync(role);
+            var result = await roleManager.CreateAsync(role);
+            if (!result.Succeeded)
+            {
+                throw new Exception($"›‘· ›Ì ≈‰‘«¡ œÊ— {roleInfo.Name}: {string.Join(", ", result.Errors.Select(e => e.Description))}");
+            }
         }
     }
 }
@@ -148,7 +189,7 @@ static async Task SeedAdminUserAsync(UserManager<ApplicationUser> userManager, R
             Gender = "–ﬂ—",
             City = "»€œ«œ",
             District = "«·ﬂ—«œ…",
-            UserType = UserType.Buyer, // Admin doesn't need specific user type
+            UserType = UserType.Buyer,
             IsPhoneVerified = true,
             IsEmailVerified = true,
             IsActive = true,
@@ -160,10 +201,14 @@ static async Task SeedAdminUserAsync(UserManager<ApplicationUser> userManager, R
         {
             await userManager.AddToRoleAsync(adminUser, "Admin");
         }
+        else
+        {
+            throw new Exception($"›‘· ›Ì ≈‰‘«¡ «·„œÌ—: {string.Join(", ", result.Errors.Select(e => e.Description))}");
+        }
     }
     else
     {
-        // Ensure admin has the Admin role
+        // «· √ﬂœ „‰ √‰ «·„œÌ— ·œÌÂ œÊ— Admin
         if (!await userManager.IsInRoleAsync(adminUser, "Admin"))
         {
             await userManager.AddToRoleAsync(adminUser, "Admin");

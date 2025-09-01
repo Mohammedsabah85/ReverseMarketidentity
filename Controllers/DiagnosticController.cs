@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ReverseMarket.Data;
 using ReverseMarket.Models;
-
+using ReverseMarket.Models.Identity;
 namespace ReverseMarket.Controllers
 {
     public class DiagnosticController : Controller

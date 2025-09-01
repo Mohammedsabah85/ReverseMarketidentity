@@ -1,5 +1,4 @@
-﻿// Controllers/DiagnosticController.cs - الإصدار المُصحح
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.Extensions.Options;
 using ReverseMarket.Services;
@@ -11,12 +10,12 @@ namespace ReverseMarket.Controllers
     {
         private readonly ILanguageService _languageService;
         private readonly IOptions<RequestLocalizationOptions> _localizationOptions;
-        private readonly ILogger<DiagnosticController> _logger;
+        private readonly ILogger<DiagnosticControllerlng> _logger;
 
         public DiagnosticControllerlng(
             ILanguageService languageService,
             IOptions<RequestLocalizationOptions> localizationOptions,
-            ILogger<DiagnosticController> logger)
+            ILogger<DiagnosticControllerlng> logger)
         {
             _languageService = languageService;
             _localizationOptions = localizationOptions;
@@ -29,18 +28,15 @@ namespace ReverseMarket.Controllers
 
             try
             {
-                // معلومات اللغة الحالية
                 diagnostic.CurrentLanguage = _languageService.GetCurrentLanguage();
                 diagnostic.CurrentDirection = _languageService.GetDirection();
                 diagnostic.SupportedLanguages = _languageService.GetSupportedLanguages();
 
-                // معلومات Culture
                 diagnostic.CurrentCulture = CultureInfo.CurrentCulture.Name;
                 diagnostic.CurrentUICulture = CultureInfo.CurrentUICulture.Name;
                 diagnostic.ThreadCulture = Thread.CurrentThread.CurrentCulture.Name;
                 diagnostic.ThreadUICulture = Thread.CurrentThread.CurrentUICulture.Name;
 
-                // معلومات RequestCultureFeature
                 var feature = HttpContext.Features.Get<IRequestCultureFeature>();
                 if (feature != null)
                 {
@@ -49,7 +45,6 @@ namespace ReverseMarket.Controllers
                     diagnostic.ProviderResultCulture = feature.Provider?.GetType().Name;
                 }
 
-                // فحص Cookies
                 var cookieValue = Request.Cookies[CookieRequestCultureProvider.DefaultCookieName];
                 diagnostic.CookieValue = cookieValue;
 
@@ -60,7 +55,6 @@ namespace ReverseMarket.Controllers
                         var requestCulture = CookieRequestCultureProvider.ParseCookieValue(cookieValue);
                         if (requestCulture != null)
                         {
-                            // إصلاح خطأ StringSegment - نفس الطريقة المستخدمة في LanguageService
                             diagnostic.CookieCulture = null;
                             diagnostic.CookieUICulture = null;
 
@@ -84,10 +78,8 @@ namespace ReverseMarket.Controllers
                     }
                 }
 
-                // معلومات Accept-Language Header
                 diagnostic.AcceptLanguageHeader = Request.Headers["Accept-Language"].FirstOrDefault();
 
-                // إعدادات Localization
                 var options = _localizationOptions.Value;
                 diagnostic.DefaultCulture = options.DefaultRequestCulture.Culture.Name;
                 diagnostic.DefaultUICulture = options.DefaultRequestCulture.UICulture.Name;
@@ -95,34 +87,28 @@ namespace ReverseMarket.Controllers
                 diagnostic.SupportedUICultures = options.SupportedUICultures?.Select(c => c.Name).ToList() ?? new List<string>();
                 diagnostic.CultureProviders = options.RequestCultureProviders.Select(p => p.GetType().Name).ToList();
 
-                // فحص صحة النظام
                 diagnostic.Issues = new List<string>();
 
-                // فحص 1: تطابق اللغات
                 if (diagnostic.CurrentLanguage != diagnostic.RequestCulture?.Split('-')[0])
                 {
                     diagnostic.Issues.Add($"Current Language ({diagnostic.CurrentLanguage}) doesn't match Request Culture ({diagnostic.RequestCulture})");
                 }
 
-                // فحص 2: وجود Cookie
                 if (string.IsNullOrEmpty(diagnostic.CookieValue))
                 {
                     diagnostic.Issues.Add("No language cookie found");
                 }
 
-                // فحص 3: نجاح تحليل Cookie
                 if (!diagnostic.CookieParseSuccess && !string.IsNullOrEmpty(diagnostic.CookieValue))
                 {
                     diagnostic.Issues.Add($"Cookie parse failed: {diagnostic.CookieParseError}");
                 }
 
-                // فحص 4: إعدادات Localization
                 if (options.RequestCultureProviders.Count == 0)
                 {
                     diagnostic.Issues.Add("No culture providers configured");
                 }
 
-                // فحص 5: تطابق اللغة مع المدعومة
                 if (!_languageService.IsLanguageSupported(diagnostic.CurrentLanguage))
                 {
                     diagnostic.Issues.Add($"Current language ({diagnostic.CurrentLanguage}) is not in supported languages list");
@@ -181,7 +167,6 @@ namespace ReverseMarket.Controllers
             }
         }
 
-        // Action إضافي لاختبار معلومات Cookie مفصلة
         public IActionResult CookieInfo()
         {
             var info = new
@@ -199,34 +184,22 @@ namespace ReverseMarket.Controllers
     {
         public bool Success { get; set; }
         public List<string> Issues { get; set; } = new();
-
-        // معلومات اللغة الحالية
         public string CurrentLanguage { get; set; } = "";
         public string CurrentDirection { get; set; } = "";
         public List<LanguageOption> SupportedLanguages { get; set; } = new();
-
-        // معلومات Culture
         public string CurrentCulture { get; set; } = "";
         public string CurrentUICulture { get; set; } = "";
         public string ThreadCulture { get; set; } = "";
         public string ThreadUICulture { get; set; } = "";
-
-        // معلومات Request
         public string? RequestCulture { get; set; }
         public string? RequestUICulture { get; set; }
         public string? ProviderResultCulture { get; set; }
-
-        // معلومات Cookie
         public string? CookieValue { get; set; }
         public string? CookieCulture { get; set; }
         public string? CookieUICulture { get; set; }
         public bool CookieParseSuccess { get; set; }
         public string? CookieParseError { get; set; }
-
-        // معلومات Headers
         public string? AcceptLanguageHeader { get; set; }
-
-        // إعدادات Localization
         public string DefaultCulture { get; set; } = "";
         public string DefaultUICulture { get; set; } = "";
         public List<string> SupportedCultures { get; set; } = new();

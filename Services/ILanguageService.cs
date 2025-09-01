@@ -1,5 +1,14 @@
 ﻿namespace ReverseMarket.Services
 {
+
+    public interface ILanguageService
+    {
+        string GetCurrentLanguage();
+        string GetDirection();
+        List<LanguageOption> GetSupportedLanguages();
+        void SetLanguage(string languageCode);
+        bool IsLanguageSupported(string languageCode);
+    }
     //public interface ILanguageService
     //{
     //    string GetCurrentLanguage();
@@ -10,14 +19,14 @@
     //}
 
 
-    public interface ILanguageService
-    {
-        string GetCurrentLanguage();
-        string GetDirection();
-        List<LanguageOption> GetSupportedLanguages();
-        void SetLanguage(string languageCode);
-        bool IsLanguageSupported(string languageCode);
-    }
+    //public interface ILanguageService
+    //{
+    //    string GetCurrentLanguage();
+    //    string GetDirection();
+    //    List<LanguageOption> GetSupportedLanguages();
+    //    void SetLanguage(string languageCode);
+    //    bool IsLanguageSupported(string languageCode);
+    //}
 
     //public class LanguageOption
     //{
