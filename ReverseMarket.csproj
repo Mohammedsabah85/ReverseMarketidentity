@@ -27,6 +27,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<Folder Include="Migrations\" />
 		<Folder Include="wwwroot\uploads\advertisements\" />
 		<Folder Include="wwwroot\uploads\categories\" />
 		<Folder Include="wwwroot\uploads\site\" />
