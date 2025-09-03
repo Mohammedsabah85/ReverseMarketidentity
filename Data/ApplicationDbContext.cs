@@ -84,8 +84,6 @@ namespace ReverseMarket.Data
                     .HasForeignKey(e => e.SubCategory1Id)
                     .OnDelete(DeleteBehavior.Cascade);
             });
-
-            // Request configurations
             modelBuilder.Entity<Request>(entity =>
             {
                 entity.HasKey(e => e.Id);
@@ -96,10 +94,11 @@ namespace ReverseMarket.Data
                 entity.Property(e => e.Location).HasMaxLength(255);
                 entity.Property(e => e.AdminNotes).HasMaxLength(1000);
 
-                // Relationship with ApplicationUser instead of User
-                entity.HasOne<ApplicationUser>()
+                // تحديد اسم foreign key بوضوح لتجنب التضارب
+                entity.HasOne<ApplicationUser>(r => r.User)
                     .WithMany(u => u.Requests)
-                    .HasForeignKey(e => e.UserId)
+                    .HasForeignKey(r => r.UserId)
+                    .HasConstraintName("FK_Request_User")
                     .OnDelete(DeleteBehavior.Cascade);
 
                 entity.HasOne(e => e.Category)
@@ -117,6 +116,38 @@ namespace ReverseMarket.Data
                     .HasForeignKey(e => e.SubCategory2Id)
                     .OnDelete(DeleteBehavior.Restrict);
             });
+            //// Request configurations
+            //modelBuilder.Entity<Request>(entity =>
+            //{
+            //    entity.HasKey(e => e.Id);
+            //    entity.Property(e => e.Title).HasMaxLength(255).IsRequired();
+            //    entity.Property(e => e.Description).HasMaxLength(2000).IsRequired();
+            //    entity.Property(e => e.City).HasMaxLength(100).IsRequired();
+            //    entity.Property(e => e.District).HasMaxLength(100).IsRequired();
+            //    entity.Property(e => e.Location).HasMaxLength(255);
+            //    entity.Property(e => e.AdminNotes).HasMaxLength(1000);
+
+            //    // Relationship with ApplicationUser instead of User
+            //    entity.HasOne<ApplicationUser>()
+            //        .WithMany(u => u.Requests)
+            //        .HasForeignKey(e => e.UserId)
+            //        .OnDelete(DeleteBehavior.Cascade);
+
+            //    entity.HasOne(e => e.Category)
+            //        .WithMany(e => e.Requests)
+            //        .HasForeignKey(e => e.CategoryId)
+            //        .OnDelete(DeleteBehavior.Restrict);
+
+            //    entity.HasOne(e => e.SubCategory1)
+            //        .WithMany(e => e.Requests)
+            //        .HasForeignKey(e => e.SubCategory1Id)
+            //        .OnDelete(DeleteBehavior.Restrict);
+
+            //    entity.HasOne(e => e.SubCategory2)
+            //        .WithMany(e => e.Requests)
+            //        .HasForeignKey(e => e.SubCategory2Id)
+            //        .OnDelete(DeleteBehavior.Restrict);
+            //});
 
             modelBuilder.Entity<RequestImage>(entity =>
             {
@@ -128,16 +159,15 @@ namespace ReverseMarket.Data
                     .HasForeignKey(e => e.RequestId)
                     .OnDelete(DeleteBehavior.Cascade);
             });
-
-            // StoreCategory configurations
             modelBuilder.Entity<StoreCategory>(entity =>
             {
                 entity.HasKey(e => e.Id);
 
-                // Relationship with ApplicationUser instead of User
-                entity.HasOne<ApplicationUser>()
+                // تحديد اسم foreign key بوضوح لتجنب التضارب
+                entity.HasOne<ApplicationUser>(sc => sc.User)
                     .WithMany(u => u.StoreCategories)
-                    .HasForeignKey(e => e.UserId)
+                    .HasForeignKey(sc => sc.UserId)
+                    .HasConstraintName("FK_StoreCategory_User")
                     .OnDelete(DeleteBehavior.Cascade);
 
                 entity.HasOne(e => e.Category)
@@ -155,6 +185,32 @@ namespace ReverseMarket.Data
                     .HasForeignKey(e => e.SubCategory2Id)
                     .OnDelete(DeleteBehavior.Restrict);
             });
+            //// StoreCategory configurations
+            //modelBuilder.Entity<StoreCategory>(entity =>
+            //{
+            //    entity.HasKey(e => e.Id);
+
+            //    // Relationship with ApplicationUser instead of User
+            //    entity.HasOne<ApplicationUser>()
+            //        .WithMany(u => u.StoreCategories)
+            //        .HasForeignKey(e => e.UserId)
+            //        .OnDelete(DeleteBehavior.Cascade);
+
+            //    entity.HasOne(e => e.Category)
+            //        .WithMany()
+            //        .HasForeignKey(e => e.CategoryId)
+            //        .OnDelete(DeleteBehavior.Restrict);
+
+            //    entity.HasOne(e => e.SubCategory1)
+            //        .WithMany()
+            //        .HasForeignKey(e => e.SubCategory1Id)
+            //        .OnDelete(DeleteBehavior.Restrict);
+
+            //    entity.HasOne(e => e.SubCategory2)
+            //        .WithMany()
+            //        .HasForeignKey(e => e.SubCategory2Id)
+            //        .OnDelete(DeleteBehavior.Restrict);
+            //});
 
             // Advertisement configurations
             modelBuilder.Entity<Advertisement>(entity =>
@@ -183,40 +239,42 @@ namespace ReverseMarket.Data
             // Seed default roles
             SeedRoles(modelBuilder);
         }
-
         private void SeedRoles(ModelBuilder modelBuilder)
         {
+            // استخدام قيم ثابتة بدلاً من DateTime.Now
+            var fixedDate = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+
             var roles = new List<ApplicationRole>
-            {
-                new ApplicationRole
-                {
-                    Id = "1",
-                    Name = "Admin",
-                    NormalizedName = "ADMIN",
-                    Description = "مدير النظام",
-                    CreatedAt = DateTime.Now
-                },
-                new ApplicationRole
-                {
-                    Id = "2",
-                    Name = "Seller",
-                    NormalizedName = "SELLER",
-                    Description = "بائع/صاحب متجر",
-                    CreatedAt = DateTime.Now
-                },
-                new ApplicationRole
-                {
-                    Id = "3",
-                    Name = "Buyer",
-                    NormalizedName = "BUYER",
-                    Description = "مشتري/عميل",
-                    CreatedAt = DateTime.Now
-                }
-            };
+    {
+        new ApplicationRole
+        {
+            Id = "1",
+            Name = "Admin",
+            NormalizedName = "ADMIN",
+            Description = "مدير النظام",
+            CreatedAt = fixedDate // قيمة ثابتة
+        },
+        new ApplicationRole
+        {
+            Id = "2",
+            Name = "Seller",
+            NormalizedName = "SELLER",
+            Description = "بائع/صاحب متجر",
+            CreatedAt = fixedDate // قيمة ثابتة
+        },
+        new ApplicationRole
+        {
+            Id = "3",
+            Name = "Buyer",
+            NormalizedName = "BUYER",
+            Description = "مشتري/عميل",
+            CreatedAt = fixedDate // قيمة ثابتة
+        }
+    };
 
             modelBuilder.Entity<ApplicationRole>().HasData(roles);
 
-            // Seed admin user
+            // Seed admin user مع قيم ثابتة
             var adminUser = new ApplicationUser
             {
                 Id = "admin-id-12345",
@@ -233,17 +291,15 @@ namespace ReverseMarket.Data
                 Gender = "ذكر",
                 City = "بغداد",
                 District = "الكرادة",
-                UserType = UserType.Buyer, // Admin doesn't need specific user type
+                UserType = UserType.Buyer,
                 IsPhoneVerified = true,
                 IsEmailVerified = true,
                 IsActive = true,
-                CreatedAt = DateTime.Now,
-                SecurityStamp = Guid.NewGuid().ToString(),
-                ConcurrencyStamp = Guid.NewGuid().ToString()
+                CreatedAt = fixedDate, // قيمة ثابتة
+                SecurityStamp = "FIXED-SECURITY-STAMP-12345", // قيمة ثابتة
+                ConcurrencyStamp = "FIXED-CONCURRENCY-STAMP-12345", // قيمة ثابتة
+                PasswordHash = "AQAAAAIAAYagAAAAEJ3pAOTg7kfNrOQi3F9x8w0iLK1J5AudCF5pN7t8oEj5oMy8q4nRuGHu8C7c0X9Y+Q=="
             };
-
-            // Set password hash for admin (password: Admin@123)
-            adminUser.PasswordHash = "AQAAAAIAAYagAAAAEJ3pAOTg7kfNrOQi3F9x8w0iLK1J5AudCF5pN7t8oEj5oMy8q4nRuGHu8C7c0X9Y+Q==";
 
             modelBuilder.Entity<ApplicationUser>().HasData(adminUser);
 
@@ -256,5 +312,77 @@ namespace ReverseMarket.Data
                 }
             );
         }
+        //private void SeedRoles(ModelBuilder modelBuilder)
+        //{
+        //    var roles = new List<ApplicationRole>
+        //    {
+        //        new ApplicationRole
+        //        {
+        //            Id = "1",
+        //            Name = "Admin",
+        //            NormalizedName = "ADMIN",
+        //            Description = "مدير النظام",
+        //            CreatedAt = DateTime.Now
+        //        },
+        //        new ApplicationRole
+        //        {
+        //            Id = "2",
+        //            Name = "Seller",
+        //            NormalizedName = "SELLER",
+        //            Description = "بائع/صاحب متجر",
+        //            CreatedAt = DateTime.Now
+        //        },
+        //        new ApplicationRole
+        //        {
+        //            Id = "3",
+        //            Name = "Buyer",
+        //            NormalizedName = "BUYER",
+        //            Description = "مشتري/عميل",
+        //            CreatedAt = DateTime.Now
+        //        }
+        //    };
+
+        //    modelBuilder.Entity<ApplicationRole>().HasData(roles);
+
+        //    // Seed admin user
+        //    var adminUser = new ApplicationUser
+        //    {
+        //        Id = "admin-id-12345",
+        //        UserName = "+9647700227210",
+        //        NormalizedUserName = "+9647700227210",
+        //        Email = "admin@reversemarket.iq",
+        //        NormalizedEmail = "ADMIN@REVERSEMARKET.IQ",
+        //        EmailConfirmed = true,
+        //        PhoneNumber = "+9647700227210",
+        //        PhoneNumberConfirmed = true,
+        //        FirstName = "مدير",
+        //        LastName = "النظام",
+        //        DateOfBirth = new DateTime(1990, 1, 1),
+        //        Gender = "ذكر",
+        //        City = "بغداد",
+        //        District = "الكرادة",
+        //        UserType = UserType.Buyer, // Admin doesn't need specific user type
+        //        IsPhoneVerified = true,
+        //        IsEmailVerified = true,
+        //        IsActive = true,
+        //        CreatedAt = DateTime.Now,
+        //        SecurityStamp = Guid.NewGuid().ToString(),
+        //        ConcurrencyStamp = Guid.NewGuid().ToString()
+        //    };
+
+        //    // Set password hash for admin (password: Admin@123)
+        //    adminUser.PasswordHash = "AQAAAAIAAYagAAAAEJ3pAOTg7kfNrOQi3F9x8w0iLK1J5AudCF5pN7t8oEj5oMy8q4nRuGHu8C7c0X9Y+Q==";
+
+        //    modelBuilder.Entity<ApplicationUser>().HasData(adminUser);
+
+        //    // Assign admin role to admin user
+        //    modelBuilder.Entity<IdentityUserRole<string>>().HasData(
+        //        new IdentityUserRole<string>
+        //        {
+        //            UserId = adminUser.Id,
+        //            RoleId = "1" // Admin role
+        //        }
+        //    );
+        //}
     }
 }

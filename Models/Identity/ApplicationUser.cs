@@ -62,9 +62,12 @@ namespace ReverseMarket.Models.Identity
         public bool IsActive { get; set; } = true;
 
         // Navigation properties
+        //public virtual ICollection<Request> Requests { get; set; } = new List<Request>();
+        //public virtual ICollection<StoreCategory> StoreCategories { get; set; } = new List<StoreCategory>();
+
+
         public virtual ICollection<Request> Requests { get; set; } = new List<Request>();
         public virtual ICollection<StoreCategory> StoreCategories { get; set; } = new List<StoreCategory>();
-
         // Full name property
         public string FullName => $"{FirstName} {LastName}";
 

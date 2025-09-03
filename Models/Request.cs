@@ -46,6 +46,7 @@ namespace ReverseMarket.Models
         public virtual SubCategory1? SubCategory1 { get; set; }
         public virtual SubCategory2? SubCategory2 { get; set; }
         public virtual ICollection<RequestImage> Images { get; set; } = new List<RequestImage>();
+      
     }
 
     public class RequestImage

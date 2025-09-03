@@ -61,43 +61,43 @@ namespace ReverseMarket.Models
 
 
     
-    // إضافة ViewModel لإنشاء الفئات
-    public class CreateCategoryViewModel
-    {
-        [Required(ErrorMessage = "اسم الفئة مطلوب")]
-        [StringLength(100, ErrorMessage = "اسم الفئة لا يجب أن يزيد عن 100 حرف")]
-        public string Name { get; set; } = "";
+    //// إضافة ViewModel لإنشاء الفئات
+    //public class CreateCategoryViewModel
+    //{
+    //    [Required(ErrorMessage = "اسم الفئة مطلوب")]
+    //    [StringLength(100, ErrorMessage = "اسم الفئة لا يجب أن يزيد عن 100 حرف")]
+    //    public string Name { get; set; } = "";
 
-        [StringLength(500, ErrorMessage = "الوصف لا يجب أن يزيد عن 500 حرف")]
-        public string? Description { get; set; }
+    //    [StringLength(500, ErrorMessage = "الوصف لا يجب أن يزيد عن 500 حرف")]
+    //    public string? Description { get; set; }
 
-        public IFormFile? Image { get; set; }
+    //    public IFormFile? Image { get; set; }
 
-        public bool IsActive { get; set; } = true;
-    }
+    //    public bool IsActive { get; set; } = true;
+    //}
 
-    // إضافة ViewModel لتعديل الفئات
-    public class EditCategoryViewModel
-    {
-        public int Id { get; set; }
+    //// إضافة ViewModel لتعديل الفئات
+    //public class EditCategoryViewModel
+    //{
+    //    public int Id { get; set; }
 
-        [Required(ErrorMessage = "اسم الفئة مطلوب")]
-        [StringLength(100, ErrorMessage = "اسم الفئة لا يجب أن يزيد عن 100 حرف")]
-        public string Name { get; set; } = "";
+    //    [Required(ErrorMessage = "اسم الفئة مطلوب")]
+    //    [StringLength(100, ErrorMessage = "اسم الفئة لا يجب أن يزيد عن 100 حرف")]
+    //    public string Name { get; set; } = "";
 
-        [StringLength(500, ErrorMessage = "الوصف لا يجب أن يزيد عن 500 حرف")]
-        public string? Description { get; set; }
+    //    [StringLength(500, ErrorMessage = "الوصف لا يجب أن يزيد عن 500 حرف")]
+    //    public string? Description { get; set; }
 
-        public string? CurrentImagePath { get; set; }
+    //    public string? CurrentImagePath { get; set; }
 
-        public IFormFile? NewImage { get; set; }
+    //    public IFormFile? NewImage { get; set; }
 
-        public bool RemoveImage { get; set; }
+    //    public bool RemoveImage { get; set; }
 
-        public bool IsActive { get; set; } = true;
+    //    public bool IsActive { get; set; } = true;
 
-        public DateTime CreatedAt { get; set; }
-    }
+    //    public DateTime CreatedAt { get; set; }
+    //}
 
     //public class CreateCategoryViewModel
     //{

@@ -19,6 +19,7 @@ namespace ReverseMarket.Models
 
         // Navigation properties
         public virtual ApplicationUser User { get; set; } = null!;
+
         public virtual Category Category { get; set; } = null!;
         public virtual SubCategory1? SubCategory1 { get; set; }
         public virtual SubCategory2? SubCategory2 { get; set; }
