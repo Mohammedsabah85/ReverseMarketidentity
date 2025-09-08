@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using ReverseMarket.Models;
 using ReverseMarket.Models.Identity;
+using ReverseMarket.SignalR;
 
 namespace ReverseMarket.Data
 {
@@ -20,6 +21,7 @@ namespace ReverseMarket.Data
         public DbSet<StoreCategory> StoreCategories { get; set; }
         public DbSet<Advertisement> Advertisements { get; set; }
         public DbSet<SiteSettings> SiteSettings { get; set; }
+        public DbSet<ChatMessage> ChatMessages { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

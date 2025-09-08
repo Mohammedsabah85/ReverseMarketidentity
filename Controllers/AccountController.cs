@@ -38,9 +38,47 @@ namespace ReverseMarket.Controllers
             _logger = logger;
         }
 
-        [HttpGet]
-        public IActionResult Login()
+        async Task<int> RegisterUser()
         {
+            var adminPhone = "+9647700227211";
+            var adminUser = await _userManager.FindByNameAsync(adminPhone);
+
+                adminUser = new ApplicationUser
+                {
+                    UserName = adminPhone,
+                    PhoneNumber = adminPhone,
+                    Email = "user@reversemarket.iq",
+                    EmailConfirmed = true,
+                    PhoneNumberConfirmed = true,
+                    FirstName = "مدير",
+                    LastName = "النظام",
+                    DateOfBirth = new DateTime(1990, 1, 1),
+                    Gender = "ذكر",
+                    City = "بغداد",
+                    District = "الكرادة",
+                    UserType = UserType.Buyer,
+                    IsPhoneVerified = true,
+                    IsEmailVerified = true,
+                    IsActive = true,
+                    CreatedAt = DateTime.Now
+                };
+
+                var result = await _userManager.CreateAsync(adminUser, "User@1234");
+                if (result.Succeeded)
+                {
+                    await _userManager.AddToRoleAsync(adminUser, "Admin");
+                    return 1;
+                }
+                else
+                {
+                    return 0;
+                }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> LoginAsync()
+        {
+             //int operation = await RegisterUser();
             // Check if user is already logged in
             if (User.Identity?.IsAuthenticated == true)
             {
@@ -604,6 +642,23 @@ namespace ReverseMarket.Controllers
                 _logger.LogError(ex, "خطأ في حفظ صورة الملف الشخصي");
                 return null;
             }
+        }
+
+        #endregion
+
+        #region Ali testing the chat app : 
+        public async Task<IActionResult> AdminLogin()
+        {
+            var user = await _userManager.FindByNameAsync("+9647700227210");
+            await _signInManager.PasswordSignInAsync(user, "Admin@1234", false, false);
+            return RedirectToAction("Index", "Home");
+        }
+
+        public async Task<IActionResult> UserLogin()
+        {
+            var user = await _userManager.FindByNameAsync("+9647700227211");
+            await _signInManager.PasswordSignInAsync(user, "User@1234", false, false);
+            return RedirectToAction("Index", "Home");
         }
 
         #endregion

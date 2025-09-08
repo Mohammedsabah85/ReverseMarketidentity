@@ -1,0 +1,27 @@
+﻿@using ReverseMarket.SignalR;
+@model List<UnReadMessagesDto>
+@{
+    ViewData["Title"] = "المراسلات";
+    Layout = "/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<br/>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>اسم المستخدم</th>
+            <th>مراسلة الآن</th>
+         
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var user in Model)
+        {
+            <tr>
+                <td>@(user.FirstName +" "+ user.LastName)</td>
+                <td><a asp-controller="Chat" asp-action="Index" asp-route-withUser="@user.UserName.ToLower()">مراسلة</a></td>
+                
+            </tr>
+        }
+    </tbody>
+    </table>

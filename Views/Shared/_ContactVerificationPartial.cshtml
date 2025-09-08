@@ -4,7 +4,7 @@
     var isLoggedIn = Context.Session.GetString("IsLoggedIn") == "true";
     var currentUserId = Context.Session.GetInt32("UserId");
     var userType = Context.Session.GetString("UserType");
-    
+
     // تحديد ما إذا كان المستخدم يمكنه رؤية معلومات التواصل
     bool canViewContact = isLoggedIn && (userType == "Admin" || currentUserId.HasValue);
 }
@@ -33,6 +33,10 @@
                     بريد إلكتروني
                 </a>
             }
+            <a asp-controller="Chat" asp-action="Index" asp-route-withUser="@Model.PhoneNumber">
+                <i class="fas fa-comments me-2"></i>
+                مراسلة الآن
+            </a>
         </div>
     </div>
 }

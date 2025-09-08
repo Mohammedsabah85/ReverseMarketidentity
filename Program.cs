@@ -1,12 +1,14 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Localization;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using ReverseMarket.Data;
 using ReverseMarket.Extensions;
 using ReverseMarket.Models.Identity;
 using ReverseMarket.Services;
+using ReverseMarket.SignalR;
 using System.Globalization;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -81,6 +83,10 @@ if (builder.Environment.IsDevelopment())
     builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 }
 
+// for real time chat : 
+builder.Services.AddSignalR();
+builder.Services.AddSingleton<IUserIdProvider, NameUserIdProvider>();
+
 var app = builder.Build();
 
 // ≈⁄œ«œ Pipeline ··ÿ·»« 
@@ -104,6 +110,9 @@ app.UseRequestLocalization();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+// for real time chat : 
+app.MapHub<ChatHub>("/chathub");
 
 app.UseSession();
 

@@ -224,6 +224,14 @@
                     إعدادات الموقع
                 </a>
             </li>
+
+            <li class="nav-item">
+                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Chat" ? "active" : "")" href="/Chat/MyChatting">
+                    <i class="fas fa-cog"></i>
+                    المراسلات
+                </a>
+            </li>
+
             <li class="nav-item mt-3 pt-3 border-top border-secondary">
                 <a class="nav-link" href="/">
                     <i class="fas fa-arrow-left"></i>
