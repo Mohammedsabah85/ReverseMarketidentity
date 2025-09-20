@@ -1,22 +1,31 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using ReverseMarket.CustomWhatsappService;
 using ReverseMarket.Data;
 using ReverseMarket.Models;
+using ReverseMarket.Services;
 using System.Diagnostics;
+using Twilio.Types;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace ReverseMarket.Controllers
 {
     public class HomeController : Controller
     {
         private readonly ApplicationDbContext _context;
+        TwilioWhatsapp _twilio=new TwilioWhatsapp();
+        
 
         public HomeController(ApplicationDbContext context)
         {
             _context = context;
+            
         }
 
         public async Task<IActionResult> Index()
         {
+            // _twilio.SendWhatsAppMessage("+9647801861182", $"code is {"99998520"} do not share");
+            
             // الحصول على إعدادات الموقع
             var siteSettings = await _context.SiteSettings.FirstOrDefaultAsync();
             ViewBag.SiteSettings = siteSettings;

@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using ReverseMarket.Data;
 using ReverseMarket.Extensions;
+using ReverseMarket.Models;
 using ReverseMarket.Models.Identity;
 using ReverseMarket.Services;
 using ReverseMarket.SignalR;
@@ -86,6 +87,11 @@ if (builder.Environment.IsDevelopment())
 // for real time chat : 
 builder.Services.AddSignalR();
 builder.Services.AddSingleton<IUserIdProvider, NameUserIdProvider>();
+
+// custome whatsapp message : 
+builder.Services.Configure<WhatsAppSettings>(
+    builder.Configuration.GetSection("WhatsAppSettings"));
+builder.Services.AddHttpClient<WhatsAppService>();
 
 var app = builder.Build();
 

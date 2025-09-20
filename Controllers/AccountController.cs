@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using ReverseMarket.CustomWhatsappService;
 using ReverseMarket.Data;
 using ReverseMarket.Models;
 using ReverseMarket.Models.Identity;
@@ -16,9 +17,10 @@ namespace ReverseMarket.Controllers
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly RoleManager<ApplicationRole> _roleManager;
         private readonly ApplicationDbContext _context;
-        private readonly IWhatsAppService _whatsAppService;
+        //private readonly IWhatsAppService _whatsAppService;
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly ILogger<AccountController> _logger;
+        private readonly WhatsAppService _whats;
 
         public AccountController(
             UserManager<ApplicationUser> userManager,
@@ -27,15 +29,17 @@ namespace ReverseMarket.Controllers
             ApplicationDbContext context,
             IWhatsAppService whatsAppService,
             IWebHostEnvironment webHostEnvironment,
-            ILogger<AccountController> logger)
+            ILogger<AccountController> logger,
+            WhatsAppService whats)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _roleManager = roleManager;
             _context = context;
-            _whatsAppService = whatsAppService;
+            //_whatsAppService = whatsAppService;
             _webHostEnvironment = webHostEnvironment;
             _logger = logger;
+            _whats = whats;
         }
 
         async Task<int> RegisterUser()
@@ -112,8 +116,14 @@ namespace ReverseMarket.Controllers
                     HttpContext.Session.SetString("AdminPhone", cleanPhoneNumber);
                     HttpContext.Session.SetString("LoginType", "Admin");
 
-                    await _whatsAppService.SendOTPAsync(cleanPhoneNumber, adminOtp);
+                    //await _whatsAppService.SendOTPAsync(cleanPhoneNumber, adminOtp);
+                    var request = new WhatsAppMessageRequest
+                    {
+                        recipient = cleanPhoneNumber, // e.g. "+9647502171212"
+                        message = adminOtp
+                    };
 
+                    await _whats.SendMessageAsync(request);
                     TempData["InfoMessage"] = "تم إرسال رمز التحقق للأدمن";
                     return RedirectToAction("VerifyAdminOTP");
                 }
@@ -141,7 +151,14 @@ namespace ReverseMarket.Controllers
                         HttpContext.Session.SetString("LoginType", "ExistingVerifiedUser");
                         HttpContext.Session.SetString("UserId", user.Id);
 
-                        await _whatsAppService.SendLoginOTPAsync(cleanPhoneNumber, otp, user.FirstName);
+                        //await _whatsAppService.SendLoginOTPAsync(cleanPhoneNumber, otp, user.FirstName);
+                        var request = new WhatsAppMessageRequest
+                        {
+                            recipient = cleanPhoneNumber, // e.g. "+9647502171212"
+                            message = otp
+                        };
+
+                        await _whats.SendMessageAsync(request);
 
                         TempData["InfoMessage"] = $"مرحباً {user.FirstName}! تم إرسال رمز الدخول إلى واتساب.";
                         return RedirectToAction("VerifyOTP");
@@ -156,8 +173,14 @@ namespace ReverseMarket.Controllers
                         HttpContext.Session.SetString("LoginType", "ExistingUnverifiedUser");
                         HttpContext.Session.SetString("UserId", user.Id);
 
-                        await _whatsAppService.SendPhoneVerificationAsync(cleanPhoneNumber, verificationCode, true);
+                        //await _whatsAppService.SendPhoneVerificationAsync(cleanPhoneNumber, verificationCode, true);
+                        var request = new WhatsAppMessageRequest
+                        {
+                            recipient = cleanPhoneNumber, // e.g. "+9647502171212"
+                            message = verificationCode
+                        };
 
+                        await _whats.SendMessageAsync(request);
                         TempData["WarningMessage"] = "حسابك موجود لكن الهاتف غير مؤكد. يرجى تأكيد رقم الهاتف.";
                         return RedirectToAction("VerifyPhone");
                     }
@@ -171,7 +194,14 @@ namespace ReverseMarket.Controllers
                     HttpContext.Session.SetString("PhoneNumber", cleanPhoneNumber);
                     HttpContext.Session.SetString("LoginType", "NewUser");
 
-                    await _whatsAppService.SendPhoneVerificationAsync(cleanPhoneNumber, verificationCode, false);
+                    //await _whatsAppService.SendPhoneVerificationAsync(cleanPhoneNumber, verificationCode, false);
+                    var request = new WhatsAppMessageRequest
+                    {
+                        recipient = cleanPhoneNumber, // e.g. "+9647502171212"
+                        message = verificationCode
+                    };
+
+                    await _whats.SendMessageAsync(request);
 
                     TempData["InfoMessage"] = "رقم جديد! يرجى تأكيد رقم الهاتف أولاً.";
                     return RedirectToAction("VerifyPhone");
@@ -493,7 +523,7 @@ namespace ReverseMarket.Controllers
                     await _signInManager.SignInAsync(user, isPersistent: true);
 
                     // Send welcome message
-                    await _whatsAppService.SendWelcomeMessageAsync(phoneNumber, user.FirstName, user.UserType.ToString());
+                    //await _whatsAppService.SendWelcomeMessageAsync(phoneNumber, user.FirstName, user.UserType.ToString());
 
                     // Clear session
                     ClearVerificationSession();
@@ -528,7 +558,14 @@ namespace ReverseMarket.Controllers
                 {
                     var newAdminOtp = GenerateOTP();
                     HttpContext.Session.SetString("AdminOTP", newAdminOtp);
-                    await _whatsAppService.SendOTPAsync(adminPhone, newAdminOtp);
+                    // await _whatsAppService.SendOTPAsync(adminPhone, newAdminOtp);
+                    var request = new WhatsAppMessageRequest
+                    {
+                        recipient = adminPhone, // e.g. "+9647502171212"
+                        message = newAdminOtp
+                    };
+
+                    await _whats.SendMessageAsync(request);
                     return Json(new { success = true, message = "تم إعادة إرسال رمز التحقق للأدمن" });
                 }
 
@@ -550,11 +587,25 @@ namespace ReverseMarket.Controllers
                         var user = await _userManager.FindByIdAsync(userId);
                         if (user != null)
                         {
-                            await _whatsAppService.SendLoginOTPAsync(phoneNumber, newCode, user.FirstName);
+                           // await _whatsAppService.SendLoginOTPAsync(phoneNumber, newCode, user.FirstName);
+                            var request = new WhatsAppMessageRequest
+                            {
+                                recipient = phoneNumber, // e.g. "+9647502171212"
+                                message = newCode
+                            };
+
+                            await _whats.SendMessageAsync(request);
                         }
                         else
                         {
-                            await _whatsAppService.SendOTPAsync(phoneNumber, newCode);
+                            //await _whatsAppService.SendOTPAsync(phoneNumber, newCode);
+                            var request = new WhatsAppMessageRequest
+                            {
+                                recipient = phoneNumber, // e.g. "+9647502171212"
+                                message = newCode
+                            };
+
+                            await _whats.SendMessageAsync(request);
                         }
                     }
                 }
@@ -563,7 +614,14 @@ namespace ReverseMarket.Controllers
                     // Resend verification code
                     HttpContext.Session.SetString("VerificationCode", newCode);
                     bool isExistingUser = loginType == "ExistingUnverifiedUser";
-                    await _whatsAppService.SendPhoneVerificationAsync(phoneNumber, newCode, isExistingUser);
+                    //await _whatsAppService.SendPhoneVerificationAsync(phoneNumber, newCode, isExistingUser);
+                    var request = new WhatsAppMessageRequest
+                    {
+                        recipient = phoneNumber, // e.g. "+9647502171212"
+                        message = newCode
+                    };
+
+                    await _whats.SendMessageAsync(request);
                 }
 
                 return Json(new { success = true, message = "تم إعادة إرسال الرمز بنجاح" });
@@ -647,19 +705,19 @@ namespace ReverseMarket.Controllers
         #endregion
 
         #region Ali testing the chat app : 
-        public async Task<IActionResult> AdminLogin()
-        {
-            var user = await _userManager.FindByNameAsync("+9647700227210");
-            await _signInManager.PasswordSignInAsync(user, "Admin@1234", false, false);
-            return RedirectToAction("Index", "Home");
-        }
+        //public async Task<IActionResult> AdminLogin()
+        //{
+        //    var user = await _userManager.FindByNameAsync("+9647700227210");
+        //    await _signInManager.PasswordSignInAsync(user, "Admin@1234", false, false);
+        //    return RedirectToAction("Index", "Home");
+        //}
 
-        public async Task<IActionResult> UserLogin()
-        {
-            var user = await _userManager.FindByNameAsync("+9647700227211");
-            await _signInManager.PasswordSignInAsync(user, "User@1234", false, false);
-            return RedirectToAction("Index", "Home");
-        }
+        //public async Task<IActionResult> UserLogin()
+        //{
+        //    var user = await _userManager.FindByNameAsync("+9647700227211");
+        //    await _signInManager.PasswordSignInAsync(user, "User@1234", false, false);
+        //    return RedirectToAction("Index", "Home");
+        //}
 
         #endregion
     }

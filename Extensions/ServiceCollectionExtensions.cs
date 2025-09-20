@@ -14,7 +14,7 @@ namespace ReverseMarket.Extensions
             services.Configure<WhatsAppSettings>(configuration.GetSection("WhatsApp"));
 
             // إضافة الخدمات المخصصة
-            services.AddScoped<IWhatsAppService, WhatsAppService>();
+           // services.AddScoped<IWhatsAppService, WhatsAppService>();
             services.AddScoped<ILanguageService, LanguageService>();
 
             return services;
