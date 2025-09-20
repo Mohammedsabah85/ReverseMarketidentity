@@ -16,10 +16,10 @@ namespace ReverseMarket.Controllers
         TwilioWhatsapp _twilio=new TwilioWhatsapp();
         
 
+
         public HomeController(ApplicationDbContext context)
         {
             _context = context;
-            
         }
 
         public async Task<IActionResult> Index()

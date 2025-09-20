@@ -11,6 +11,7 @@ public class WhatsAppService
 {
     private readonly HttpClient _httpClient;
     private readonly WhatsSettings _settings;
+  
 
     public WhatsAppService(HttpClient httpClient, IOptions<WhatsSettings> options)
     {

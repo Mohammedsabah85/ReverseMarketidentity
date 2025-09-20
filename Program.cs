@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using ReverseMarket.CustomWhatsappService;
 using ReverseMarket.Data;
 using ReverseMarket.Extensions;
 using ReverseMarket.Models;
@@ -89,7 +90,7 @@ builder.Services.AddSignalR();
 builder.Services.AddSingleton<IUserIdProvider, NameUserIdProvider>();
 
 // custome whatsapp message : 
-builder.Services.Configure<WhatsAppSettings>(
+builder.Services.Configure<WhatsSettings>(
     builder.Configuration.GetSection("WhatsAppSettings"));
 builder.Services.AddHttpClient<WhatsAppService>();
 

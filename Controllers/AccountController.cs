@@ -27,7 +27,7 @@ namespace ReverseMarket.Controllers
             SignInManager<ApplicationUser> signInManager,
             RoleManager<ApplicationRole> roleManager,
             ApplicationDbContext context,
-            IWhatsAppService whatsAppService,
+            //IWhatsAppService whatsAppService,
             IWebHostEnvironment webHostEnvironment,
             ILogger<AccountController> logger,
             WhatsAppService whats)
