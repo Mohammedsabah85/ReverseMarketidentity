@@ -1,5 +1,9 @@
-﻿@{
-    ViewData["Title"] = "تواصل معنا";
+﻿@using Microsoft.Extensions.Localization
+@using ReverseMarket.Resources
+@inject IStringLocalizer<SharedResource> Localizer
+@{
+    ViewData["Title"] = Localizer["Contact"];
+    var siteSettings = ViewBag.SiteSettings as ReverseMarket.Models.SiteSettings;
 }
 
 <div class="container-custom">
@@ -9,9 +13,9 @@
                 <div class="text-center mb-5">
                     <h1 class="display-5 text-primary">
                         <i class="fas fa-envelope me-3"></i>
-                        تواصل معنا
+                        @Localizer["Contact"]
                     </h1>
-                    <p class="lead text-muted">نحن هنا لخدمتك، لا تتردد في التواصل معنا</p>
+                    <p class="lead text-muted">@Localizer["ContactDescription"]</p>
                 </div>
 
                 <div class="row g-4">
@@ -19,75 +23,99 @@
                         <div class="card-custom border">
                             <h4 class="text-primary mb-3">
                                 <i class="fas fa-info-circle me-2"></i>
-                                معلومات التواصل
+                                @Localizer["ContactInfo"]
                             </h4>
 
                             <div class="mb-3">
-                                <h6><i class="fas fa-phone text-primary me-2"></i>الهاتف</h6>
-                                <p class="text-muted">+964 770 123 4567</p>
-                            </div>
-
-                            <div class="mb-3">
-                                <h6><i class="fab fa-whatsapp text-success me-2"></i>واتساب</h6>
-                                <p class="text-muted">+964 770 123 4567</p>
-                            </div>
-
-                            <div class="mb-3">
-                                <h6><i class="fas fa-envelope text-primary me-2"></i>البريد الإلكتروني</h6>
-                                <p class="text-muted">info@reversemarket.iq</p>
-                            </div>
-
-                            <div class="mb-3">
-                                <h6><i class="fas fa-clock text-primary me-2"></i>ساعات العمل</h6>
+                                <h6><i class="fas fa-phone text-primary me-2"></i>@Localizer["Phone"]</h6>
                                 <p class="text-muted">
-                                    السبت - الخميس: 9:00 ص - 6:00 م<br>
-                                    الجمعة: عطلة
+                                    @if (!string.IsNullOrEmpty(siteSettings?.ContactPhone))
+                                    {
+                                        @siteSettings.ContactPhone
+                                    }
+                                    else
+                                    {
+                                        <text>+964 770 123 4567</text>
+                                    }
                                 </p>
+                            </div>
+
+                            <div class="mb-3">
+                                <h6><i class="fab fa-whatsapp text-success me-2"></i>@Localizer["WhatsApp"]</h6>
+                                <p class="text-muted">
+                                    @if (!string.IsNullOrEmpty(siteSettings?.ContactWhatsApp))
+                                    {
+                                        @siteSettings.ContactWhatsApp
+                                    }
+                                    else
+                                    {
+                                        <text>+964 770 123 4567</text>
+                                    }
+                                </p>
+                            </div>
+
+                            <div class="mb-3">
+                                <h6><i class="fas fa-envelope text-primary me-2"></i>@Localizer["Email"]</h6>
+                                <p class="text-muted">
+                                    @if (!string.IsNullOrEmpty(siteSettings?.ContactEmail))
+                                    {
+                                        @siteSettings.ContactEmail
+                                    }
+                                    else
+                                    {
+                                        <text>info@reversemarket.iq</text>
+                                    }
+                                </p>
+                            </div>
+
+                            <div class="mb-3">
+                                <h6><i class="fas fa-map-marker-alt text-primary me-2"></i>@Localizer["Location"]</h6>
+                                <p class="text-muted">@Localizer["LocationAddress"]</p>
                             </div>
                         </div>
                     </div>
 
                     <div class="col-md-6">
-                        <form>
+                        <form id="contactForm">
                             <h4 class="text-primary mb-3">
                                 <i class="fas fa-paper-plane me-2"></i>
-                                أرسل رسالة
+                                @Localizer["SendMessage"]
                             </h4>
 
                             <div class="mb-3">
-                                <label for="name" class="form-label">الاسم الكامل *</label>
+                                <label for="name" class="form-label">@Localizer["FullName"] *</label>
                                 <input type="text" class="form-control" id="name" required>
                             </div>
 
                             <div class="mb-3">
-                                <label for="email" class="form-label">البريد الإلكتروني *</label>
+                                <label for="email" class="form-label">@Localizer["Email"] *</label>
                                 <input type="email" class="form-control" id="email" required>
                             </div>
 
                             <div class="mb-3">
-                                <label for="phone" class="form-label">رقم الهاتف</label>
+                                <label for="phone" class="form-label">@Localizer["Phone"]</label>
                                 <input type="tel" class="form-control" id="phone">
                             </div>
 
                             <div class="mb-3">
-                                <label for="subject" class="form-label">الموضوع *</label>
+                                <label for="subject" class="form-label">@Localizer["Subject"] *</label>
                                 <select class="form-control" id="subject" required>
-                                    <option value="">اختر الموضوع</option>
-                                    <option value="general">استفسار عام</option>
-                                    <option value="technical">مشكلة تقنية</option>
-                                    <option value="suggestion">اقتراح</option>
-                                    <option value="complaint">شكوى</option>
+                                    <option value="">@Localizer["SelectSubject"]</option>
+                                    <option value="general">@Localizer["GeneralInquiry"]</option>
+                                    <option value="technical">@Localizer["TechnicalIssue"]</option>
+                                    <option value="suggestion">@Localizer["Suggestion"]</option>
+                                    <option value="complaint">@Localizer["Complaint"]</option>
                                 </select>
                             </div>
 
                             <div class="mb-3">
-                                <label for="message" class="form-label">الرسالة *</label>
+                                <label for="message" class="form-label">@Localizer["Message"] *</label>
                                 <textarea class="form-control" id="message" rows="5" required></textarea>
                             </div>
 
                             <button type="submit" class="btn btn-custom w-100">
                                 <i class="fas fa-paper-plane me-2"></i>
-                                إرسال الرسالة
+                                @Localizer["SendMessage"]
                             </button>
                         </form>
                     </div>
@@ -96,17 +124,17 @@
                 <hr class="my-5">
 
                 <div class="text-center">
-                    <h4 class="text-primary mb-3">أسئلة شائعة</h4>
+                    <h4 class="text-primary mb-3">@Localizer["FAQ"]</h4>
                     <div class="accordion" id="faqAccordion">
                         <div class="accordion-item mb-2">
                             <h2 class="accordion-header" id="faq1">
                                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse1">
-                                    كيف أقوم بإضافة طلب؟
+                                    @Localizer["FAQ1Question"]
                                 </button>
                             </h2>
                             <div id="collapse1" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
                                 <div class="accordion-body text-start">
-                                    يمكنك إضافة طلبك من خلال الضغط على "إضافة طلب" في القائمة العلوية، ثم ملء البيانات المطلوبة.
+                                    @Localizer["FAQ1Answer"]
                                 </div>
                             </div>
                         </div>
@@ -114,12 +142,12 @@
                         <div class="accordion-item mb-2">
                             <h2 class="accordion-header" id="faq2">
                                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse2">
-                                    كم من الوقت يستغرق الحصول على عروض؟
+                                    @Localizer["FAQ2Question"]
                                 </button>
                             </h2>
                             <div id="collapse2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
                                 <div class="accordion-body text-start">
-                                    عادة ما تبدأ العروض بالوصول خلال ساعات قليلة من الموافقة على الطلب.
+                                    @Localizer["FAQ2Answer"]
                                 </div>
                             </div>
                         </div>
@@ -129,3 +157,24 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        document.getElementById('contactForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            // Get form values
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const phone = document.getElementById('phone').value;
+            const subject = document.getElementById('subject').value;
+            const message = document.getElementById('message').value;
+
+            // Here you would normally send the data to the server
+            // For now, we'll just show a success message
+
+            alert('@Localizer["MessageSentSuccess"]');
+            this.reset();
+        });
+    </script>
+}

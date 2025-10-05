@@ -1,84 +1,53 @@
-﻿// Controllers/LanguageController.cs
+﻿using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Localization;
-using ReverseMarket.Services;
 
 namespace ReverseMarket.Controllers
 {
     public class LanguageController : Controller
     {
-        private readonly ILanguageService _languageService;
-        private readonly ILogger<LanguageController> _logger;
-
-        public LanguageController(ILanguageService languageService, ILogger<LanguageController> logger)
-        {
-            _languageService = languageService;
-            _logger = logger;
-        }
-
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult SetLanguage(string culture, string returnUrl = "/")
+        public IActionResult SetLanguage(string culture, string returnUrl)
         {
-            try
+            if (string.IsNullOrEmpty(culture))
             {
-                _logger.LogInformation("Language change requested to: {Culture}", culture);
-
-                // التحقق من صحة اللغة
-                if (string.IsNullOrEmpty(culture) || !_languageService.IsLanguageSupported(culture))
-                {
-                    _logger.LogWarning("Unsupported language requested: {Culture}", culture);
-                    TempData["ErrorMessage"] = "اللغة المطلوبة غير مدعومة";
-                    return LocalRedirect(returnUrl);
-                }
-
-                // تحديد اللغة
-                _languageService.SetLanguage(culture);
-
-                _logger.LogInformation("Language successfully changed to: {Culture}", culture);
-                TempData["SuccessMessage"] = "تم تغيير اللغة بنجاح";
-
-                // التأكد من أن returnUrl آمن
-                if (!Url.IsLocalUrl(returnUrl))
-                {
-                    returnUrl = "/";
-                }
-
-                return LocalRedirect(returnUrl);
+                return BadRequest("Culture parameter is required");
             }
-            catch (Exception ex)
+
+            // التحقق من صحة اللغة
+            var validCultures = new[] { "ar", "en", "ku" };
+            if (!validCultures.Contains(culture.ToLower()))
             {
-                _logger.LogError(ex, "Error changing language to {Culture}", culture);
-                TempData["ErrorMessage"] = "حدث خطأ أثناء تغيير اللغة";
-                return LocalRedirect(returnUrl);
+                return BadRequest("Invalid culture");
             }
+
+            Response.Cookies.Append(
+                CookieRequestCultureProvider.DefaultCookieName,
+                CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(culture)),
+                new CookieOptions
+                {
+                    Expires = DateTimeOffset.UtcNow.AddYears(1),
+                    IsEssential = true,
+                    Path = "/",
+                    SameSite = SameSiteMode.Lax
+                }
+            );
+
+            // التأكد من وجود returnUrl صالح
+            if (string.IsNullOrEmpty(returnUrl) || !Url.IsLocalUrl(returnUrl))
+            {
+                returnUrl = "/";
+            }
+
+            return Redirect(returnUrl);
         }
 
-        // API endpoint لـ AJAX requests
-        [HttpPost]
-        public IActionResult SetLanguageAjax([FromBody] SetLanguageRequest request)
+        [HttpGet]
+        public IActionResult GetCurrentLanguage()
         {
-            try
-            {
-                if (string.IsNullOrEmpty(request.Culture) || !_languageService.IsLanguageSupported(request.Culture))
-                {
-                    return BadRequest(new { success = false, message = "اللغة المطلوبة غير مدعومة" });
-                }
+            var feature = HttpContext.Features.Get<IRequestCultureFeature>();
+            var currentCulture = feature?.RequestCulture.Culture.Name ?? "ar";
 
-                _languageService.SetLanguage(request.Culture);
-
-                return Ok(new { success = true, message = "تم تغيير اللغة بنجاح" });
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error changing language via AJAX to {Culture}", request.Culture);
-                return BadRequest(new { success = false, message = "حدث خطأ أثناء تغيير اللغة" });
-            }
-        }
-
-        public class SetLanguageRequest
-        {
-            public string Culture { get; set; } = "";
+            return Json(new { language = currentCulture });
         }
     }
 }

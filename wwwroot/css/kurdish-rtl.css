@@ -1,0 +1,228 @@
+﻿/* Kurdish RTL Support - دعم اللغة الكردية */
+
+/* استيراد خط كردي مناسب */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@300;400;500;600;700;800&display=swap');
+
+/* تطبيق الخط على اللغة الكردية */
+html[lang="ku"] * {
+    font-family: 'Noto Sans Arabic', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* تحسين عرض النصوص الكردية */
+html[lang="ku"] {
+    direction: rtl;
+    text-align: right;
+}
+
+    html[lang="ku"] body {
+        font-family: 'Noto Sans Arabic', -apple-system, BlinkMacSystemFont, sans-serif;
+        line-height: 1.8;
+    }
+
+    /* تعديلات خاصة بالأزرار */
+    html[lang="ku"] .btn {
+        font-weight: 500;
+    }
+
+    /* تعديلات للقوائم */
+    html[lang="ku"] .navbar-nav {
+        text-align: right;
+    }
+
+    /* تعديلات للنماذج */
+    html[lang="ku"] .form-label {
+        text-align: right;
+        display: block;
+    }
+
+    html[lang="ku"] .form-control {
+        text-align: right;
+        direction: rtl;
+    }
+
+    /* تعديلات للجداول */
+    html[lang="ku"] .table {
+        direction: rtl;
+    }
+
+        html[lang="ku"] .table th,
+        html[lang="ku"] .table td {
+            text-align: right;
+        }
+
+    /* تعديلات للتنبيهات */
+    html[lang="ku"] .alert {
+        text-align: right;
+    }
+
+    /* تعديلات للبطاقات */
+    html[lang="ku"] .card-title,
+    html[lang="ku"] .card-text {
+        text-align: right;
+    }
+
+    /* تعديلات للقوائم المنسدلة */
+    html[lang="ku"] .dropdown-menu {
+        text-align: right;
+        right: 0;
+        left: auto;
+    }
+
+    /* تعديلات للأيقونات */
+    html[lang="ku"] .fas,
+    html[lang="ku"] .fab,
+    html[lang="ku"] .far {
+        margin-left: 0.5rem;
+        margin-right: 0;
+    }
+
+    /* تعديل اتجاه الأسهم */
+    html[lang="ku"] .fa-chevron-left::before {
+        content: "\f054"; /* chevron-right */
+    }
+
+    html[lang="ku"] .fa-chevron-right::before {
+        content: "\f053"; /* chevron-left */
+    }
+
+    html[lang="ku"] .fa-arrow-left::before {
+        content: "\f061"; /* arrow-right */
+    }
+
+    html[lang="ku"] .fa-arrow-right::before {
+        content: "\f060"; /* arrow-left */
+    }
+
+    /* تحسين المسافات */
+    html[lang="ku"] .me-1,
+    html[lang="ku"] .me-2,
+    html[lang="ku"] .me-3 {
+        margin-right: 0 !important;
+        margin-left: 0.25rem !important;
+    }
+
+    html[lang="ku"] .ms-1,
+    html[lang="ku"] .ms-2,
+    html[lang="ku"] .ms-3 {
+        margin-left: 0 !important;
+        margin-right: 0.25rem !important;
+    }
+
+    html[lang="ku"] .me-auto {
+        margin-right: 0 !important;
+        margin-left: auto !important;
+    }
+
+    html[lang="ku"] .ms-auto {
+        margin-left: 0 !important;
+        margin-right: auto !important;
+    }
+
+    /* تعديلات للـ Breadcrumb */
+    html[lang="ku"] .breadcrumb-item + .breadcrumb-item::before {
+        float: right;
+        padding-right: 0;
+        padding-left: 0.5rem;
+        content: "←";
+    }
+
+    /* تعديلات للـ Progress Bar */
+    html[lang="ku"] .progress-bar {
+        float: right;
+    }
+
+    /* تحسين عرض الأرقام */
+    html[lang="ku"] .badge,
+    html[lang="ku"] .page-link {
+        font-family: 'Noto Sans Arabic', sans-serif;
+    }
+
+    /* تعديلات للـ Pagination */
+    html[lang="ku"] .pagination {
+        direction: ltr;
+    }
+
+    /* تعديلات خاصة بالـ Footer */
+    html[lang="ku"] .footer-section ul {
+        padding-right: 0;
+    }
+
+        html[lang="ku"] .footer-section ul li::before {
+            right: 0;
+            left: auto;
+        }
+
+    /* تعديلات للـ Modal */
+    html[lang="ku"] .modal-header .btn-close {
+        margin: -0.5rem auto -0.5rem -0.5rem;
+    }
+
+    /* تحسين النصوص الطويلة */
+    html[lang="ku"] p,
+    html[lang="ku"] .card-text,
+    html[lang="ku"] .lead {
+        text-align: justify;
+        text-justify: inter-word;
+    }
+
+    /* تعديلات للأكورديون */
+    html[lang="ku"] .accordion-button {
+        text-align: right;
+    }
+
+        html[lang="ku"] .accordion-button::after {
+            margin-right: auto;
+            margin-left: 0;
+        }
+
+    /* تعديلات للـ Toast */
+    html[lang="ku"] .toast {
+        text-align: right;
+    }
+
+    /* تحسين عرض التواريخ */
+    html[lang="ku"] .datetime,
+    html[lang="ku"] .date,
+    html[lang="ku"] .time {
+        direction: ltr;
+        unicode-bidi: embed;
+    }
+
+    /* تعديلات للـ Input Group */
+    html[lang="ku"] .input-group > :not(:first-child):not(.dropdown-menu):not(.valid-tooltip):not(.valid-feedback):not(.invalid-tooltip):not(.invalid-feedback) {
+        margin-right: -1px;
+        margin-left: 0;
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+        border-top-left-radius: 0.25rem;
+        border-bottom-left-radius: 0.25rem;
+    }
+
+    /* تحسين الانتقالات */
+    html[lang="ku"] .slide-in-right {
+        animation-name: slideInLeft;
+    }
+
+    html[lang="ku"] .slide-in-left {
+        animation-name: slideInRight;
+    }
+
+/* Media Queries للشاشات الصغيرة */
+@media (max-width: 768px) {
+    html[lang="ku"] .navbar-collapse {
+        text-align: right;
+    }
+
+    html[lang="ku"] .offcanvas {
+        right: 0;
+        left: auto;
+    }
+}
+
+/* تحسين الطباعة */
+@media print {
+    html[lang="ku"] * {
+        direction: rtl;
+        text-align: right;
+    }
+}

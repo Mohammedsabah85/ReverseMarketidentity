@@ -3,6 +3,8 @@
 @using ReverseMarket.Resources
 @inject IStringLocalizer<SharedResource> Localizer
 @inject ILanguageService LanguageService
+@inject IStringLocalizer<SharedResource> Localizer
+@Localizer["KeyName"]
 @{
     var currentLanguage = LanguageService.GetCurrentLanguage();
     var direction = LanguageService.GetDirection();

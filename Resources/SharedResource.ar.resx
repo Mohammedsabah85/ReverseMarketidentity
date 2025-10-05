@@ -1,70 +1,61 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <root>
-    <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-        <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
-        <xsd:element name="root" msdata:IsDataSet="true">
-            <xsd:complexType>
-                <xsd:choice maxOccurs="unbounded">
-                    <xsd:element name="metadata">
-                        <xsd:complexType>
-                            <xsd:sequence>
-                                <xsd:element name="value" type="xsd:string" minOccurs="0" />
-                            </xsd:sequence>
-                            <xsd:attribute name="name" use="required" type="xsd:string" />
-                            <xsd:attribute name="type" type="xsd:string" />
-                            <xsd:attribute name="mimetype" type="xsd:string" />
-                            <xsd:attribute ref="xml:space" />
-                        </xsd:complexType>
-                    </xsd:element>
-                    <xsd:element name="assembly">
-                        <xsd:complexType>
-                            <xsd:attribute name="alias" type="xsd:string" />
-                            <xsd:attribute name="name" type="xsd:string" />
-                        </xsd:complexType>
-                    </xsd:element>
-                    <xsd:element name="data">
-                        <xsd:complexType>
-                            <xsd:sequence>
-                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
-                                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
-                            </xsd:sequence>
-                            <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
-                            <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
-                            <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
-                            <xsd:attribute ref="xml:space" />
-                        </xsd:complexType>
-                    </xsd:element>
-                    <xsd:element name="resheader">
-                        <xsd:complexType>
-                            <xsd:sequence>
-                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
-                            </xsd:sequence>
-                            <xsd:attribute name="name" type="xsd:string" use="required" />
-                        </xsd:complexType>
-                    </xsd:element>
-                </xsd:choice>
-            </xsd:complexType>
-        </xsd:element>
-    </xsd:schema>
-    <resheader name="resmimetype">
-        <value>text/microsoft-resx</value>
-    </resheader>
-    <resheader name="version">
-        <value>2.0</value>
-    </resheader>
-    <resheader name="reader">
-        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-    </resheader>
-    <resheader name="writer">
-        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-    </resheader>
-
-    <!-- Site Information -->
-    <data name="SiteName" xml:space="preserve">
-    <value>السوق العكسي</value>
+    <!-- Terms of Use -->
+    <data name="TermsOfUse" xml:space="preserve">
+    <value>شروط الاستخدام</value>
   </data>
-    <data name="SiteDescription" xml:space="preserve">
-    <value>منصة السوق العكسي - أضف طلبك ودع المتاجر تتنافس لخدمتك</value>
+    <data name="PrivacyPolicy" xml:space="preserve">
+    <value>سياسة الخصوصية</value>
+  </data>
+    <data name="LastUpdated" xml:space="preserve">
+    <value>آخر تحديث</value>
+  </data>
+    <data name="Introduction" xml:space="preserve">
+    <value>المقدمة</value>
+  </data>
+    <data name="TermsIntroText" xml:space="preserve">
+    <value>مرحباً بك في السوق العكسي. هذه الشروط والأحكام تحدد القواعد والتنظيمات الخاصة باستخدام موقعنا الإلكتروني.</value>
+  </data>
+    <data name="AcceptanceOfTerms" xml:space="preserve">
+    <value>قبول الشروط</value>
+  </data>
+    <data name="AcceptanceText" xml:space="preserve">
+    <value>باستخدامك لهذا الموقع، فإنك توافق على الالتزام بهذه الشروط. إذا كنت لا توافق على أي جزء من هذه الشروط، يجب عليك عدم استخدام موقعنا.</value>
+  </data>
+    <data name="UserRegistration" xml:space="preserve">
+    <value>تسجيل المستخدم</value>
+  </data>
+    <data name="RegistrationRule1" xml:space="preserve">
+    <value>يجب أن تكون فوق سن 18 عاماً للتسجيل</value>
+  </data>
+    <data name="RegistrationRule2" xml:space="preserve">
+    <value>يجب تقديم معلومات صحيحة ودقيقة</value>
+  </data>
+    <data name="RegistrationRule3" xml:space="preserve">
+    <value>أنت مسؤول عن الحفاظ على سرية كلمة المرور</value>
+  </data>
+    <data name="RegistrationRule4" xml:space="preserve">
+    <value>حساب واحد فقط لكل مستخدم</value>
+  </data>
+
+    <!-- Privacy Policy -->
+    <data name="InformationWeCollect" xml:space="preserve">
+    <value>المعلومات التي نجمعها</value>
+  </data>
+    <data name="PersonalInformation" xml:space="preserve">
+    <value>المعلومات الشخصية</value>
+  </data>
+    <data name="PersonalInfo1" xml:space="preserve">
+    <value>الاسم الكامل ورقم الهاتف</value>
+  </data>
+    <data name="PersonalInfo2" xml:space="preserve">
+    <value>البريد الإلكتروني والعنوان</value>
+  </data>
+    <data name="PersonalInfo3" xml:space="preserve">
+    <value>معلومات الموقع الجغرافي</value>
+  </data>
+    <data name="PersonalInfo4" xml:space="preserve">
+    <value>معلومات الاستخدام والتصفح</value>
   </data>
 
     <!-- Navigation -->
@@ -89,8 +80,6 @@
     <data name="Logout" xml:space="preserve">
     <value>تسجيل الخروج</value>
   </data>
-
-    <!-- User Actions -->
     <data name="AddRequest" xml:space="preserve">
     <value>إضافة طلب</value>
   </data>
@@ -104,28 +93,247 @@
     <value>لوحة التحكم</value>
   </data>
 
-    <!-- Messages -->
+    <!-- Common -->
+    <data name="SiteName" xml:space="preserve">
+    <value>السوق العكسي</value>
+  </data>
+    <data name="SiteDescription" xml:space="preserve">
+    <value>أضف طلبك ودع المتاجر تتنافس لخدمتك</value>
+  </data>
+    <data name="ContactInfo" xml:space="preserve">
+    <value>معلومات الاتصال</value>
+  </data>
+    <data name="ImportantLinks" xml:space="preserve">
+    <value>روابط هامة</value>
+  </data>
+    <data name="Copyright" xml:space="preserve">
+    <value>© 2024 السوق العكسي. جميع الحقوق محفوظة.</value>
+  </data>
+    <data name="Email" xml:space="preserve">
+    <value>البريد الإلكتروني</value>
+  </data>
+    <data name="Phone" xml:space="preserve">
+    <value>الهاتف</value>
+  </data>
+    <data name="BackToHome" xml:space="preserve">
+    <value>العودة للرئيسية</value>
+  </data>
+    <data name="ContactUs" xml:space="preserve">
+    <value>اتصل بنا</value>
+  </data>
     <data name="Success" xml:space="preserve">
     <value>نجح</value>
   </data>
     <data name="Error" xml:space="preserve">
     <value>خطأ</value>
   </data>
-    <data name="Warning" xml:space="preserve">
-    <value>تنبيه</value>
+
+    <data name="ContactDescription" xml:space="preserve">
+    <value>نحن هنا لخدمتك، لا تتردد في التواصل معنا</value>
+  </data>
+    <data name="WhatsApp" xml:space="preserve">
+    <value>واتساب</value>
+  </data>
+    <data name="Location" xml:space="preserve">
+    <value>الموقع</value>
+  </data>
+    <data name="LocationAddress" xml:space="preserve">
+    <value>بغداد، العراق</value>
+  </data>
+    <data name="SendMessage" xml:space="preserve">
+    <value>أرسل رسالة</value>
+  </data>
+    <data name="FullName" xml:space="preserve">
+    <value>الاسم الكامل</value>
+  </data>
+    <data name="Subject" xml:space="preserve">
+    <value>الموضوع</value>
+  </data>
+    <data name="SelectSubject" xml:space="preserve">
+    <value>اختر الموضوع</value>
+  </data>
+    <data name="GeneralInquiry" xml:space="preserve">
+    <value>استفسار عام</value>
+  </data>
+    <data name="TechnicalIssue" xml:space="preserve">
+    <value>مشكلة تقنية</value>
+  </data>
+    <data name="Suggestion" xml:space="preserve">
+    <value>اقتراح</value>
+  </data>
+    <data name="Complaint" xml:space="preserve">
+    <value>شكوى</value>
+  </data>
+    <data name="Message" xml:space="preserve">
+    <value>الرسالة</value>
+  </data>
+    <data name="MessageSentSuccess" xml:space="preserve">
+    <value>تم إرسال رسالتك بنجاح! سنتواصل معك قريباً.</value>
+  </data>
+    <data name="FAQ" xml:space="preserve">
+    <value>أسئلة شائعة</value>
+  </data>
+    <data name="FAQ1Question" xml:space="preserve">
+    <value>كيف أقوم بإضافة طلب؟</value>
+  </data>
+    <data name="FAQ1Answer" xml:space="preserve">
+    <value>يمكنك إضافة طلبك من خلال الضغط على "إضافة طلب" في القائمة العلوية، ثم ملء البيانات المطلوبة.</value>
+  </data>
+    <data name="FAQ2Question" xml:space="preserve">
+    <value>كم من الوقت يستغرق الحصول على عروض؟</value>
+  </data>
+    <data name="FAQ2Answer" xml:space="preserve">
+    <value>عادة ما تبدأ العروض بالوصول خلال ساعات قليلة من الموافقة على الطلب.</value>
   </data>
 
-    <!-- Footer -->
-    <data name="ContactInfo" xml:space="preserve">
-    <value>معلومات التواصل</value>
+    <!-- Terms & Privacy Additional -->
+    <data name="UserResponsibilities" xml:space="preserve">
+    <value>مسؤوليات المستخدم</value>
   </data>
-    <data name="ImportantLinks" xml:space="preserve">
-    <value>روابط مهمة</value>
+    <data name="Responsibility1" xml:space="preserve">
+    <value>استخدام المنصة بشكل قانوني ومشروع</value>
   </data>
-    <data name="PrivacyPolicy" xml:space="preserve">
-    <value>سياسة الخصوصية</value>
+    <data name="Responsibility2" xml:space="preserve">
+    <value>عدم انتهاك حقوق الآخرين</value>
   </data>
-    <data name="Copyright" xml:space="preserve">
-    <value>© 2024 السوق العكسي. جميع الحقوق محفوظة.</value>
+    <data name="Responsibility3" xml:space="preserve">
+    <value>الالتزام بجميع القوانين واللوائح المعمول بها</value>
+  </data>
+    <data name="Responsibility4" xml:space="preserve">
+    <value>تقديم معلومات صحيحة ودقيقة</value>
+  </data>
+    <data name="ProhibitedActivities" xml:space="preserve">
+    <value>الأنشطة المحظورة</value>
+  </data>
+    <data name="Prohibited1" xml:space="preserve">
+    <value>نشر محتوى مسيء أو غير قانوني</value>
+  </data>
+    <data name="Prohibited2" xml:space="preserve">
+    <value>الاحتيال أو التضليل</value>
+  </data>
+    <data name="Prohibited3" xml:space="preserve">
+    <value>انتهاك الملكية الفكرية</value>
+  </data>
+    <data name="Prohibited4" xml:space="preserve">
+    <value>محاولة اختراق أو تعطيل النظام</value>
+  </data>
+    <data name="IntellectualProperty" xml:space="preserve">
+    <value>الملكية الفكرية</value>
+  </data>
+    <data name="IntellectualPropertyText" xml:space="preserve">
+    <value>جميع المحتويات والعلامات التجارية على هذا الموقع محمية بموجب قوانين الملكية الفكرية.</value>
+  </data>
+    <data name="LimitationOfLiability" xml:space="preserve">
+    <value>حدود المسؤولية</value>
+  </data>
+    <data name="LiabilityText" xml:space="preserve">
+    <value>نحن غير مسؤولين عن أي أضرار مباشرة أو غير مباشرة قد تنتج عن استخدام المنصة.</value>
+  </data>
+    <data name="TerminationOfService" xml:space="preserve">
+    <value>إنهاء الخدمة</value>
+  </data>
+    <data name="TerminationText" xml:space="preserve">
+    <value>نحتفظ بالحق في إيقاف أو إنهاء حسابك في حالة انتهاك الشروط.</value>
+  </data>
+    <data name="ChangesToTerms" xml:space="preserve">
+    <value>التغييرات على الشروط</value>
+  </data>
+    <data name="ChangesText" xml:space="preserve">
+    <value>قد نقوم بتحديث هذه الشروط من وقت لآخر. سيتم إشعارك بأي تغييرات جوهرية.</value>
+  </data>
+    <data name="ContactTermsText" xml:space="preserve">
+    <value>إذا كان لديك أي أسئلة حول هذه الشروط، يرجى التواصل معنا:</value>
+  </data>
+
+    <!-- Privacy Policy Additional -->
+    <data name="HowWeUseInformation" xml:space="preserve">
+    <value>كيف نستخدم المعلومات</value>
+  </data>
+    <data name="UseInfo1" xml:space="preserve">
+    <value>تقديم وتحسين خدماتنا</value>
+  </data>
+    <data name="UseInfo2" xml:space="preserve">
+    <value>التواصل معك بشأن حسابك</value>
+  </data>
+    <data name="UseInfo3" xml:space="preserve">
+    <value>تخصيص تجربتك</value>
+  </data>
+    <data name="UseInfo4" xml:space="preserve">
+    <value>حماية الأمن ومنع الاحتيال</value>
+  </data>
+    <data name="UseInfo5" xml:space="preserve">
+    <value>الامتثال للمتطلبات القانونية</value>
+  </data>
+    <data name="DataProtection" xml:space="preserve">
+    <value>حماية البيانات</value>
+  </data>
+    <data name="DataProtectionText" xml:space="preserve">
+    <value>نتخذ تدابير أمنية معقولة لحماية معلوماتك الشخصية:</value>
+  </data>
+    <data name="Protection1" xml:space="preserve">
+    <value>تشفير البيانات الحساسة</value>
+  </data>
+    <data name="Protection2" xml:space="preserve">
+    <value>التحكم في الوصول للموظفين المصرح لهم فقط</value>
+  </data>
+    <data name="Protection3" xml:space="preserve">
+    <value>مراقبة وتحديث أنظمة الأمان بانتظام</value>
+  </data>
+    <data name="InformationSharing" xml:space="preserve">
+    <value>مشاركة المعلومات</value>
+  </data>
+    <data name="SharingText" xml:space="preserve">
+    <value>لا نبيع معلوماتك الشخصية. قد نشاركها في الحالات التالية:</value>
+  </data>
+    <data name="Sharing1" xml:space="preserve">
+    <value>مع موافقتك الصريحة</value>
+  </data>
+    <data name="Sharing2" xml:space="preserve">
+    <value>مع مزودي الخدمات الموثوقين</value>
+  </data>
+    <data name="Sharing3" xml:space="preserve">
+    <value>عند الضرورة القانونية</value>
+  </data>
+    <data name="Cookies" xml:space="preserve">
+    <value>ملفات تعريف الارتباط (Cookies)</value>
+  </data>
+    <data name="CookiesText" xml:space="preserve">
+    <value>نستخدم ملفات تعريف الارتباط لتحسين تجربتك وتحليل استخدام الموقع.</value>
+  </data>
+    <data name="YourRights" xml:space="preserve">
+    <value>حقوقك</value>
+  </data>
+    <data name="Right1" xml:space="preserve">
+    <value>الوصول إلى معلوماتك الشخصية</value>
+  </data>
+    <data name="Right2" xml:space="preserve">
+    <value>تصحيح المعلومات غير الدقيقة</value>
+  </data>
+    <data name="Right3" xml:space="preserve">
+    <value>طلب حذف معلوماتك</value>
+  </data>
+    <data name="Right4" xml:space="preserve">
+    <value>الاعتراض على معالجة بياناتك</value>
+  </data>
+    <data name="DataRetention" xml:space="preserve">
+    <value>الاحتفاظ بالبيانات</value>
+  </data>
+    <data name="RetentionText" xml:space="preserve">
+    <value>نحتفظ بمعلوماتك طالما كان حسابك نشطاً أو حسب الحاجة لتقديم خدماتنا.</value>
+  </data>
+    <data name="ChildrenPrivacy" xml:space="preserve">
+    <value>خصوصية الأطفال</value>
+  </data>
+    <data name="ChildrenText" xml:space="preserve">
+    <value>خدماتنا غير موجهة للأطفال دون سن 18 عاماً. لا نجمع معلومات من الأطفال عمداً.</value>
+  </data>
+    <data name="PolicyChanges" xml:space="preserve">
+    <value>تغييرات السياسة</value>
+  </data>
+    <data name="PolicyChangesText" xml:space="preserve">
+    <value>قد نحدث سياسة الخصوصية هذه. سننشر أي تغييرات على هذه الصفحة.</value>
+  </data>
+    <data name="ContactPrivacyText" xml:space="preserve">
+    <value>إذا كان لديك أسئلة حول سياسة الخصوصية، تواصل معنا:</value>
   </data>
 </root>

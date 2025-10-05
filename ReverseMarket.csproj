@@ -9,6 +9,7 @@
 	<ItemGroup>
 		<PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="9.0.8" />
 		<PackageReference Include="Microsoft.AspNetCore.Localization" Version="2.3.0" />
+		<PackageReference Include="Microsoft.AspNetCore.Mvc.Localization" Version="2.3.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Session" Version="2.3.0" />
 		<PackageReference Include="Microsoft.AspNetCore.SignalR.Core" Version="1.2.0" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.8" />
@@ -21,6 +22,7 @@
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 		<PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Localization" Version="9.0.9" />
 		<PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.0" />
 		<PackageReference Include="SixLabors.ImageSharp" Version="3.0.2" />
 		<PackageReference Include="MailKit" Version="4.2.0" />

@@ -8,18 +8,25 @@ using System.Diagnostics;
 using Twilio.Types;
 using static System.Net.Mime.MediaTypeNames;
 
+
+using Microsoft.Extensions.Localization;
+
+using ReverseMarket.Resources;
+
+
 namespace ReverseMarket.Controllers
 {
     public class HomeController : Controller
     {
         private readonly ApplicationDbContext _context;
         TwilioWhatsapp _twilio=new TwilioWhatsapp();
-        
+        private readonly IStringLocalizer<SharedResource> _localizer;
 
 
-        public HomeController(ApplicationDbContext context)
+        public HomeController(ApplicationDbContext context, IStringLocalizer<SharedResource> localizer)
         {
             _context = context;
+            _localizer = localizer;
         }
 
         public async Task<IActionResult> Index()
@@ -74,6 +81,25 @@ namespace ReverseMarket.Controllers
             return View();
         }
 
+
+        [HttpPost]
+        public async Task<IActionResult> Contact(ContactFormModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                // هنا يمكنك إضافة منطق إرسال البريد الإلكتروني أو حفظ الرسالة في قاعدة البيانات
+
+                TempData["SuccessMessage"] = _localizer["MessageSentSuccess"];
+                return RedirectToAction(nameof(Contact));
+            }
+
+            return View(model);
+        }
+
+        public IActionResult Terms()
+        {
+            return View();
+        }
         public async Task<IActionResult> Privacy()
         {
             var siteSettings = await _context.SiteSettings.FirstOrDefaultAsync();
@@ -86,5 +112,13 @@ namespace ReverseMarket.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+    }
+    public class ContactFormModel
+    {
+        public string Name { get; set; }
+        public string Email { get; set; }
+        public string Phone { get; set; }
+        public string Subject { get; set; }
+        public string Message { get; set; }
     }
 }

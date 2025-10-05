@@ -13,6 +13,8 @@ using ReverseMarket.Services;
 using ReverseMarket.SignalR;
 using System.Globalization;
 
+using Microsoft.Extensions.Options;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // ≈⁄œ«œ ﬁ«⁄œ… «·»Ì«‰« 
@@ -37,28 +39,52 @@ builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
 .AddEntityFrameworkStores<ApplicationDbContext>()
 .AddDefaultTokenProviders();
 
-// ≈⁄œ«œ «· —Ã„… Ê«· œÊÌ·
-var supportedCultures = new[]
-{
-    new CultureInfo("ar-IQ"),
-    new CultureInfo("en-US"),
-    new CultureInfo("ku")
-};
+
+builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
 
 builder.Services.Configure<RequestLocalizationOptions>(options =>
 {
-    options.DefaultRequestCulture = new RequestCulture("ar-IQ");
+    var supportedCultures = new[]
+    {
+        new CultureInfo("ar"), // Arabic
+        new CultureInfo("en"), // English
+        new CultureInfo("ku")  // Kurdish
+    };
+
+    options.DefaultRequestCulture = new RequestCulture("ar");
     options.SupportedCultures = supportedCultures;
     options.SupportedUICultures = supportedCultures;
 
-    options.RequestCultureProviders = new List<IRequestCultureProvider>
-    {
-        new CookieRequestCultureProvider(),
-        new AcceptLanguageHeaderRequestCultureProvider()
-    };
+    options.RequestCultureProviders.Insert(0, new CookieRequestCultureProvider());
 });
 
-builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
+// Add MVC with Localization
+builder.Services.AddControllersWithViews()
+    .AddViewLocalization(Microsoft.AspNetCore.Mvc.Razor.LanguageViewLocationExpanderFormat.Suffix)
+    .AddDataAnnotationsLocalization();
+
+////// ≈⁄œ«œ «· —Ã„… Ê«· œÊÌ·
+////var supportedCultures = new[]
+////{
+////    new CultureInfo("ar-IQ"),
+////    new CultureInfo("en-US"),
+////    new CultureInfo("ku")
+////};
+
+////builder.Services.Configure<RequestLocalizationOptions>(options =>
+////{
+////    options.DefaultRequestCulture = new RequestCulture("ar-IQ");
+////    options.SupportedCultures = supportedCultures;
+////    options.SupportedUICultures = supportedCultures;
+
+////    options.RequestCultureProviders = new List<IRequestCultureProvider>
+////    {
+////        new CookieRequestCultureProvider(),
+////        new AcceptLanguageHeaderRequestCultureProvider()
+////    };
+////});
+
+////builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
 
 // ≈⁄œ«œ «·Œœ„«  «·„Œ’’…
 builder.Services.AddScoped<ILanguageService, LanguageService>();
@@ -96,6 +122,9 @@ builder.Services.AddHttpClient<WhatsAppService>();
 
 var app = builder.Build();
 
+
+var localizationOptions = app.Services.GetRequiredService<IOptions<RequestLocalizationOptions>>().Value;
+app.UseRequestLocalization(localizationOptions);
 // ≈⁄œ«œ Pipeline ··ÿ·»« 
 if (app.Environment.IsDevelopment())
 {

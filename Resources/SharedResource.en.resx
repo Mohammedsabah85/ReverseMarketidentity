@@ -128,4 +128,214 @@
     <data name="Copyright" xml:space="preserve">
     <value>© 2024 Reverse Market. All rights reserved.</value>
   </data>
+    <!-- Add these keys to SharedResource.en.resx -->
+    <!-- Contact Page -->
+    <data name="ContactDescription" xml:space="preserve">
+    <value>We are here to serve you, don't hesitate to contact us</value>
+  </data>
+    <data name="WhatsApp" xml:space="preserve">
+    <value>WhatsApp</value>
+  </data>
+    <data name="Location" xml:space="preserve">
+    <value>Location</value>
+  </data>
+    <data name="LocationAddress" xml:space="preserve">
+    <value>Baghdad, Iraq</value>
+  </data>
+    <data name="SendMessage" xml:space="preserve">
+    <value>Send Message</value>
+  </data>
+    <data name="FullName" xml:space="preserve">
+    <value>Full Name</value>
+  </data>
+    <data name="Subject" xml:space="preserve">
+    <value>Subject</value>
+  </data>
+    <data name="SelectSubject" xml:space="preserve">
+    <value>Select Subject</value>
+  </data>
+    <data name="GeneralInquiry" xml:space="preserve">
+    <value>General Inquiry</value>
+  </data>
+    <data name="TechnicalIssue" xml:space="preserve">
+    <value>Technical Issue</value>
+  </data>
+    <data name="Suggestion" xml:space="preserve">
+    <value>Suggestion</value>
+  </data>
+    <data name="Complaint" xml:space="preserve">
+    <value>Complaint</value>
+  </data>
+    <data name="Message" xml:space="preserve">
+    <value>Message</value>
+  </data>
+    <data name="MessageSentSuccess" xml:space="preserve">
+    <value>Your message has been sent successfully! We will contact you soon.</value>
+  </data>
+    <data name="FAQ" xml:space="preserve">
+    <value>Frequently Asked Questions</value>
+  </data>
+    <data name="FAQ1Question" xml:space="preserve">
+    <value>How do I add a request?</value>
+  </data>
+    <data name="FAQ1Answer" xml:space="preserve">
+    <value>You can add your request by clicking "Add Request" in the top menu, then fill in the required information.</value>
+  </data>
+    <data name="FAQ2Question" xml:space="preserve">
+    <value>How long does it take to get offers?</value>
+  </data>
+    <data name="FAQ2Answer" xml:space="preserve">
+    <value>Offers usually start arriving within a few hours of request approval.</value>
+  </data>
+
+    <!-- Terms & Privacy Additional -->
+    <data name="UserResponsibilities" xml:space="preserve">
+    <value>User Responsibilities</value>
+  </data>
+    <data name="Responsibility1" xml:space="preserve">
+    <value>Use the platform legally and legitimately</value>
+  </data>
+    <data name="Responsibility2" xml:space="preserve">
+    <value>Do not violate others' rights</value>
+  </data>
+    <data name="Responsibility3" xml:space="preserve">
+    <value>Comply with all applicable laws and regulations</value>
+  </data>
+    <data name="Responsibility4" xml:space="preserve">
+    <value>Provide accurate and truthful information</value>
+  </data>
+    <data name="ProhibitedActivities" xml:space="preserve">
+    <value>Prohibited Activities</value>
+  </data>
+    <data name="Prohibited1" xml:space="preserve">
+    <value>Posting offensive or illegal content</value>
+  </data>
+    <data name="Prohibited2" xml:space="preserve">
+    <value>Fraud or deception</value>
+  </data>
+    <data name="Prohibited3" xml:space="preserve">
+    <value>Intellectual property infringement</value>
+  </data>
+    <data name="Prohibited4" xml:space="preserve">
+    <value>Attempting to hack or disrupt the system</value>
+  </data>
+    <data name="IntellectualProperty" xml:space="preserve">
+    <value>Intellectual Property</value>
+  </data>
+    <data name="IntellectualPropertyText" xml:space="preserve">
+    <value>All content and trademarks on this site are protected under intellectual property laws.</value>
+  </data>
+    <data name="LimitationOfLiability" xml:space="preserve">
+    <value>Limitation of Liability</value>
+  </data>
+    <data name="LiabilityText" xml:space="preserve">
+    <value>We are not responsible for any direct or indirect damages resulting from use of the platform.</value>
+  </data>
+    <data name="TerminationOfService" xml:space="preserve">
+    <value>Service Termination</value>
+  </data>
+    <data name="TerminationText" xml:space="preserve">
+    <value>We reserve the right to suspend or terminate your account for violation of terms.</value>
+  </data>
+    <data name="ChangesToTerms" xml:space="preserve">
+    <value>Changes to Terms</value>
+  </data>
+    <data name="ChangesText" xml:space="preserve">
+    <value>We may update these terms from time to time. You will be notified of any substantial changes.</value>
+  </data>
+    <data name="ContactTermsText" xml:space="preserve">
+    <value>If you have any questions about these terms, please contact us:</value>
+  </data>
+
+    <!-- Privacy Policy Additional -->
+    <data name="HowWeUseInformation" xml:space="preserve">
+    <value>How We Use Information</value>
+  </data>
+    <data name="UseInfo1" xml:space="preserve">
+    <value>Provide and improve our services</value>
+  </data>
+    <data name="UseInfo2" xml:space="preserve">
+    <value>Communicate with you about your account</value>
+  </data>
+    <data name="UseInfo3" xml:space="preserve">
+    <value>Personalize your experience</value>
+  </data>
+    <data name="UseInfo4" xml:space="preserve">
+    <value>Protect security and prevent fraud</value>
+  </data>
+    <data name="UseInfo5" xml:space="preserve">
+    <value>Comply with legal requirements</value>
+  </data>
+    <data name="DataProtection" xml:space="preserve">
+    <value>Data Protection</value>
+  </data>
+    <data name="DataProtectionText" xml:space="preserve">
+    <value>We take reasonable security measures to protect your personal information:</value>
+  </data>
+    <data name="Protection1" xml:space="preserve">
+    <value>Encryption of sensitive data</value>
+  </data>
+    <data name="Protection2" xml:space="preserve">
+    <value>Access control for authorized personnel only</value>
+  </data>
+    <data name="Protection3" xml:space="preserve">
+    <value>Regular monitoring and updating of security systems</value>
+  </data>
+    <data name="InformationSharing" xml:space="preserve">
+    <value>Information Sharing</value>
+  </data>
+    <data name="SharingText" xml:space="preserve">
+    <value>We do not sell your personal information. We may share it in the following cases:</value>
+  </data>
+    <data name="Sharing1" xml:space="preserve">
+    <value>With your explicit consent</value>
+  </data>
+    <data name="Sharing2" xml:space="preserve">
+    <value>With trusted service providers</value>
+  </data>
+    <data name="Sharing3" xml:space="preserve">
+    <value>When legally required</value>
+  </data>
+    <data name="Cookies" xml:space="preserve">
+    <value>Cookies</value>
+  </data>
+    <data name="CookiesText" xml:space="preserve">
+    <value>We use cookies to improve your experience and analyze site usage.</value>
+  </data>
+    <data name="YourRights" xml:space="preserve">
+    <value>Your Rights</value>
+  </data>
+    <data name="Right1" xml:space="preserve">
+    <value>Access your personal information</value>
+  </data>
+    <data name="Right2" xml:space="preserve">
+    <value>Correct inaccurate information</value>
+  </data>
+    <data name="Right3" xml:space="preserve">
+    <value>Request deletion of your information</value>
+  </data>
+    <data name="Right4" xml:space="preserve">
+    <value>Object to data processing</value>
+  </data>
+    <data name="DataRetention" xml:space="preserve">
+    <value>Data Retention</value>
+  </data>
+    <data name="RetentionText" xml:space="preserve">
+    <value>We retain your information as long as your account is active or as needed to provide our services.</value>
+  </data>
+    <data name="ChildrenPrivacy" xml:space="preserve">
+    <value>Children's Privacy</value>
+  </data>
+    <data name="ChildrenText" xml:space="preserve">
+    <value>Our services are not directed to children under 18. We do not knowingly collect information from children.</value>
+  </data>
+    <data name="PolicyChanges" xml:space="preserve">
+    <value>Policy Changes</value>
+  </data>
+    <data name="PolicyChangesText" xml:space="preserve">
+    <value>We may update this privacy policy. We will post any changes on this page.</value>
+  </data>
+    <data name="ContactPrivacyText" xml:space="preserve">
+    <value>If you have questions about the privacy policy, contact us:</value>
+  </data>
 </root>
