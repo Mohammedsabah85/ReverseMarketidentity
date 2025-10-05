@@ -1,270 +1,210 @@
 ﻿/**
- * Language Manager - إدارة اللغات المتعددة
- * يتعامل مع تبديل اللغات وحفظ التفضيلات
+ * مدير اللغات - نسخة محسّنة وموثوقة
  */
 
 class LanguageManager {
     constructor() {
         this.currentLanguage = document.documentElement.lang || 'ar';
         this.supportedLanguages = ['ar', 'en', 'ku'];
+        this.isChanging = false;
+
+        console.log('✅ تم تحميل مدير اللغات:', this.currentLanguage);
         this.init();
     }
 
     init() {
-        this.attachEventListeners();
-        this.loadKurdishCssIfNeeded();
-        this.updateUIBasedOnLanguage();
+        this.setupEventListeners();
+        this.loadKurdishStyleIfNeeded();
     }
 
-    /**
-     * ربط مستمعي الأحداث
-     */
-    attachEventListeners() {
-        // استماع لتغيير اللغة
-        document.addEventListener('DOMContentLoaded', () => {
-            const languageForms = document.querySelectorAll('.language-form');
+    setupEventListeners() {
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => this.attachFormListeners());
+        } else {
+            this.attachFormListeners();
+        }
+    }
 
-            languageForms.forEach(form => {
-                form.addEventListener('submit', (e) => {
-                    e.preventDefault();
-                    this.changeLanguage(form);
-                });
+    attachFormListeners() {
+        const forms = document.querySelectorAll('.language-form');
+        console.log('📝 عدد نماذج اللغة:', forms.length);
+
+        forms.forEach((form, index) => {
+            const culture = form.querySelector('input[name="culture"]')?.value;
+            console.log(`نموذج ${index + 1}: ${culture}`);
+
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+
+                console.log('🔄 بدء تغيير اللغة إلى:', culture);
+                this.changeLanguage(form);
             });
         });
     }
 
-    /**
-     * تحميل ملف CSS الخاص بالكردية عند الحاجة
-     */
-    loadKurdishCssIfNeeded() {
+    loadKurdishStyleIfNeeded() {
         if (this.currentLanguage === 'ku') {
-            const link = document.createElement('link');
-            link.rel = 'stylesheet';
-            link.href = '/css/kurdish-rtl.css';
-            document.head.appendChild(link);
-        }
-    }
-
-    /**
-     * تحديث الواجهة بناءً على اللغة
-     */
-    updateUIBasedOnLanguage() {
-        const direction = this.getDirection(this.currentLanguage);
-        document.documentElement.dir = direction;
-
-        // تحديث Bootstrap إذا لزم الأمر
-        if (direction === 'rtl' && !this.isBootstrapRTLLoaded()) {
-            this.loadBootstrapRTL();
-        }
-    }
-
-    /**
-     * الحصول على اتجاه اللغة
-     */
-    getDirection(language) {
-        const rtlLanguages = ['ar', 'ku'];
-        return rtlLanguages.includes(language) ? 'rtl' : 'ltr';
-    }
-
-    /**
-     * التحقق من تحميل Bootstrap RTL
-     */
-    isBootstrapRTLLoaded() {
-        return Array.from(document.styleSheets).some(sheet =>
-            sheet.href && sheet.href.includes('bootstrap.rtl')
-        );
-    }
-
-    /**
-     * تحميل Bootstrap RTL
-     */
-    loadBootstrapRTL() {
-        // إزالة Bootstrap LTR
-        const bootstrapLinks = Array.from(document.querySelectorAll('link[href*="bootstrap"]'));
-        bootstrapLinks.forEach(link => {
-            if (!link.href.includes('rtl')) {
-                link.remove();
+            if (!document.querySelector('link[href*="kurdish-rtl"]')) {
+                const link = document.createElement('link');
+                link.rel = 'stylesheet';
+                link.href = '/css/kurdish-rtl.css';
+                document.head.appendChild(link);
+                console.log('✅ تم تحميل ملف CSS الكردي');
             }
-        });
-
-        // إضافة Bootstrap RTL
-        const rtlLink = document.createElement('link');
-        rtlLink.rel = 'stylesheet';
-        rtlLink.href = 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.rtl.min.css';
-        document.head.appendChild(rtlLink);
+        }
     }
 
-    /**
-     * تغيير اللغة
-     */
     async changeLanguage(form) {
+        if (this.isChanging) {
+            console.warn('⚠️ تغيير اللغة قيد التنفيذ بالفعل');
+            return;
+        }
+
+        this.isChanging = true;
+
         const formData = new FormData(form);
         const culture = formData.get('culture');
         const returnUrl = formData.get('returnUrl') || window.location.href;
 
+        console.log('📤 بيانات التغيير:', {
+            culture,
+            returnUrl,
+            hasToken: !!formData.get('__RequestVerificationToken')
+        });
+
         if (!this.supportedLanguages.includes(culture)) {
-            console.error('اللغة غير مدعومة:', culture);
+            console.error('❌ لغة غير مدعومة:', culture);
+            this.isChanging = false;
+            return;
+        }
+
+        if (culture === this.currentLanguage) {
+            console.log('ℹ️ اللغة مختارة بالفعل');
+            this.isChanging = false;
             return;
         }
 
         try {
-            // تحديث UI لإظهار التحميل
-            this.showLoadingState(form);
+            this.showLoading(form, culture);
 
-            // إرسال الطلب
             const response = await fetch(form.action, {
                 method: 'POST',
                 body: formData,
                 headers: {
                     'X-Requested-With': 'XMLHttpRequest'
-                }
+                },
+                credentials: 'same-origin'
             });
 
-            if (response.ok) {
-                // حفظ في localStorage
-                localStorage.setItem('preferredLanguage', culture);
+            console.log('📥 الاستجابة:', response.status, response.ok);
 
-                // إعادة تحميل الصفحة
-                window.location.href = returnUrl;
-            } else {
+            if (!response.ok) {
                 throw new Error(`HTTP ${response.status}`);
             }
+
+            // حفظ التفضيل
+            try {
+                localStorage.setItem('preferredLanguage', culture);
+                console.log('💾 تم حفظ التفضيل');
+            } catch (e) {
+                console.warn('⚠️ لا يمكن حفظ في localStorage');
+            }
+
+            // إعادة التحميل
+            console.log('🔄 إعادة تحميل الصفحة...');
+            setTimeout(() => {
+                window.location.href = returnUrl;
+            }, 100);
+
         } catch (error) {
-            console.error('خطأ في تغيير اللغة:', error);
-            this.showError('حدث خطأ في تغيير اللغة');
-            this.resetLoadingState(form);
+            console.error('❌ خطأ:', error);
+            this.showError(this.getErrorMessage());
+            this.hideLoading(form);
+            this.isChanging = false;
         }
     }
 
-    /**
-     * إظهار حالة التحميل
-     */
-    showLoadingState(form) {
+    showLoading(form, culture) {
         const button = form.querySelector('button[type="submit"]');
-        if (button) {
-            button.disabled = true;
-            button.dataset.originalHtml = button.innerHTML;
+        if (!button) return;
 
-            const loadingText = this.getLoadingText();
-            button.innerHTML = `<i class="fas fa-spinner fa-spin me-2"></i>${loadingText}`;
-        }
+        button.disabled = true;
+        button.dataset.original = button.innerHTML;
 
-        // إغلاق القائمة المنسدلة
-        const dropdown = bootstrap.Dropdown.getInstance(
-            document.getElementById('languageMenu')
-        );
-        if (dropdown) {
-            dropdown.hide();
-        }
-    }
-
-    /**
-     * إعادة تعيين حالة التحميل
-     */
-    resetLoadingState(form) {
-        const button = form.querySelector('button[type="submit"]');
-        if (button && button.dataset.originalHtml) {
-            button.innerHTML = button.dataset.originalHtml;
-            button.disabled = false;
-            delete button.dataset.originalHtml;
-        }
-    }
-
-    /**
-     * الحصول على نص التحميل
-     */
-    getLoadingText() {
-        const loadingTexts = {
+        const loadingText = {
             'ar': 'جاري التحميل...',
             'en': 'Loading...',
             'ku': 'لودکردن...'
-        };
-        return loadingTexts[this.currentLanguage] || 'Loading...';
+        }[culture] || 'جاري التحميل...';
+
+        button.innerHTML = `<i class="fas fa-spinner fa-spin me-2"></i>${loadingText}`;
+
+        // تعطيل جميع الأزرار
+        document.querySelectorAll('.language-form button').forEach(btn => {
+            btn.disabled = true;
+        });
     }
 
-    /**
-     * عرض رسالة خطأ
-     */
+    hideLoading(form) {
+        const button = form.querySelector('button[type="submit"]');
+        if (button && button.dataset.original) {
+            button.innerHTML = button.dataset.original;
+            button.disabled = false;
+            delete button.dataset.original;
+        }
+
+        document.querySelectorAll('.language-form button').forEach(btn => {
+            btn.disabled = false;
+        });
+    }
+
+    getErrorMessage() {
+        const messages = {
+            'ar': 'حدث خطأ في تغيير اللغة',
+            'en': 'Error changing language',
+            'ku': 'هەڵەیەک ڕوویدا'
+        };
+        return messages[this.currentLanguage] || messages['ar'];
+    }
+
     showError(message) {
-        const alertDiv = document.createElement('div');
-        alertDiv.className = 'alert alert-danger alert-dismissible fade show position-fixed';
-        alertDiv.style.cssText = 'top: 20px; right: 20px; z-index: 9999; max-width: 400px;';
-        alertDiv.innerHTML = `
+        document.querySelectorAll('.language-error').forEach(el => el.remove());
+
+        const alert = document.createElement('div');
+        alert.className = 'alert alert-danger alert-dismissible fade show position-fixed language-error';
+        alert.style.cssText = 'top: 20px; right: 20px; left: 20px; z-index: 9999; max-width: 500px; margin: 0 auto;';
+        alert.innerHTML = `
             <i class="fas fa-exclamation-circle me-2"></i>
             ${message}
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         `;
 
-        document.body.appendChild(alertDiv);
+        document.body.appendChild(alert);
 
         setTimeout(() => {
-            alertDiv.remove();
+            if (alert.parentNode) alert.remove();
         }, 5000);
     }
 
-    /**
-     * الحصول على اللغة الحالية
-     */
     getCurrentLanguage() {
         return this.currentLanguage;
     }
-
-    /**
-     * التحقق من دعم اللغة
-     */
-    isLanguageSupported(language) {
-        return this.supportedLanguages.includes(language);
-    }
-
-    /**
-     * الحصول على اسم اللغة
-     */
-    getLanguageName(language) {
-        const names = {
-            'ar': 'العربية',
-            'en': 'English',
-            'ku': 'کوردی'
-        };
-        return names[language] || language;
-    }
-
-    /**
-     * تطبيق اللغة المفضلة تلقائياً
-     */
-    autoApplyPreferredLanguage() {
-        const preferred = localStorage.getItem('preferredLanguage');
-
-        if (preferred &&
-            preferred !== this.currentLanguage &&
-            this.isLanguageSupported(preferred)) {
-
-            const form = document.querySelector(
-                `.language-form input[value="${preferred}"]`
-            )?.closest('form');
-
-            if (form) {
-                setTimeout(() => {
-                    form.dispatchEvent(new Event('submit', {
-                        bubbles: true,
-                        cancelable: true
-                    }));
-                }, 200);
-            }
-        }
-    }
 }
 
-// تهيئة مدير اللغات
-const languageManager = new LanguageManager();
+// التهيئة
+console.log('🚀 بدء تحميل مدير اللغات...');
 
-// تصدير للاستخدام العام
+let languageManager;
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+        languageManager = new LanguageManager();
+        window.languageManager = languageManager;
+    });
+} else {
+    languageManager = new LanguageManager();
+    window.languageManager = languageManager;
+}
+
 window.LanguageManager = LanguageManager;
-window.languageManager = languageManager;
-
-// تطبيق اللغة المفضلة عند تحميل الصفحة
-document.addEventListener('DOMContentLoaded', () => {
-    // إعطاء وقت للصفحة للتحميل قبل تطبيق اللغة
-    setTimeout(() => {
-        languageManager.autoApplyPreferredLanguage();
-    }, 500);
-});

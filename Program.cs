@@ -17,9 +17,62 @@ using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
+
+builder.Services.AddLocalization(options =>
+{
+    options.ResourcesPath = "Resources";
+});
+
+builder.Services.AddControllersWithViews()
+    .AddViewLocalization()
+    .AddDataAnnotationsLocalization();
+
+// «··€«  «·„œ⁄Ê„…
+var supportedCultures = new[]
+{
+    new CultureInfo("ar"),
+    new CultureInfo("en"),
+    new CultureInfo("ku")
+};
+
+builder.Services.Configure<RequestLocalizationOptions>(options =>
+{
+    options.DefaultRequestCulture = new RequestCulture("ar");
+    options.SupportedCultures = supportedCultures;
+    options.SupportedUICultures = supportedCultures;
+
+    options.RequestCultureProviders = new List<IRequestCultureProvider>
+    {
+        new CookieRequestCultureProvider(),
+        new QueryStringRequestCultureProvider(),
+        new AcceptLanguageHeaderRequestCultureProvider()
+    };
+});
+
+
+
+
+
 // ≈⁄œ«œ ﬁ«⁄œ… «·»Ì«‰« 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+
+builder.Services.AddHttpContextAccessor();
+
+
+builder.Services.AddScoped<ILanguageService, LanguageService>();
+
+// Session
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30);
+    options.Cookie.IsEssential = true;
+});
+
+
+
+
 
 // ≈⁄œ«œ Identity „⁄ «·√œÊ«—
 builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
@@ -40,28 +93,7 @@ builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
 .AddDefaultTokenProviders();
 
 
-builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
 
-builder.Services.Configure<RequestLocalizationOptions>(options =>
-{
-    var supportedCultures = new[]
-    {
-        new CultureInfo("ar"), // Arabic
-        new CultureInfo("en"), // English
-        new CultureInfo("ku")  // Kurdish
-    };
-
-    options.DefaultRequestCulture = new RequestCulture("ar");
-    options.SupportedCultures = supportedCultures;
-    options.SupportedUICultures = supportedCultures;
-
-    options.RequestCultureProviders.Insert(0, new CookieRequestCultureProvider());
-});
-
-// Add MVC with Localization
-builder.Services.AddControllersWithViews()
-    .AddViewLocalization(Microsoft.AspNetCore.Mvc.Razor.LanguageViewLocationExpanderFormat.Suffix)
-    .AddDataAnnotationsLocalization();
 
 ////// ≈⁄œ«œ «· —Ã„… Ê«· œÊÌ·
 ////var supportedCultures = new[]

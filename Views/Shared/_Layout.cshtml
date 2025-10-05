@@ -4,12 +4,17 @@
 @inject IStringLocalizer<SharedResource> Localizer
 @inject ILanguageService LanguageService
 @inject IStringLocalizer<SharedResource> Localizer
+
+@inject IStringLocalizer<SharedResource> Localizer
+@inject ILanguageService LanguageService
+
 @Localizer["KeyName"]
 @{
     var currentLanguage = LanguageService.GetCurrentLanguage();
     var direction = LanguageService.GetDirection();
     var supportedLanguages = LanguageService.GetSupportedLanguages();
     var currentLangInfo = supportedLanguages.FirstOrDefault(l => l.Code == currentLanguage) ?? supportedLanguages.First();
+
 
     var siteSettings = ViewBag.SiteSettings as ReverseMarket.Models.SiteSettings;
     var isLoggedIn = Context.Session.GetString("IsLoggedIn") == "true";
@@ -811,26 +816,26 @@
                                role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 <span class="flag">@currentLangInfo.Flag</span>
                                 <span class="d-none d-sm-inline">@currentLangInfo.NativeName</span>
-                                <i class="fas fa-globe @(direction == "rtl" ? "me-1" : "ms-1") d-sm-none"></i>
                             </a>
-                            <ul class="dropdown-menu dropdown-menu-end animate__animated animate__fadeIn animate__faster" id="languageDropdown">
+                            <ul class="dropdown-menu dropdown-menu-end" id="languageDropdown">
                                 @foreach (var language in supportedLanguages)
                                 {
                                     <li>
-                                        <form method="post" action="/Language/SetLanguage"
-                                              class="language-form" data-language="@language.Code">
+                                        <form method="post"
+                                              action="@Url.Action("SetLanguage", "Language")"
+                                              class="language-form">
                                             @Html.AntiForgeryToken()
                                             <input type="hidden" name="culture" value="@language.Code" />
-                                            <input type="hidden" name="returnUrl"
-                                                   value="@(Context.Request.Path + Context.Request.QueryString)" />
+                                            <input type="hidden" name="returnUrl" value="@(Context.Request.Path + Context.Request.QueryString)" />
+
                                             <button type="submit"
                                                     class="dropdown-item @(currentLanguage == language.Code ? "active" : "")"
                                                     @(currentLanguage == language.Code ? "disabled" : "")>
                                                 <span class="flag">@language.Flag</span>
-                                                <span class="flex-grow-1">@language.NativeName</span>
+                                                <span>@language.NativeName</span>
                                                 @if (currentLanguage == language.Code)
                                                 {
-                                                    <i class="fas fa-check @(direction == "rtl" ? "me-auto" : "ms-auto") text-success"></i>
+                                                    <i class="fas fa-check ms-auto text-success"></i>
                                                 }
                                             </button>
                                         </form>
@@ -1124,381 +1129,8 @@
     <script>
 
 
-                // Global Configuration
-           const siteConfig = {
-            currentLanguage: '@currentLanguage',
-            direction: '@direction',
-            isRTL: @(direction == "rtl" ? "true" : "false")
-        };
-
-        // DOM Ready Functions
-        document.addEventListener('DOMContentLoaded', function() {
-            initializeAlerts();
-            initializeBackToTop();
-            initializeNavigation();
-            initializeLanguageSelector();
-            initializeAnimations();
-        });
-
-        // Language Selector Enhancement
-        function initializeLanguageSelector() {
-            const languageForms = document.querySelectorAll('.language-form');
-            const languageDropdown = document.getElementById('languageDropdown');
-
-            languageForms.forEach(form => {
-                form.addEventListener('submit', function(e) {
-                    e.preventDefault(); // منع الإرسال الافتراضي
-
-                    const button = this.querySelector('button[type="submit"]');
-                    const cultureInput = this.querySelector('input[name="culture"]');
-                    const returnUrlInput = this.querySelector('input[name="returnUrl"]');
-
-                    if (!button || !cultureInput) {
-                        console.error('Required form elements not found');
-                        showLanguageError('عناصر النموذج المطلوبة غير موجودة');
-                        return;
-                    }
-
-                    const languageCode = cultureInput.value;
-                    const returnUrl = returnUrlInput ? returnUrlInput.value : window.location.href;
-
-                    // التحقق من صحة رمز اللغة
-                    if (!languageCode || !isValidLanguageCode(languageCode)) {
-                        showLanguageError('رمز اللغة غير صحيح');
-                        return;
-                    }
-
-                    // التحقق من أن اللغة مختلفة عن الحالية
-                    if (languageCode === siteConfig.currentLanguage) {
-                        console.log('Language is already selected:', languageCode);
-                        return;
-                    }
-
-                    // تحديث UI
-                    handleLanguageChange(button, languageCode);
-
-                    // إرسال الطلب
-                    submitLanguageForm(this, languageCode, returnUrl);
-                });
-            });
-
-            // إضافة معالج للنقر خارج القائمة
-            document.addEventListener('click', function(e) {
-                if (languageDropdown && !e.target.closest('.language-selector')) {
-                    const dropdownInstance = bootstrap.Dropdown.getInstance(
-                        document.getElementById('languageMenu')
-                    );
-                    if (dropdownInstance) {
-                        dropdownInstance.hide();
-                    }
-                }
-            });
-        }
-
-        // التحقق من صحة رمز اللغة
-        function isValidLanguageCode(code) {
-            const validCodes = ['ar', 'en', 'ku'];
-            return validCodes.includes(code);
-        }
-
-        // معالج تغيير اللغة
-        function handleLanguageChange(button, languageCode) {
-            if (!button) return;
-
-            // حفظ المحتوى الأصلي
-            const originalContent = button.innerHTML;
-            button.dataset.originalContent = originalContent;
-
-            // إضافة حالة التحميل
-            const loadingText = getLoadingText(languageCode);
-            button.innerHTML = `<i class="fas fa-spinner fa-spin me-2"></i>${loadingText}`;
-            button.disabled = true;
-
-            // تعطيل جميع أزرار اللغة
-            const allButtons = document.querySelectorAll('.language-form button');
-            allButtons.forEach(btn => {
-                btn.disabled = true;
-                btn.classList.add('loading');
-            });
-
-            // إضافة كلاس التحميل للقائمة
-            const dropdown = document.getElementById('languageDropdown');
-            if (dropdown) {
-                dropdown.classList.add('loading');
-            }
-
-            // إخفاء القائمة المنسدلة
-            const dropdownInstance = bootstrap.Dropdown.getInstance(
-                document.getElementById('languageMenu')
-            );
-            if (dropdownInstance) {
-                dropdownInstance.hide();
-            }
-
-            // إضافة timeout للأمان
-            setTimeout(() => {
-                resetLanguageButtons();
-                showLanguageError('انتهت مهلة تغيير اللغة. يرجى المحاولة مرة أخرى.');
-            }, 15000); // 15 ثانية
-        }
-
-        // إرسال نموذج اللغة
-        function submitLanguageForm(form, languageCode, returnUrl) {
-            const formData = new FormData(form);
-
-            // التأكد من وجود returnUrl
-            if (!formData.has('returnUrl')) {
-                formData.append('returnUrl', returnUrl || window.location.href);
-            }
-
-            console.log('Submitting language change request:', {
-                culture: languageCode,
-                returnUrl: returnUrl,
-                action: form.action
-            });
-
-            fetch(form.action, {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest',
-                    'Cache-Control': 'no-cache'
-                },
-                credentials: 'same-origin'
-            })
-            .then(response => {
-                console.log('Language change response status:', response.status);
-
-                if (response.ok) {
-                    // حفظ اللغة في localStorage
-                    try {
-                        localStorage.setItem('preferredLanguage', languageCode);
-                        console.log('Language preference saved:', languageCode);
-                    } catch (e) {
-                        console.log('LocalStorage not available:', e);
-                    }
-
-                    // إعادة تحميل الصفحة لتطبيق اللغة الجديدة
-                    console.log('Reloading page to apply new language...');
-                    setTimeout(() => {
-                        window.location.reload(true);
-                    }, 300);
-                } else {
-                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-                }
-            })
-            .catch(error => {
-                console.error('Language change error:', error);
-                showLanguageError('حدث خطأ أثناء تغيير اللغة: ' + error.message);
-                resetLanguageButtons();
-            });
-        }
-
-        // إعادة تعيين أزرار اللغة
-        function resetLanguageButtons() {
-            const allButtons = document.querySelectorAll('.language-form button');
-            allButtons.forEach(btn => {
-                btn.disabled = false;
-                btn.classList.remove('loading');
-
-                // استعادة المحتوى الأصلي
-                if (btn.dataset.originalContent) {
-                    btn.innerHTML = btn.dataset.originalContent;
-                    delete btn.dataset.originalContent;
-                }
-            });
-
-            // إزالة كلاس التحميل من القائمة
-            const dropdown = document.getElementById('languageDropdown');
-            if (dropdown) {
-                dropdown.classList.remove('loading');
-            }
-        }
-
-        // الحصول على نص التحميل حسب اللغة
-        function getLoadingText(languageCode) {
-            switch (languageCode) {
-                case 'ar':
-                    return 'جاري التحميل...';
-                case 'en':
-                    return 'Loading...';
-                case 'ku':
-                    return 'لودكردن...';
-                default:
-                    return 'جاري التحميل...';
-            }
-        }
-
-        // عرض خطأ اللغة
-        function showLanguageError(message) {
-            console.error('Language Error:', message);
-
-            // إزالة الأخطاء السابقة
-            const existingErrors = document.querySelectorAll('.language-error-alert');
-            existingErrors.forEach(alert => alert.remove());
-
-            // إنشاء تنبيه مؤقت
-            const alertDiv = document.createElement('div');
-            alertDiv.className = 'alert alert-danger alert-dismissible fade show position-fixed language-error-alert';
-            alertDiv.style.cssText = 'top: 20px; right: 20px; z-index: 9999; max-width: 400px;';
-            alertDiv.innerHTML = `
-                <i class="fas fa-exclamation-circle me-2"></i>
-                <strong>خطأ في تغيير اللغة:</strong> ${message}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            `;
-
-            document.body.appendChild(alertDiv);
-
-            // إزالة التنبيه تلقائياً
-            setTimeout(() => {
-                if (alertDiv.parentNode) {
-                    alertDiv.remove();
-                }
-            }, 8000);
-        }
-
-        // معالج النقر على أزرار اللغة (للاستدعاء من HTML إذا لزم الأمر)
-        function handleLanguageClick(button, languageCode) {
-            const form = button.closest('form');
-            if (form) {
-                const event = new Event('submit', {
-                    bubbles: true,
-                    cancelable: true
-                });
-                form.dispatchEvent(event);
-            }
-        }
-
-        // تطبيق اللغة المفضلة تلقائياً
-        function autoApplyPreferredLanguage() {
-            try {
-                const preferredLang = localStorage.getItem('preferredLanguage');
-                if (preferredLang &&
-                    preferredLang !== siteConfig.currentLanguage &&
-                    isValidLanguageCode(preferredLang)) {
-
-                    console.log(`Auto-applying preferred language: ${preferredLang} (current: ${siteConfig.currentLanguage})`);
-
-                    // البحث عن النموذج المناسب
-                    const cultureInput = document.querySelector(`.language-form input[value="${preferredLang}"]`);
-                    const form = cultureInput?.closest('form');
-
-                    if (form && cultureInput) {
-                        console.log('Found form for preferred language, applying...');
-                        setTimeout(() => {
-                            const submitEvent = new Event('submit', {
-                                bubbles: true,
-                                cancelable: true
-                            });
-                            form.dispatchEvent(submitEvent);
-                        }, 200);
-                    } else {
-                        console.log('Form not found for preferred language:', preferredLang);
-                    }
-                } else {
-                    console.log('No auto-language change needed:', {
-                        preferred: preferredLang,
-                        current: siteConfig.currentLanguage,
-                        valid: preferredLang ? isValidLanguageCode(preferredLang) : false
-                    });
-                }
-            } catch (e) {
-                console.log('Error auto-applying language:', e);
-            }
-        }
-
-        // باقي الدوال (initializeAlerts, initializeBackToTop, etc.)
-        function initializeAlerts() {
-            const alerts = document.querySelectorAll('.alert');
-            alerts.forEach(alert => {
-                setTimeout(() => {
-                    if (alert.parentNode) {
-                        const bsAlert = new bootstrap.Alert(alert);
-                        bsAlert.close();
-                    }
-                }, 5000);
-
-                alert.addEventListener('closed.bs.alert', function() {
-                    this.style.transform = 'translateX(' + (siteConfig.isRTL ? '-' : '') + '100%)';
-                });
-            });
-        }
-
-        function initializeBackToTop() {
-            const backToTop = document.getElementById('backToTop');
-            if (!backToTop) return;
-
-            window.addEventListener('scroll', function() {
-                if (window.pageYOffset > 300) {
-                    backToTop.style.display = 'block';
-                    backToTop.classList.add('animate__animated', 'animate__fadeInUp');
-                } else {
-                    backToTop.style.display = 'none';
-                }
-            });
-
-            backToTop.addEventListener('click', function() {
-                window.scrollTo({
-                    top: 0,
-                    behavior: 'smooth'
-                });
-            });
-        }
-
-        function initializeNavigation() {
-            const currentPath = window.location.pathname;
-            const navLinks = document.querySelectorAll('.navbar-nav .nav-link');
-
-            navLinks.forEach(link => {
-                if (link.getAttribute('href') === currentPath) {
-                    link.classList.add('active');
-                }
-            });
-
-            const navbarToggler = document.querySelector('.navbar-toggler');
-            const navbarCollapse = document.querySelector('.navbar-collapse');
-
-            if (navbarToggler && navbarCollapse) {
-                navbarToggler.addEventListener('click', function() {
-                    navbarCollapse.classList.toggle('animate__animated');
-                    navbarCollapse.classList.toggle('animate__slideInDown');
-                });
-            }
-        }
-
-        function initializeAnimations() {
-            const observerOptions = {
-                threshold: 0.1,
-                rootMargin: '0px 0px -50px 0px'
-            };
-
-            const observer = new IntersectionObserver(function(entries) {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('animate__animated', 'animate__fadeInUp');
-                    }
-                });
-            }, observerOptions);
-
-            const animatedElements = document.querySelectorAll('.card-custom, .footer-section');
-            animatedElements.forEach(el => observer.observe(el));
-        }
-
-        // تطبيق اللغة المفضلة بعد تحميل الصفحة
-        setTimeout(autoApplyPreferredLanguage, 500);
-
-        // معالج الأخطاء العامة
-        window.addEventListener('error', function(e) {
-            console.error('Global error:', e.error);
-        });
-
-        // مراقبة الأداء
-        window.addEventListener('load', function() {
-            const loadTime = performance.timing.loadEventEnd - performance.timing.navigationStart;
-            console.log('Page load time:', loadTime + 'ms');
-        });
-        // // Global Configuration
-        // const siteConfig = {
+        //         // Global Configuration
+        //    const siteConfig = {
         //     currentLanguage: '@currentLanguage',
         //     direction: '@direction',
         //     isRTL: @(direction == "rtl" ? "true" : "false")
@@ -1513,11 +1145,277 @@
         //     initializeAnimations();
         // });
 
-        // // Alert Management
+        // // Language Selector Enhancement
+        // function initializeLanguageSelector() {
+        //     const languageForms = document.querySelectorAll('.language-form');
+        //     const languageDropdown = document.getElementById('languageDropdown');
+
+        //     languageForms.forEach(form => {
+        //         form.addEventListener('submit', function(e) {
+        //             e.preventDefault(); // منع الإرسال الافتراضي
+
+        //             const button = this.querySelector('button[type="submit"]');
+        //             const cultureInput = this.querySelector('input[name="culture"]');
+        //             const returnUrlInput = this.querySelector('input[name="returnUrl"]');
+
+        //             if (!button || !cultureInput) {
+        //                 console.error('Required form elements not found');
+        //                 showLanguageError('عناصر النموذج المطلوبة غير موجودة');
+        //                 return;
+        //             }
+
+        //             const languageCode = cultureInput.value;
+        //             const returnUrl = returnUrlInput ? returnUrlInput.value : window.location.href;
+
+        //             // التحقق من صحة رمز اللغة
+        //             if (!languageCode || !isValidLanguageCode(languageCode)) {
+        //                 showLanguageError('رمز اللغة غير صحيح');
+        //                 return;
+        //             }
+
+        //             // التحقق من أن اللغة مختلفة عن الحالية
+        //             if (languageCode === siteConfig.currentLanguage) {
+        //                 console.log('Language is already selected:', languageCode);
+        //                 return;
+        //             }
+
+        //             // تحديث UI
+        //             handleLanguageChange(button, languageCode);
+
+        //             // إرسال الطلب
+        //             submitLanguageForm(this, languageCode, returnUrl);
+        //         });
+        //     });
+
+        //     // إضافة معالج للنقر خارج القائمة
+        //     document.addEventListener('click', function(e) {
+        //         if (languageDropdown && !e.target.closest('.language-selector')) {
+        //             const dropdownInstance = bootstrap.Dropdown.getInstance(
+        //                 document.getElementById('languageMenu')
+        //             );
+        //             if (dropdownInstance) {
+        //                 dropdownInstance.hide();
+        //             }
+        //         }
+        //     });
+        // }
+
+        // // التحقق من صحة رمز اللغة
+        // function isValidLanguageCode(code) {
+        //     const validCodes = ['ar', 'en', 'ku'];
+        //     return validCodes.includes(code);
+        // }
+
+        // // معالج تغيير اللغة
+        // function handleLanguageChange(button, languageCode) {
+        //     if (!button) return;
+
+        //     // حفظ المحتوى الأصلي
+        //     const originalContent = button.innerHTML;
+        //     button.dataset.originalContent = originalContent;
+
+        //     // إضافة حالة التحميل
+        //     const loadingText = getLoadingText(languageCode);
+        //     button.innerHTML = `<i class="fas fa-spinner fa-spin me-2"></i>${loadingText}`;
+        //     button.disabled = true;
+
+        //     // تعطيل جميع أزرار اللغة
+        //     const allButtons = document.querySelectorAll('.language-form button');
+        //     allButtons.forEach(btn => {
+        //         btn.disabled = true;
+        //         btn.classList.add('loading');
+        //     });
+
+        //     // إضافة كلاس التحميل للقائمة
+        //     const dropdown = document.getElementById('languageDropdown');
+        //     if (dropdown) {
+        //         dropdown.classList.add('loading');
+        //     }
+
+        //     // إخفاء القائمة المنسدلة
+        //     const dropdownInstance = bootstrap.Dropdown.getInstance(
+        //         document.getElementById('languageMenu')
+        //     );
+        //     if (dropdownInstance) {
+        //         dropdownInstance.hide();
+        //     }
+
+        //     // إضافة timeout للأمان
+        //     setTimeout(() => {
+        //         resetLanguageButtons();
+        //         showLanguageError('انتهت مهلة تغيير اللغة. يرجى المحاولة مرة أخرى.');
+        //     }, 15000); // 15 ثانية
+        // }
+
+        // // إرسال نموذج اللغة
+        // function submitLanguageForm(form, languageCode, returnUrl) {
+        //     const formData = new FormData(form);
+
+        //     // التأكد من وجود returnUrl
+        //     if (!formData.has('returnUrl')) {
+        //         formData.append('returnUrl', returnUrl || window.location.href);
+        //     }
+
+        //     console.log('Submitting language change request:', {
+        //         culture: languageCode,
+        //         returnUrl: returnUrl,
+        //         action: form.action
+        //     });
+
+        //     fetch(form.action, {
+        //         method: 'POST',
+        //         body: formData,
+        //         headers: {
+        //             'X-Requested-With': 'XMLHttpRequest',
+        //             'Cache-Control': 'no-cache'
+        //         },
+        //         credentials: 'same-origin'
+        //     })
+        //     .then(response => {
+        //         console.log('Language change response status:', response.status);
+
+        //         if (response.ok) {
+        //             // حفظ اللغة في localStorage
+        //             try {
+        //                 localStorage.setItem('preferredLanguage', languageCode);
+        //                 console.log('Language preference saved:', languageCode);
+        //             } catch (e) {
+        //                 console.log('LocalStorage not available:', e);
+        //             }
+
+        //             // إعادة تحميل الصفحة لتطبيق اللغة الجديدة
+        //             console.log('Reloading page to apply new language...');
+        //             setTimeout(() => {
+        //                 window.location.reload(true);
+        //             }, 300);
+        //         } else {
+        //             throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        //         }
+        //     })
+        //     .catch(error => {
+        //         console.error('Language change error:', error);
+        //         showLanguageError('حدث خطأ أثناء تغيير اللغة: ' + error.message);
+        //         resetLanguageButtons();
+        //     });
+        // }
+
+        // // إعادة تعيين أزرار اللغة
+        // function resetLanguageButtons() {
+        //     const allButtons = document.querySelectorAll('.language-form button');
+        //     allButtons.forEach(btn => {
+        //         btn.disabled = false;
+        //         btn.classList.remove('loading');
+
+        //         // استعادة المحتوى الأصلي
+        //         if (btn.dataset.originalContent) {
+        //             btn.innerHTML = btn.dataset.originalContent;
+        //             delete btn.dataset.originalContent;
+        //         }
+        //     });
+
+        //     // إزالة كلاس التحميل من القائمة
+        //     const dropdown = document.getElementById('languageDropdown');
+        //     if (dropdown) {
+        //         dropdown.classList.remove('loading');
+        //     }
+        // }
+
+        // // الحصول على نص التحميل حسب اللغة
+        // function getLoadingText(languageCode) {
+        //     switch (languageCode) {
+        //         case 'ar':
+        //             return 'جاري التحميل...';
+        //         case 'en':
+        //             return 'Loading...';
+        //         case 'ku':
+        //             return 'لودكردن...';
+        //         default:
+        //             return 'جاري التحميل...';
+        //     }
+        // }
+
+        // // عرض خطأ اللغة
+        // function showLanguageError(message) {
+        //     console.error('Language Error:', message);
+
+        //     // إزالة الأخطاء السابقة
+        //     const existingErrors = document.querySelectorAll('.language-error-alert');
+        //     existingErrors.forEach(alert => alert.remove());
+
+        //     // إنشاء تنبيه مؤقت
+        //     const alertDiv = document.createElement('div');
+        //     alertDiv.className = 'alert alert-danger alert-dismissible fade show position-fixed language-error-alert';
+        //     alertDiv.style.cssText = 'top: 20px; right: 20px; z-index: 9999; max-width: 400px;';
+        //     alertDiv.innerHTML = `
+        //         <i class="fas fa-exclamation-circle me-2"></i>
+        //         <strong>خطأ في تغيير اللغة:</strong> ${message}
+        //         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        //     `;
+
+        //     document.body.appendChild(alertDiv);
+
+        //     // إزالة التنبيه تلقائياً
+        //     setTimeout(() => {
+        //         if (alertDiv.parentNode) {
+        //             alertDiv.remove();
+        //         }
+        //     }, 8000);
+        // }
+
+        // // معالج النقر على أزرار اللغة (للاستدعاء من HTML إذا لزم الأمر)
+        // function handleLanguageClick(button, languageCode) {
+        //     const form = button.closest('form');
+        //     if (form) {
+        //         const event = new Event('submit', {
+        //             bubbles: true,
+        //             cancelable: true
+        //         });
+        //         form.dispatchEvent(event);
+        //     }
+        // }
+
+        // // تطبيق اللغة المفضلة تلقائياً
+        // function autoApplyPreferredLanguage() {
+        //     try {
+        //         const preferredLang = localStorage.getItem('preferredLanguage');
+        //         if (preferredLang &&
+        //             preferredLang !== siteConfig.currentLanguage &&
+        //             isValidLanguageCode(preferredLang)) {
+
+        //             console.log(`Auto-applying preferred language: ${preferredLang} (current: ${siteConfig.currentLanguage})`);
+
+        //             // البحث عن النموذج المناسب
+        //             const cultureInput = document.querySelector(`.language-form input[value="${preferredLang}"]`);
+        //             const form = cultureInput?.closest('form');
+
+        //             if (form && cultureInput) {
+        //                 console.log('Found form for preferred language, applying...');
+        //                 setTimeout(() => {
+        //                     const submitEvent = new Event('submit', {
+        //                         bubbles: true,
+        //                         cancelable: true
+        //                     });
+        //                     form.dispatchEvent(submitEvent);
+        //                 }, 200);
+        //             } else {
+        //                 console.log('Form not found for preferred language:', preferredLang);
+        //             }
+        //         } else {
+        //             console.log('No auto-language change needed:', {
+        //                 preferred: preferredLang,
+        //                 current: siteConfig.currentLanguage,
+        //                 valid: preferredLang ? isValidLanguageCode(preferredLang) : false
+        //             });
+        //         }
+        //     } catch (e) {
+        //         console.log('Error auto-applying language:', e);
+        //     }
+        // }
+
+        // // باقي الدوال (initializeAlerts, initializeBackToTop, etc.)
         // function initializeAlerts() {
         //     const alerts = document.querySelectorAll('.alert');
         //     alerts.forEach(alert => {
-        //         // Auto-dismiss after 5 seconds
         //         setTimeout(() => {
         //             if (alert.parentNode) {
         //                 const bsAlert = new bootstrap.Alert(alert);
@@ -1525,16 +1423,15 @@
         //             }
         //         }, 5000);
 
-        //         // Add dismiss animation
         //         alert.addEventListener('closed.bs.alert', function() {
         //             this.style.transform = 'translateX(' + (siteConfig.isRTL ? '-' : '') + '100%)';
         //         });
         //     });
         // }
 
-        // // Back to Top Button
         // function initializeBackToTop() {
         //     const backToTop = document.getElementById('backToTop');
+        //     if (!backToTop) return;
 
         //     window.addEventListener('scroll', function() {
         //         if (window.pageYOffset > 300) {
@@ -1553,9 +1450,7 @@
         //     });
         // }
 
-        // // Navigation Enhancement
         // function initializeNavigation() {
-        //     // Active page highlighting
         //     const currentPath = window.location.pathname;
         //     const navLinks = document.querySelectorAll('.navbar-nav .nav-link');
 
@@ -1565,7 +1460,6 @@
         //         }
         //     });
 
-        //     // Mobile menu enhancements
         //     const navbarToggler = document.querySelector('.navbar-toggler');
         //     const navbarCollapse = document.querySelector('.navbar-collapse');
 
@@ -1577,65 +1471,7 @@
         //     }
         // }
 
-        // // Language Selector
-        // function initializeLanguageSelector() {
-        //     const languageForms = document.querySelectorAll('.language-form');
-
-        //     languageForms.forEach(form => {
-        //         form.addEventListener('submit', function(e) {
-        //             const button = this.querySelector('button[type="submit"]');
-        //             const languageCode = this.dataset.language;
-
-        //             // Store language preference
-        //             try {
-        //                 localStorage.setItem('preferredLanguage', languageCode);
-        //             } catch (e) {
-        //                 console.log('LocalStorage not available');
-        //             }
-        //         });
-        //     });
-
-        //     // Auto-apply preferred language
-        //     try {
-        //         const preferredLang = localStorage.getItem('preferredLanguage');
-        //         if (preferredLang && preferredLang !== siteConfig.currentLanguage) {
-        //             const form = document.querySelector(`.language-form[data-language="${preferredLang}"]`);
-        //             if (form) {
-        //                 setTimeout(() => form.submit(), 100);
-        //             }
-        //         }
-        //     } catch (e) {
-        //         console.log('LocalStorage not available');
-        //     }
-        // }
-
-        // // Language Change Handler
-        // function handleLanguageChange(button, languageCode) {
-        //     // Add loading state
-        //     const originalContent = button.innerHTML;
-        //     button.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>جاري التحميل...';
-        //     button.disabled = true;
-
-        //     // Disable all language buttons
-        //     const allButtons = document.querySelectorAll('.language-form button');
-        //     allButtons.forEach(btn => btn.disabled = true);
-
-        //     // Add loading class to dropdown
-        //     const dropdown = document.getElementById('languageDropdown');
-        //     dropdown.classList.add('loading');
-
-        //     // Reset if form submission fails
-        //     setTimeout(() => {
-        //         button.innerHTML = originalContent;
-        //         button.disabled = false;
-        //         allButtons.forEach(btn => btn.disabled = false);
-        //         dropdown.classList.remove('loading');
-        //     }, 5000);
-        // }
-
-        // // Animation Initialization
         // function initializeAnimations() {
-        //     // Intersection Observer for scroll animations
         //     const observerOptions = {
         //         threshold: 0.1,
         //         rootMargin: '0px 0px -50px 0px'
@@ -1649,83 +1485,276 @@
         //         });
         //     }, observerOptions);
 
-        //     // Observe elements with animation class
         //     const animatedElements = document.querySelectorAll('.card-custom, .footer-section');
         //     animatedElements.forEach(el => observer.observe(el));
         // }
 
-        // // Keyboard Shortcuts
-        // document.addEventListener('keydown', function(e) {
-        //     // Alt + L: Open language menu
-        //     if (e.altKey && e.key === 'l') {
-        //         e.preventDefault();
-        //         const languageMenu = document.getElementById('languageMenu');
-        //         if (languageMenu) {
-        //             languageMenu.click();
-        //         }
-        //     }
+        // // تطبيق اللغة المفضلة بعد تحميل الصفحة
+        // setTimeout(autoApplyPreferredLanguage, 500);
 
-        //     // Ctrl + K: Focus search (if available)
-        //     if (e.ctrlKey && e.key === 'k') {
-        //         e.preventDefault();
-        //         const searchInput = document.querySelector('input[type="search"], input[name="search"]');
-        //         if (searchInput) {
-        //             searchInput.focus();
-        //         }
-        //     }
-
-        //     // Escape: Close dropdowns
-        //     if (e.key === 'Escape') {
-        //         const openDropdowns = document.querySelectorAll('.dropdown-menu.show');
-        //         openDropdowns.forEach(dropdown => {
-        //             const bsDropdown = new bootstrap.Dropdown(dropdown.previousElementSibling);
-        //             bsDropdown.hide();
-        //         });
-        //     }
-        // });
-
-        // // Form Enhancement
-        // function enhanceFormElements() {
-        //     // Add floating labels effect
-        //     const formControls = document.querySelectorAll('.form-control');
-        //     formControls.forEach(control => {
-        //         control.addEventListener('focus', function() {
-        //             this.parentElement.classList.add('focused');
-        //         });
-
-        //         control.addEventListener('blur', function() {
-        //             if (!this.value) {
-        //                 this.parentElement.classList.remove('focused');
-        //             }
-        //         });
-        //     });
-        // }
-
-        // // Call form enhancement
-        // enhanceFormElements();
-
-        // // Global Error Handler
+        // // معالج الأخطاء العامة
         // window.addEventListener('error', function(e) {
         //     console.error('Global error:', e.error);
-        //     // Could send to logging service here
         // });
 
-        // // Performance Monitoring
+        // // مراقبة الأداء
         // window.addEventListener('load', function() {
         //     const loadTime = performance.timing.loadEventEnd - performance.timing.navigationStart;
         //     console.log('Page load time:', loadTime + 'ms');
         // });
 
-        // // Service Worker Registration (if needed)
-        // if ('serviceWorker' in navigator) {
-        //     window.addEventListener('load', function() {
-        //         // Uncomment if you have a service worker
-        //         // navigator.serviceWorker.register('/sw.js');
-        //     });
-        // }
+
+
+        //        (function() {
+        //     'use strict';
+
+        //     const LanguageTester = {
+        //         // معلومات النظام
+        //         info: {
+        //             currentLang: document.documentElement.lang,
+        //             direction: document.dir,
+        //             userAgent: navigator.userAgent,
+        //             cookiesEnabled: navigator.cookieEnabled
+        //         },
+
+        //         // فحص شامل
+        //         runDiagnostics() {
+        //             console.group('🔍 Language System Diagnostics');
+
+        //             this.checkBasicSetup();
+        //             this.checkCookies();
+        //             this.checkForms();
+        //             this.checkScripts();
+        //             this.checkStyles();
+
+        //             console.groupEnd();
+        //         },
+
+        //         // فحص الإعدادات الأساسية
+        //         checkBasicSetup() {
+        //             console.group('📋 Basic Setup');
+
+        //             console.log('Current Language:', this.info.currentLang);
+        //             console.log('Direction:', this.info.direction);
+        //             console.log('HTML Lang Attribute:', document.documentElement.getAttribute('lang'));
+        //             console.log('HTML Dir Attribute:', document.documentElement.getAttribute('dir'));
+        //             console.log('Cookies Enabled:', this.info.cookiesEnabled);
+
+        //             console.groupEnd();
+        //         },
+
+        //         // فحص الكوكيز
+        //         checkCookies() {
+        //             console.group('🍪 Cookies Check');
+
+        //             const cookies = document.cookie.split(';').reduce((acc, cookie) => {
+        //                 const [key, value] = cookie.trim().split('=');
+        //                 acc[key] = value;
+        //                 return acc;
+        //             }, {});
+
+        //             console.log('All Cookies:', cookies);
+
+        //             const cultureCookie = cookies['.AspNetCore.Culture'];
+        //             if (cultureCookie) {
+        //                 console.log('✅ Culture Cookie Found:', decodeURIComponent(cultureCookie));
+        //             } else {
+        //                 console.warn('⚠️ Culture Cookie NOT Found!');
+        //             }
+
+        //             console.groupEnd();
+        //         },
+
+        //         // فحص النماذج
+        //         checkForms() {
+        //             console.group('📝 Forms Check');
+
+        //             const forms = document.querySelectorAll('.language-form');
+        //             console.log('Language Forms Count:', forms.length);
+
+        //             forms.forEach((form, index) => {
+        //                 const culture = form.querySelector('input[name="culture"]')?.value;
+        //                 const returnUrl = form.querySelector('input[name="returnUrl"]')?.value;
+        //                 const token = form.querySelector('input[name="__RequestVerificationToken"]')?.value;
+
+        //                 console.log(`Form ${index + 1}:`, {
+        //                     culture,
+        //                     returnUrl,
+        //                     hasToken: !!token,
+        //                     action: form.action
+        //                 });
+        //             });
+
+        //             console.groupEnd();
+        //         },
+
+        //         // فحص السكريبتات
+        //         checkScripts() {
+        //             console.group('📜 Scripts Check');
+
+        //             console.log('Language Manager Loaded:', !!window.LanguageManager);
+        //             console.log('Language Manager Instance:', !!window.languageManager);
+
+        //             if (window.languageManager) {
+        //                 console.log('Current Language (from manager):', window.languageManager.getCurrentLanguage());
+        //             }
+
+        //             const scripts = Array.from(document.scripts)
+        //                 .filter(s => s.src.includes('language'))
+        //                 .map(s => s.src);
+
+        //             console.log('Language Scripts:', scripts);
+
+        //             console.groupEnd();
+        //         },
+
+        //         // فحص الأنماط
+        //         checkStyles() {
+        //             console.group('🎨 Styles Check');
+
+        //             const stylesheets = Array.from(document.styleSheets)
+        //                 .filter(sheet => sheet.href)
+        //                 .map(sheet => ({
+        //                     href: sheet.href,
+        //                     isRTL: sheet.href.includes('rtl'),
+        //                     isKurdish: sheet.href.includes('kurdish')
+        //                 }));
+
+        //             console.table(stylesheets);
+
+        //             const bootstrapRTL = stylesheets.some(s => s.isRTL && s.href.includes('bootstrap'));
+        //             console.log('Bootstrap RTL Loaded:', bootstrapRTL);
+
+        //             const kurdishCSS = stylesheets.some(s => s.isKurdish);
+        //             console.log('Kurdish CSS Loaded:', kurdishCSS);
+
+        //             console.groupEnd();
+        //         },
+
+        //         // اختبار تغيير اللغة
+        //         async testLanguageChange(culture) {
+        //             console.group(`🧪 Testing Language Change to: ${culture}`);
+
+        //             const form = document.querySelector(`input[name="culture"][value="${culture}"]`)?.closest('form');
+
+        //             if (!form) {
+        //                 console.error('❌ Form not found for culture:', culture);
+        //                 console.groupEnd();
+        //                 return false;
+        //             }
+
+        //             const formData = new FormData(form);
+
+        //             console.log('Form Data:', {
+        //                 culture: formData.get('culture'),
+        //                 returnUrl: formData.get('returnUrl'),
+        //                 hasToken: !!formData.get('__RequestVerificationToken')
+        //             });
+
+        //             try {
+        //                 const response = await fetch(form.action, {
+        //                     method: 'POST',
+        //                     body: formData,
+        //                     headers: {
+        //                         'X-Requested-With': 'XMLHttpRequest'
+        //                     }
+        //                 });
+
+        //                 console.log('Response Status:', response.status);
+        //                 console.log('Response OK:', response.ok);
+
+        //                 if (response.ok) {
+        //                     const contentType = response.headers.get('content-type');
+
+        //                     if (contentType && contentType.includes('application/json')) {
+        //                         const data = await response.json();
+        //                         console.log('✅ Response Data:', data);
+        //                     } else {
+        //                         const text = await response.text();
+        //                         console.log('Response Text (first 200 chars):', text.substring(0, 200));
+        //                     }
+
+        //                     console.log('✅ Language change request successful!');
+        //                 } else {
+        //                     console.error('❌ Request failed:', response.statusText);
+        //                 }
+
+        //             } catch (error) {
+        //                 console.error('❌ Error:', error);
+        //             }
+
+        //             console.groupEnd();
+        //             return true;
+        //         },
+
+        //         // تصدير التقرير
+        //         exportReport() {
+        //             const report = {
+        //                 timestamp: new Date().toISOString(),
+        //                 info: this.info,
+        //                 cookies: document.cookie,
+        //                 forms: Array.from(document.querySelectorAll('.language-form')).map(form => ({
+        //                     culture: form.querySelector('input[name="culture"]')?.value,
+        //                     action: form.action
+        //                 })),
+        //                 scripts: Array.from(document.scripts)
+        //                     .filter(s => s.src)
+        //                     .map(s => s.src),
+        //                 styles: Array.from(document.styleSheets)
+        //                     .filter(s => s.href)
+        //                     .map(s => s.href),
+        //                 languageManager: {
+        //                     loaded: !!window.LanguageManager,
+        //                     instance: !!window.languageManager,
+        //                     currentLang: window.languageManager?.getCurrentLanguage()
+        //                 }
+        //             };
+
+        //             console.log('📊 Complete Report:', report);
+
+        //             // نسخ إلى الحافظة
+        //             const reportText = JSON.stringify(report, null, 2);
+
+        //             if (navigator.clipboard) {
+        //                 navigator.clipboard.writeText(reportText)
+        //                     .then(() => console.log('✅ Report copied to clipboard!'))
+        //                     .catch(err => console.error('❌ Failed to copy:', err));
+        //             }
+
+        //             return report;
+        //         }
+        //     };
+
+        //     // تصدير للاستخدام العالمي
+        //     window.LanguageTester = LanguageTester;
+
+        //     // تشغيل الفحص التلقائي عند التحميل (اختياري)
+        //     if (window.location.search.includes('debug=language')) {
+        //         document.addEventListener('DOMContentLoaded', () => {
+        //             setTimeout(() => {
+        //                 LanguageTester.runDiagnostics();
+        //             }, 1000);
+        //         });
+        //     }
+
+        //     console.log('🔧 Language Tester loaded. Use:');
+        //     console.log('  LanguageTester.runDiagnostics() - للفحص الشامل');
+        //     console.log('  LanguageTester.testLanguageChange("en") - لاختبار تغيير اللغة');
+        //     console.log('  LanguageTester.exportReport() - لتصدير التقرير');
+        //     console.log('  Or add ?debug=language to URL for auto-diagnostics');
+        // })();
     </script>
 
     <!-- Page-specific Scripts -->
     @await RenderSectionAsync("Scripts", required: false)
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/language-manager.js"></script>
+
+    <script>
+        console.log('🌐 اللغة الحالية:', '@currentLanguage');
+        console.log('📂 الاتجاه:', '@direction');
+    </script>
 </body>
 </html>
