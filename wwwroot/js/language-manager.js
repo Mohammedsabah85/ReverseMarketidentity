@@ -1,8 +1,4 @@
-﻿/**
- * مدير اللغات - نسخة محسّنة وموثوقة
- */
-
-class LanguageManager {
+﻿class LanguageManager {
     constructor() {
         this.currentLanguage = document.documentElement.lang || 'ar';
         this.supportedLanguages = ['ar', 'en', 'ku'];
@@ -91,9 +87,6 @@ class LanguageManager {
             const response = await fetch(form.action, {
                 method: 'POST',
                 body: formData,
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                },
                 credentials: 'same-origin'
             });
 
@@ -103,19 +96,11 @@ class LanguageManager {
                 throw new Error(`HTTP ${response.status}`);
             }
 
-            // حفظ التفضيل
-            try {
-                localStorage.setItem('preferredLanguage', culture);
-                console.log('💾 تم حفظ التفضيل');
-            } catch (e) {
-                console.warn('⚠️ لا يمكن حفظ في localStorage');
-            }
-
-            // إعادة التحميل
+            // ✅ الحل: إعادة تحميل الصفحة بالكامل
             console.log('🔄 إعادة تحميل الصفحة...');
-            setTimeout(() => {
-                window.location.href = returnUrl;
-            }, 100);
+
+            // استخدام reload مع true لإجبار التحميل من السيرفر
+            window.location.reload(true);
 
         } catch (error) {
             console.error('❌ خطأ:', error);
@@ -140,7 +125,6 @@ class LanguageManager {
 
         button.innerHTML = `<i class="fas fa-spinner fa-spin me-2"></i>${loadingText}`;
 
-        // تعطيل جميع الأزرار
         document.querySelectorAll('.language-form button').forEach(btn => {
             btn.disabled = true;
         });

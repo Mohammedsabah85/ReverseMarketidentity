@@ -3,18 +3,12 @@
 @using ReverseMarket.Resources
 @inject IStringLocalizer<SharedResource> Localizer
 @inject ILanguageService LanguageService
-@inject IStringLocalizer<SharedResource> Localizer
 
-@inject IStringLocalizer<SharedResource> Localizer
-@inject ILanguageService LanguageService
-
-@Localizer["KeyName"]
 @{
     var currentLanguage = LanguageService.GetCurrentLanguage();
     var direction = LanguageService.GetDirection();
     var supportedLanguages = LanguageService.GetSupportedLanguages();
     var currentLangInfo = supportedLanguages.FirstOrDefault(l => l.Code == currentLanguage) ?? supportedLanguages.First();
-
 
     var siteSettings = ViewBag.SiteSettings as ReverseMarket.Models.SiteSettings;
     var isLoggedIn = Context.Session.GetString("IsLoggedIn") == "true";
@@ -39,15 +33,24 @@
     <!-- Bootstrap CSS with RTL/LTR support -->
     @if (direction == "rtl")
     {
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.rtl.min.css" rel="stylesheet" />
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.rtl.min.css"
+              rel="stylesheet"
+              integrity="sha384-dpuaG1suU0eT09tx5plTaGMLBsfDLzUCCUXOY2j/LSvXYuG6Bqs43ALlhIqAJVRb"
+              crossorigin="anonymous">
     }
     else
     {
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+              rel="stylesheet"
+              integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+              crossorigin="anonymous">
     }
 
     <!-- Font Awesome Icons -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+          rel="stylesheet"
+          integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
+          crossorigin="anonymous" />
 
     <!-- Google Fonts based on language -->
     @if (currentLanguage == "ar" || currentLanguage == "ku")
@@ -86,17 +89,7 @@
         }
 
         * {
-            font-family: @if (currentLanguage == "ar" || currentLanguage == "ku")
-            {
-                <text>'Cairo', -apple-system, BlinkMacSystemFont, sans-serif;
-                </text>
-            }
-                        else
-            {
-
-                <text>'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-                </text>
-            }
+            font-family: @if (currentLanguage == "ar" || currentLanguage == "ku") { <text>'Cairo', -apple-system, BlinkMacSystemFont, sans-serif;</text> } else { <text>'Inter', -apple-system, BlinkMacSystemFont, sans-serif;</text> }
         }
 
         body {
@@ -108,7 +101,6 @@
             flex-direction: column;
         }
 
-        /* Header Styles */
         .main-header {
             background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
             box-shadow: var(--shadow-medium);
@@ -124,11 +116,11 @@
             font-size: 0.875rem;
         }
 
-            .top-bar .container {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-            }
+        .top-bar .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
 
         .contact-info {
             display: flex;
@@ -136,34 +128,33 @@
             color: rgba(255,255,255,0.8);
         }
 
-            .contact-info a {
-                color: rgba(255,255,255,0.8);
-                text-decoration: none;
-                transition: var(--transition);
-            }
+        .contact-info a {
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            transition: var(--transition);
+        }
 
-                .contact-info a:hover {
-                    color: white;
-                    transform: translateY(-1px);
-                }
+        .contact-info a:hover {
+            color: white;
+            transform: translateY(-1px);
+        }
 
         .social-links {
             display: flex;
             gap: 1rem;
         }
 
-            .social-links a {
-                color: rgba(255,255,255,0.8);
-                font-size: 1.1rem;
-                transition: var(--transition);
-            }
+        .social-links a {
+            color: rgba(255,255,255,0.8);
+            font-size: 1.1rem;
+            transition: var(--transition);
+        }
 
-                .social-links a:hover {
-                    color: white;
-                    transform: translateY(-2px) scale(1.1);
-                }
+        .social-links a:hover {
+            color: white;
+            transform: translateY(-2px) scale(1.1);
+        }
 
-        /* Main Navigation */
         .main-navbar {
             padding: 1rem 0;
         }
@@ -178,84 +169,62 @@
             transition: var(--transition);
         }
 
-            .navbar-brand:hover {
-                transform: scale(1.02);
-            }
+        .navbar-brand:hover {
+            transform: scale(1.02);
+        }
 
-            .navbar-brand img {
-                max-height: 45px;
-                @if (direction == "rtl")
-                {
-                    <text>margin-left: 12px;
-                    </text>
-                }
-                else
-                {
+        .navbar-brand img {
+            max-height: 45px;
+            @if (direction == "rtl") { <text>margin-left: 12px;</text> } else { <text>margin-right: 12px;</text> }
+            filter: brightness(1.1);
+        }
 
-                    <text>margin-right: 12px;
-                    </text>
-                }
- filter: brightness(1.1);
-            }
+        .navbar-brand .brand-icon {
+            font-size: 2rem;
+            @if (direction == "rtl") { <text>margin-left: 12px;</text> } else { <text>margin-right: 12px;</text> }
+            background: linear-gradient(45deg, var(--secondary-color), var(--accent-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
 
-            .navbar-brand .brand-icon {
-                font-size: 2rem;
-                @if (direction == "rtl")
-                {
-                    <text>margin-left: 12px;
-                    </text>
-                }
-                else
-                {
-
-                    <text>margin-right: 12px;
-                    </text>
-                }
- background: linear-gradient(45deg, var(--secondary-color), var(--accent-color));
-                -webkit-background-clip: text;
-                -webkit-text-fill-color: transparent;
-                background-clip: text;
-            }
-
-        /* Navigation Links */
         .navbar-nav {
             gap: 0.5rem;
         }
 
-            .navbar-nav .nav-link {
-                color: rgba(255,255,255,0.9) !important;
-                font-weight: 500;
-                padding: 0.75rem 1.25rem !important;
-                border-radius: 25px;
-                transition: var(--transition);
-                position: relative;
-                overflow: hidden;
-            }
+        .navbar-nav .nav-link {
+            color: rgba(255,255,255,0.9) !important;
+            font-weight: 500;
+            padding: 0.75rem 1.25rem !important;
+            border-radius: 25px;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
 
-                .navbar-nav .nav-link::before {
-                    content: '';
-                    position: absolute;
-                    top: 0;
-                    left: 0;
-                    width: 0;
-                    height: 100%;
-                    background: rgba(255,255,255,0.1);
-                    transition: width 0.3s ease;
-                    z-index: -1;
-                }
+        .navbar-nav .nav-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 100%;
+            background: rgba(255,255,255,0.1);
+            transition: width 0.3s ease;
+            z-index: -1;
+        }
 
-                .navbar-nav .nav-link:hover::before {
-                    width: 100%;
-                }
+        .navbar-nav .nav-link:hover::before {
+            width: 100%;
+        }
 
-                .navbar-nav .nav-link:hover,
-                .navbar-nav .nav-link.active {
-                    color: white !important;
-                    transform: translateY(-2px);
-                    box-shadow: 0 4px 15px rgba(255,255,255,0.2);
-                }
+        .navbar-nav .nav-link:hover,
+        .navbar-nav .nav-link.active {
+            color: white !important;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(255,255,255,0.2);
+        }
 
-        /* Language Selector */
         .language-selector {
             position: relative;
         }
@@ -276,17 +245,17 @@
             backdrop-filter: blur(5px);
         }
 
-            .language-dropdown:hover {
-                background: rgba(255,255,255,0.2);
-                color: white;
-                transform: translateY(-2px);
-                box-shadow: 0 4px 15px rgba(255,255,255,0.2);
-            }
+        .language-dropdown:hover {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(255,255,255,0.2);
+        }
 
-            .language-dropdown .flag {
-                font-size: 1.2em;
-                filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
-            }
+        .language-dropdown .flag {
+            font-size: 1.2em;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+        }
 
         .dropdown-menu {
             border: none;
@@ -302,48 +271,37 @@
             width: 100%;
         }
 
-            .language-form button {
-                width: 100%;
-                text-align: @(direction == "rtl" ? "right" : "left");
-                border: none;
-                background: none;
-                display: flex;
-                align-items: center;
-                padding: 0.75rem 1rem;
-                transition: var(--transition);
-                border-radius: 8px;
-                margin: 2px 0;
-                font-weight: 500;
-            }
+        .language-form button {
+            width: 100%;
+            text-align: @(direction == "rtl" ? "right" : "left");
+            border: none;
+            background: none;
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            transition: var(--transition);
+            border-radius: 8px;
+            margin: 2px 0;
+            font-weight: 500;
+        }
 
-                .language-form button:hover:not(:disabled) {
-                    background: var(--light-bg);
-                    transform: translateX( @(direction == "rtl" ? "5px" : "-5px") );
-                    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-                }
+        .language-form button:hover:not(:disabled) {
+            background: var(--light-bg);
+            transform: translateX(@(direction == "rtl" ? "5px" : "-5px"));
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
 
-                .language-form button.active {
-                    background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
-                    color: white;
-                    box-shadow: 0 4px 15px rgba(44, 90, 160, 0.3);
-                }
+        .language-form button.active {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            color: white;
+            box-shadow: 0 4px 15px rgba(44, 90, 160, 0.3);
+        }
 
-                .language-form button .flag {
-                    @if (direction == "rtl")
-                    {
-                        <text>margin-left: 0.75rem;
-                        </text>
-                    }
-                    else
-                    {
+        .language-form button .flag {
+            @if (direction == "rtl") { <text>margin-left: 0.75rem;</text> } else { <text>margin-right: 0.75rem;</text> }
+            font-size: 1.2em;
+        }
 
-                        <text>margin-right: 0.75rem;
-                        </text>
-                    }
- font-size: 1.2em;
-                }
-
-        /* User Menu */
         .user-dropdown {
             background: rgba(255,255,255,0.1);
             border: 1px solid rgba(255,255,255,0.2);
@@ -359,12 +317,12 @@
             backdrop-filter: blur(5px);
         }
 
-            .user-dropdown:hover {
-                background: rgba(255,255,255,0.2);
-                color: white;
-                transform: translateY(-2px);
-                box-shadow: 0 4px 15px rgba(255,255,255,0.2);
-            }
+        .user-dropdown:hover {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(255,255,255,0.2);
+        }
 
         .user-avatar {
             width: 32px;
@@ -379,7 +337,6 @@
             font-size: 0.875rem;
         }
 
-        /* Custom Button Styles */
         .btn-custom {
             background: linear-gradient(135deg, var(--secondary-color), var(--secondary-dark));
             border: none;
@@ -395,12 +352,12 @@
             box-shadow: 0 4px 15px rgba(52, 199, 89, 0.3);
         }
 
-            .btn-custom:hover {
-                transform: translateY(-3px);
-                box-shadow: 0 8px 25px rgba(52, 199, 89, 0.4);
-                color: white;
-                background: linear-gradient(135deg, var(--secondary-dark), var(--secondary-color));
-            }
+        .btn-custom:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(52, 199, 89, 0.4);
+            color: white;
+            background: linear-gradient(135deg, var(--secondary-dark), var(--secondary-color));
+        }
 
         .btn-outline-custom {
             border: 2px solid white;
@@ -416,14 +373,13 @@
             gap: 0.5rem;
         }
 
-            .btn-outline-custom:hover {
-                background: white;
-                color: var(--primary-color);
-                transform: translateY(-2px);
-                box-shadow: 0 4px 15px rgba(255,255,255,0.3);
-            }
+        .btn-outline-custom:hover {
+            background: white;
+            color: var(--primary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(255,255,255,0.3);
+        }
 
-        /* Main Content */
         main {
             flex: 1;
             padding: 2rem 0;
@@ -444,12 +400,11 @@
             transition: var(--transition);
         }
 
-            .card-custom:hover {
-                box-shadow: var(--shadow-medium);
-                transform: translateY(-2px);
-            }
+        .card-custom:hover {
+            box-shadow: var(--shadow-medium);
+            transform: translateY(-2px);
+        }
 
-        /* Alert Styles */
         .alert {
             border: none;
             border-radius: var(--border-radius);
@@ -485,7 +440,6 @@
             border-left: 4px solid #0dcaf0;
         }
 
-        /* Form Controls */
         .form-control {
             border-radius: var(--border-radius);
             border: 2px solid var(--border-color);
@@ -494,13 +448,12 @@
             font-weight: 500;
         }
 
-            .form-control:focus {
-                border-color: var(--primary-color);
-                box-shadow: 0 0 0 0.2rem rgba(44, 90, 160, 0.25);
-                transform: translateY(-1px);
-            }
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(44, 90, 160, 0.25);
+            transform: translateY(-1px);
+        }
 
-        /* Footer */
         .main-footer {
             background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
             color: white;
@@ -515,16 +468,16 @@
             position: relative;
         }
 
-            .footer-section h5::after {
-                content: '';
-                position: absolute;
-                bottom: -8px;
-                left: 0;
-                width: 50px;
-                height: 3px;
-                background: linear-gradient(90deg, var(--secondary-color), var(--accent-color));
-                border-radius: 2px;
-            }
+        .footer-section h5::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 50px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--secondary-color), var(--accent-color));
+            border-radius: 2px;
+        }
 
         .footer-section a {
             color: rgba(255,255,255,0.8);
@@ -536,10 +489,10 @@
             padding: 0.25rem 0;
         }
 
-            .footer-section a:hover {
-                color: var(--secondary-color);
-                transform: translateX( @(direction == "rtl" ? "5px" : "-5px") );
-            }
+        .footer-section a:hover {
+            color: var(--secondary-color);
+            transform: translateX(@(direction == "rtl" ? "5px" : "-5px"));
+        }
 
         .footer-bottom {
             border-top: 1px solid rgba(255,255,255,0.1);
@@ -549,154 +502,73 @@
             color: rgba(255,255,255,0.7);
         }
 
-        /* Loading States */
         .loading {
             opacity: 0.6;
             pointer-events: none;
             position: relative;
         }
 
-            .loading::after {
-                content: '';
-                position: absolute;
-                top: 50%;
-                left: 50%;
-                width: 20px;
-                height: 20px;
-                margin: -10px 0 0 -10px;
-                border: 2px solid #fff;
-                border-radius: 50%;
-                border-top-color: transparent;
-                animation: spin 1s linear infinite;
-            }
+        .loading::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 20px;
+            height: 20px;
+            margin: -10px 0 0 -10px;
+            border: 2px solid #fff;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 1s linear infinite;
+        }
 
         @@keyframes spin {
-            to
-
-        {
-            transform: rotate(360deg);
+            to { transform: rotate(360deg); }
         }
 
-        }
-
-        /* Responsive Design */
         @@media (max-width: 768px) {
-            .top-bar
-
-        {
-            display: none;
-        }
-
-        .contact-info {
-            flex-direction: column;
-            gap: 0.5rem;
-        }
-
-        .navbar-brand {
-            font-size: 1.5rem;
-        }
-
-        .navbar-nav {
-            margin-top: 1rem;
-            padding-top: 1rem;
-            border-top: 1px solid rgba(255,255,255,0.1);
-        }
-
-            .navbar-nav .nav-link {
-                padding: 0.5rem 1rem !important;
-                margin: 0.25rem 0;
-            }
-
-        .container-custom {
-            padding: 0 0.75rem;
-        }
-
-        .card-custom {
-            padding: 1.5rem;
-        }
-
-        .main-footer {
-            padding: 2rem 0 1rem;
-        }
-
+            .top-bar { display: none; }
+            .contact-info { flex-direction: column; gap: 0.5rem; }
+            .navbar-brand { font-size: 1.5rem; }
+            .navbar-nav { margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.1); }
+            .navbar-nav .nav-link { padding: 0.5rem 1rem !important; margin: 0.25rem 0; }
+            .container-custom { padding: 0 0.75rem; }
+            .card-custom { padding: 1.5rem; }
+            .main-footer { padding: 2rem 0 1rem; }
         }
 
         @@media (max-width: 576px) {
-            .language-dropdown, .user-dropdown
-
-        {
-            padding: 0.5rem;
-            font-size: 0.875rem;
+            .language-dropdown, .user-dropdown { padding: 0.5rem; font-size: 0.875rem; }
+            .btn-custom, .btn-outline-custom { padding: 0.5rem 1.5rem; font-size: 0.875rem; }
         }
 
-        .btn-custom,
-        .btn-outline-custom {
-            padding: 0.5rem 1.5rem;
-            font-size: 0.875rem;
-        }
-
-        }
-
-        /* Animation Classes */
         .fade-in {
             animation: fadeIn 0.5s ease-in-out;
         }
 
         @@keyframes fadeIn {
-            from
-
-        {
-            opacity: 0;
-            transform: translateY(20px);
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        }
-
-        .slide-in- @(direction == "rtl" ? "right" : "left") {
-            animation: slideIn @(direction == "rtl" ? "Right" : "Left") 0.3s ease-out;
+        .slide-in-@(direction == "rtl" ? "right" : "left") {
+            animation: slideIn@(direction == "rtl" ? "Right" : "Left") 0.3s ease-out;
         }
 
         @@keyframes slideInLeft {
-            from
-
-        {
-            opacity: 0;
-            transform: translateX(-30px);
-        }
-
-        to {
-            opacity: 1;
-            transform: translateX(0);
-        }
-
+            from { opacity: 0; transform: translateX(-30px); }
+            to { opacity: 1; transform: translateX(0); }
         }
 
         @@keyframes slideInRight {
-            from
-
-        {
-            opacity: 0;
-            transform: translateX(30px);
-        }
-
-        to {
-            opacity: 1;
-            transform: translateX(0);
-        }
-
+            from { opacity: 0; transform: translateX(30px); }
+            to { opacity: 1; transform: translateX(0); }
         }
     </style>
 </head>
 
 <body>
-    <!-- Header -->
     <header class="main-header">
-        <!-- Top Bar -->
         <div class="top-bar d-none d-md-block">
             <div class="container">
                 <div class="contact-info">
@@ -745,10 +617,8 @@
             </div>
         </div>
 
-        <!-- Main Navigation -->
         <nav class="navbar navbar-expand-lg main-navbar">
             <div class="container">
-                <!-- Brand -->
                 <a class="navbar-brand" href="/">
                     @if (!string.IsNullOrEmpty(siteSettings?.SiteLogo))
                     {
@@ -761,56 +631,45 @@
                     @Localizer["SiteName"]
                 </a>
 
-                <!-- Mobile Toggle -->
-                <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                     <span class="navbar-toggler-icon"></span>
                 </button>
 
-                <!-- Navigation Menu -->
                 <div class="collapse navbar-collapse" id="navbarNav">
-                    <!-- Main Links -->
                     <ul class="navbar-nav @(direction == "rtl" ? "ms-auto" : "me-auto")">
                         <li class="nav-item">
-                            <a class="nav-link @(ViewContext.RouteData.Values["action"]?.ToString() == "Index" && ViewContext.RouteData.Values["controller"]?.ToString() == "Home" ? "active" : "")"
-                               href="/">
+                            <a class="nav-link @(ViewContext.RouteData.Values["action"]?.ToString() == "Index" && ViewContext.RouteData.Values["controller"]?.ToString() == "Home" ? "active" : "")" href="/">
                                 <i class="fas fa-home @(direction == "rtl" ? "ms-1" : "me-1")"></i>
                                 @Localizer["Home"]
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Requests" ? "active" : "")"
-                               href="/Requests">
+                            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Requests" ? "active" : "")" href="/Requests">
                                 <i class="fas fa-list @(direction == "rtl" ? "ms-1" : "me-1")"></i>
                                 @Localizer["Requests"]
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Stores" ? "active" : "")"
-                               href="/Stores">
+                            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Stores" ? "active" : "")" href="/Stores">
                                 <i class="fas fa-store @(direction == "rtl" ? "ms-1" : "me-1")"></i>
                                 @Localizer["Stores"]
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link @(ViewContext.RouteData.Values["action"]?.ToString() == "About" ? "active" : "")"
-                               href="/Home/About">
+                            <a class="nav-link @(ViewContext.RouteData.Values["action"]?.ToString() == "About" ? "active" : "")" href="/Home/About">
                                 <i class="fas fa-info-circle @(direction == "rtl" ? "ms-1" : "me-1")"></i>
                                 @Localizer["About"]
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link @(ViewContext.RouteData.Values["action"]?.ToString() == "Contact" ? "active" : "")"
-                               href="/Home/Contact">
+                            <a class="nav-link @(ViewContext.RouteData.Values["action"]?.ToString() == "Contact" ? "active" : "")" href="/Home/Contact">
                                 <i class="fas fa-envelope @(direction == "rtl" ? "ms-1" : "me-1")"></i>
                                 @Localizer["Contact"]
                             </a>
                         </li>
                     </ul>
 
-                    <!-- Right Side Menu -->
                     <ul class="navbar-nav">
-                        <!-- Language Selector -->
                         <li class="nav-item dropdown language-selector">
                             <a class="nav-link dropdown-toggle language-dropdown" href="#" id="languageMenu"
                                role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -821,16 +680,11 @@
                                 @foreach (var language in supportedLanguages)
                                 {
                                     <li>
-                                        <form method="post"
-                                              action="@Url.Action("SetLanguage", "Language")"
-                                              class="language-form">
+                                        <form method="post" action="@Url.Action("SetLanguage", "Language")" class="language-form">
                                             @Html.AntiForgeryToken()
                                             <input type="hidden" name="culture" value="@language.Code" />
                                             <input type="hidden" name="returnUrl" value="@(Context.Request.Path + Context.Request.QueryString)" />
-
-                                            <button type="submit"
-                                                    class="dropdown-item @(currentLanguage == language.Code ? "active" : "")"
-                                                    @(currentLanguage == language.Code ? "disabled" : "")>
+                                            <button type="submit" class="dropdown-item @(currentLanguage == language.Code ? "active" : "")" @(currentLanguage == language.Code ? "disabled" : "")>
                                                 <span class="flag">@language.Flag</span>
                                                 <span>@language.NativeName</span>
                                                 @if (currentLanguage == language.Code)
@@ -844,66 +698,32 @@
                             </ul>
                         </li>
 
-                        <!-- User Menu or Login -->
                         @if (isLoggedIn)
                         {
                             <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle user-dropdown" href="#" id="userMenu"
-                                   role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <div class="user-avatar">
-                                        @(userName?.FirstOrDefault() ?? 'U')
-                                    </div>
+                                <a class="nav-link dropdown-toggle user-dropdown" href="#" id="userMenu" role="button" data-bs-toggle="dropdown">
+                                    <div class="user-avatar">@(userName?.FirstOrDefault() ?? 'U')</div>
                                     <span class="d-none d-md-inline">@userName</span>
                                 </a>
-                                <ul class="dropdown-menu dropdown-menu-end animate__animated animate__fadeIn animate__faster">
+                                <ul class="dropdown-menu dropdown-menu-end">
                                     @if (userType == "Admin")
                                     {
-                                        <li>
-                                            <a class="dropdown-item" href="/Admin/Dashboard">
-                                                <i class="fas fa-tachometer-alt @(direction == "rtl" ? "ms-2" : "me-2")"></i>
-                                                @Localizer["AdminPanel"]
-                                            </a>
-                                        </li>
+                                        <li><a class="dropdown-item" href="/Admin/Dashboard"><i class="fas fa-tachometer-alt @(direction == "rtl" ? "ms-2" : "me-2")"></i>@Localizer["AdminPanel"]</a></li>
                                     }
                                     else
                                     {
-                                        <li>
-                                            <a class="dropdown-item" href="/Account/Profile">
-                                                <i class="fas fa-user @(direction == "rtl" ? "ms-2" : "me-2")"></i>
-                                                @Localizer["Profile"]
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a class="dropdown-item" href="/Requests/Create">
-                                                <i class="fas fa-plus @(direction == "rtl" ? "ms-2" : "me-2")"></i>
-                                                @Localizer["AddRequest"]
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a class="dropdown-item" href="/Requests/MyRequests">
-                                                <i class="fas fa-list-alt @(direction == "rtl" ? "ms-2" : "me-2")"></i>
-                                                @Localizer["MyRequests"]
-                                            </a>
-                                        </li>
+                                        <li><a class="dropdown-item" href="/Account/Profile"><i class="fas fa-user @(direction == "rtl" ? "ms-2" : "me-2")"></i>@Localizer["Profile"]</a></li>
+                                        <li><a class="dropdown-item" href="/Requests/Create"><i class="fas fa-plus @(direction == "rtl" ? "ms-2" : "me-2")"></i>@Localizer["AddRequest"]</a></li>
+                                        <li><a class="dropdown-item" href="/Requests/MyRequests"><i class="fas fa-list-alt @(direction == "rtl" ? "ms-2" : "me-2")"></i>@Localizer["MyRequests"]</a></li>
                                     }
                                     <li><hr class="dropdown-divider"></li>
-                                    <li>
-                                        <a class="dropdown-item text-danger" href="/Account/Logout">
-                                            <i class="fas fa-sign-out-alt @(direction == "rtl" ? "ms-2" : "me-2")"></i>
-                                            @Localizer["Logout"]
-                                        </a>
-                                    </li>
+                                    <li><a class="dropdown-item text-danger" href="/Account/Logout"><i class="fas fa-sign-out-alt @(direction == "rtl" ? "ms-2" : "me-2")"></i>@Localizer["Logout"]</a></li>
                                 </ul>
                             </li>
                         }
                         else
                         {
-                            <li class="nav-item">
-                                <a class="nav-link" href="/Requests/Create">
-                                    <i class="fas fa-plus @(direction == "rtl" ? "ms-1" : "me-1")"></i>
-                                    @Localizer["AddRequest"]
-                                </a>
-                            </li>
+                            <li class="nav-item"><a class="nav-link" href="/Requests/Create"><i class="fas fa-plus @(direction == "rtl" ? "ms-1" : "me-1")"></i>@Localizer["AddRequest"]</a></li>
                             <li class="nav-item">
                                 <a class="btn btn-outline-custom" href="/Account/Login">
                                     <i class="fas fa-sign-in-alt"></i>
@@ -917,9 +737,7 @@
         </nav>
     </header>
 
-    <!-- Main Content -->
     <main role="main" class="fade-in">
-        <!-- Messages Section -->
         <div class="messages-container">
             @if (TempData["SuccessMessage"] != null)
             {
@@ -978,15 +796,12 @@
             }
         </div>
 
-        <!-- Page Content -->
         @RenderBody()
     </main>
 
-    <!-- Footer -->
     <footer class="main-footer">
         <div class="container">
             <div class="row g-4">
-                <!-- About Section -->
                 <div class="col-lg-4 footer-section">
                     <h5>@Localizer["About"]</h5>
                     <p class="mb-3">
@@ -1027,7 +842,6 @@
                     </div>
                 </div>
 
-                <!-- Contact Section -->
                 <div class="col-lg-4 footer-section">
                     <h5>@Localizer["ContactInfo"]</h5>
                     <ul class="list-unstyled">
@@ -1065,7 +879,6 @@
                     </ul>
                 </div>
 
-                <!-- Links Section -->
                 <div class="col-lg-4 footer-section">
                     <h5>@Localizer["ImportantLinks"]</h5>
                     <div class="row">
@@ -1089,7 +902,6 @@
                 </div>
             </div>
 
-            <!-- Footer Bottom -->
             <div class="footer-bottom">
                 <div class="row align-items-center">
                     <div class="col-md-6 text-center text-md-start">
@@ -1115,646 +927,31 @@
         </div>
     </footer>
 
-    <!-- Back to Top Button -->
-    <button id="backToTop" class="btn btn-custom position-fixed"
-            style="bottom: 2rem; @(direction == "rtl" ? "left" : "right"): 2rem; z-index: 1000; display: none; border-radius: 50%; width: 50px; height: 50px;">
+    <button id="backToTop" class="btn btn-custom position-fixed" style="bottom: 2rem; @(direction == "rtl" ? "left" : "right"): 2rem; z-index: 1000; display: none; border-radius: 50%; width: 50px; height: 50px;">
         <i class="fas fa-arrow-up"></i>
     </button>
 
-    <!-- Scripts -->
-    <!-- Bootstrap Bundle with Popper -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-
-    <!-- Custom JavaScript -->
-    <script>
-
-
-        //         // Global Configuration
-        //    const siteConfig = {
-        //     currentLanguage: '@currentLanguage',
-        //     direction: '@direction',
-        //     isRTL: @(direction == "rtl" ? "true" : "false")
-        // };
-
-        // // DOM Ready Functions
-        // document.addEventListener('DOMContentLoaded', function() {
-        //     initializeAlerts();
-        //     initializeBackToTop();
-        //     initializeNavigation();
-        //     initializeLanguageSelector();
-        //     initializeAnimations();
-        // });
-
-        // // Language Selector Enhancement
-        // function initializeLanguageSelector() {
-        //     const languageForms = document.querySelectorAll('.language-form');
-        //     const languageDropdown = document.getElementById('languageDropdown');
-
-        //     languageForms.forEach(form => {
-        //         form.addEventListener('submit', function(e) {
-        //             e.preventDefault(); // منع الإرسال الافتراضي
-
-        //             const button = this.querySelector('button[type="submit"]');
-        //             const cultureInput = this.querySelector('input[name="culture"]');
-        //             const returnUrlInput = this.querySelector('input[name="returnUrl"]');
-
-        //             if (!button || !cultureInput) {
-        //                 console.error('Required form elements not found');
-        //                 showLanguageError('عناصر النموذج المطلوبة غير موجودة');
-        //                 return;
-        //             }
-
-        //             const languageCode = cultureInput.value;
-        //             const returnUrl = returnUrlInput ? returnUrlInput.value : window.location.href;
-
-        //             // التحقق من صحة رمز اللغة
-        //             if (!languageCode || !isValidLanguageCode(languageCode)) {
-        //                 showLanguageError('رمز اللغة غير صحيح');
-        //                 return;
-        //             }
-
-        //             // التحقق من أن اللغة مختلفة عن الحالية
-        //             if (languageCode === siteConfig.currentLanguage) {
-        //                 console.log('Language is already selected:', languageCode);
-        //                 return;
-        //             }
-
-        //             // تحديث UI
-        //             handleLanguageChange(button, languageCode);
-
-        //             // إرسال الطلب
-        //             submitLanguageForm(this, languageCode, returnUrl);
-        //         });
-        //     });
-
-        //     // إضافة معالج للنقر خارج القائمة
-        //     document.addEventListener('click', function(e) {
-        //         if (languageDropdown && !e.target.closest('.language-selector')) {
-        //             const dropdownInstance = bootstrap.Dropdown.getInstance(
-        //                 document.getElementById('languageMenu')
-        //             );
-        //             if (dropdownInstance) {
-        //                 dropdownInstance.hide();
-        //             }
-        //         }
-        //     });
-        // }
-
-        // // التحقق من صحة رمز اللغة
-        // function isValidLanguageCode(code) {
-        //     const validCodes = ['ar', 'en', 'ku'];
-        //     return validCodes.includes(code);
-        // }
-
-        // // معالج تغيير اللغة
-        // function handleLanguageChange(button, languageCode) {
-        //     if (!button) return;
-
-        //     // حفظ المحتوى الأصلي
-        //     const originalContent = button.innerHTML;
-        //     button.dataset.originalContent = originalContent;
-
-        //     // إضافة حالة التحميل
-        //     const loadingText = getLoadingText(languageCode);
-        //     button.innerHTML = `<i class="fas fa-spinner fa-spin me-2"></i>${loadingText}`;
-        //     button.disabled = true;
-
-        //     // تعطيل جميع أزرار اللغة
-        //     const allButtons = document.querySelectorAll('.language-form button');
-        //     allButtons.forEach(btn => {
-        //         btn.disabled = true;
-        //         btn.classList.add('loading');
-        //     });
-
-        //     // إضافة كلاس التحميل للقائمة
-        //     const dropdown = document.getElementById('languageDropdown');
-        //     if (dropdown) {
-        //         dropdown.classList.add('loading');
-        //     }
-
-        //     // إخفاء القائمة المنسدلة
-        //     const dropdownInstance = bootstrap.Dropdown.getInstance(
-        //         document.getElementById('languageMenu')
-        //     );
-        //     if (dropdownInstance) {
-        //         dropdownInstance.hide();
-        //     }
-
-        //     // إضافة timeout للأمان
-        //     setTimeout(() => {
-        //         resetLanguageButtons();
-        //         showLanguageError('انتهت مهلة تغيير اللغة. يرجى المحاولة مرة أخرى.');
-        //     }, 15000); // 15 ثانية
-        // }
-
-        // // إرسال نموذج اللغة
-        // function submitLanguageForm(form, languageCode, returnUrl) {
-        //     const formData = new FormData(form);
-
-        //     // التأكد من وجود returnUrl
-        //     if (!formData.has('returnUrl')) {
-        //         formData.append('returnUrl', returnUrl || window.location.href);
-        //     }
-
-        //     console.log('Submitting language change request:', {
-        //         culture: languageCode,
-        //         returnUrl: returnUrl,
-        //         action: form.action
-        //     });
-
-        //     fetch(form.action, {
-        //         method: 'POST',
-        //         body: formData,
-        //         headers: {
-        //             'X-Requested-With': 'XMLHttpRequest',
-        //             'Cache-Control': 'no-cache'
-        //         },
-        //         credentials: 'same-origin'
-        //     })
-        //     .then(response => {
-        //         console.log('Language change response status:', response.status);
-
-        //         if (response.ok) {
-        //             // حفظ اللغة في localStorage
-        //             try {
-        //                 localStorage.setItem('preferredLanguage', languageCode);
-        //                 console.log('Language preference saved:', languageCode);
-        //             } catch (e) {
-        //                 console.log('LocalStorage not available:', e);
-        //             }
-
-        //             // إعادة تحميل الصفحة لتطبيق اللغة الجديدة
-        //             console.log('Reloading page to apply new language...');
-        //             setTimeout(() => {
-        //                 window.location.reload(true);
-        //             }, 300);
-        //         } else {
-        //             throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-        //         }
-        //     })
-        //     .catch(error => {
-        //         console.error('Language change error:', error);
-        //         showLanguageError('حدث خطأ أثناء تغيير اللغة: ' + error.message);
-        //         resetLanguageButtons();
-        //     });
-        // }
-
-        // // إعادة تعيين أزرار اللغة
-        // function resetLanguageButtons() {
-        //     const allButtons = document.querySelectorAll('.language-form button');
-        //     allButtons.forEach(btn => {
-        //         btn.disabled = false;
-        //         btn.classList.remove('loading');
-
-        //         // استعادة المحتوى الأصلي
-        //         if (btn.dataset.originalContent) {
-        //             btn.innerHTML = btn.dataset.originalContent;
-        //             delete btn.dataset.originalContent;
-        //         }
-        //     });
-
-        //     // إزالة كلاس التحميل من القائمة
-        //     const dropdown = document.getElementById('languageDropdown');
-        //     if (dropdown) {
-        //         dropdown.classList.remove('loading');
-        //     }
-        // }
-
-        // // الحصول على نص التحميل حسب اللغة
-        // function getLoadingText(languageCode) {
-        //     switch (languageCode) {
-        //         case 'ar':
-        //             return 'جاري التحميل...';
-        //         case 'en':
-        //             return 'Loading...';
-        //         case 'ku':
-        //             return 'لودكردن...';
-        //         default:
-        //             return 'جاري التحميل...';
-        //     }
-        // }
-
-        // // عرض خطأ اللغة
-        // function showLanguageError(message) {
-        //     console.error('Language Error:', message);
-
-        //     // إزالة الأخطاء السابقة
-        //     const existingErrors = document.querySelectorAll('.language-error-alert');
-        //     existingErrors.forEach(alert => alert.remove());
-
-        //     // إنشاء تنبيه مؤقت
-        //     const alertDiv = document.createElement('div');
-        //     alertDiv.className = 'alert alert-danger alert-dismissible fade show position-fixed language-error-alert';
-        //     alertDiv.style.cssText = 'top: 20px; right: 20px; z-index: 9999; max-width: 400px;';
-        //     alertDiv.innerHTML = `
-        //         <i class="fas fa-exclamation-circle me-2"></i>
-        //         <strong>خطأ في تغيير اللغة:</strong> ${message}
-        //         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        //     `;
-
-        //     document.body.appendChild(alertDiv);
-
-        //     // إزالة التنبيه تلقائياً
-        //     setTimeout(() => {
-        //         if (alertDiv.parentNode) {
-        //             alertDiv.remove();
-        //         }
-        //     }, 8000);
-        // }
-
-        // // معالج النقر على أزرار اللغة (للاستدعاء من HTML إذا لزم الأمر)
-        // function handleLanguageClick(button, languageCode) {
-        //     const form = button.closest('form');
-        //     if (form) {
-        //         const event = new Event('submit', {
-        //             bubbles: true,
-        //             cancelable: true
-        //         });
-        //         form.dispatchEvent(event);
-        //     }
-        // }
-
-        // // تطبيق اللغة المفضلة تلقائياً
-        // function autoApplyPreferredLanguage() {
-        //     try {
-        //         const preferredLang = localStorage.getItem('preferredLanguage');
-        //         if (preferredLang &&
-        //             preferredLang !== siteConfig.currentLanguage &&
-        //             isValidLanguageCode(preferredLang)) {
-
-        //             console.log(`Auto-applying preferred language: ${preferredLang} (current: ${siteConfig.currentLanguage})`);
-
-        //             // البحث عن النموذج المناسب
-        //             const cultureInput = document.querySelector(`.language-form input[value="${preferredLang}"]`);
-        //             const form = cultureInput?.closest('form');
-
-        //             if (form && cultureInput) {
-        //                 console.log('Found form for preferred language, applying...');
-        //                 setTimeout(() => {
-        //                     const submitEvent = new Event('submit', {
-        //                         bubbles: true,
-        //                         cancelable: true
-        //                     });
-        //                     form.dispatchEvent(submitEvent);
-        //                 }, 200);
-        //             } else {
-        //                 console.log('Form not found for preferred language:', preferredLang);
-        //             }
-        //         } else {
-        //             console.log('No auto-language change needed:', {
-        //                 preferred: preferredLang,
-        //                 current: siteConfig.currentLanguage,
-        //                 valid: preferredLang ? isValidLanguageCode(preferredLang) : false
-        //             });
-        //         }
-        //     } catch (e) {
-        //         console.log('Error auto-applying language:', e);
-        //     }
-        // }
-
-        // // باقي الدوال (initializeAlerts, initializeBackToTop, etc.)
-        // function initializeAlerts() {
-        //     const alerts = document.querySelectorAll('.alert');
-        //     alerts.forEach(alert => {
-        //         setTimeout(() => {
-        //             if (alert.parentNode) {
-        //                 const bsAlert = new bootstrap.Alert(alert);
-        //                 bsAlert.close();
-        //             }
-        //         }, 5000);
-
-        //         alert.addEventListener('closed.bs.alert', function() {
-        //             this.style.transform = 'translateX(' + (siteConfig.isRTL ? '-' : '') + '100%)';
-        //         });
-        //     });
-        // }
-
-        // function initializeBackToTop() {
-        //     const backToTop = document.getElementById('backToTop');
-        //     if (!backToTop) return;
-
-        //     window.addEventListener('scroll', function() {
-        //         if (window.pageYOffset > 300) {
-        //             backToTop.style.display = 'block';
-        //             backToTop.classList.add('animate__animated', 'animate__fadeInUp');
-        //         } else {
-        //             backToTop.style.display = 'none';
-        //         }
-        //     });
-
-        //     backToTop.addEventListener('click', function() {
-        //         window.scrollTo({
-        //             top: 0,
-        //             behavior: 'smooth'
-        //         });
-        //     });
-        // }
-
-        // function initializeNavigation() {
-        //     const currentPath = window.location.pathname;
-        //     const navLinks = document.querySelectorAll('.navbar-nav .nav-link');
-
-        //     navLinks.forEach(link => {
-        //         if (link.getAttribute('href') === currentPath) {
-        //             link.classList.add('active');
-        //         }
-        //     });
-
-        //     const navbarToggler = document.querySelector('.navbar-toggler');
-        //     const navbarCollapse = document.querySelector('.navbar-collapse');
-
-        //     if (navbarToggler && navbarCollapse) {
-        //         navbarToggler.addEventListener('click', function() {
-        //             navbarCollapse.classList.toggle('animate__animated');
-        //             navbarCollapse.classList.toggle('animate__slideInDown');
-        //         });
-        //     }
-        // }
-
-        // function initializeAnimations() {
-        //     const observerOptions = {
-        //         threshold: 0.1,
-        //         rootMargin: '0px 0px -50px 0px'
-        //     };
-
-        //     const observer = new IntersectionObserver(function(entries) {
-        //         entries.forEach(entry => {
-        //             if (entry.isIntersecting) {
-        //                 entry.target.classList.add('animate__animated', 'animate__fadeInUp');
-        //             }
-        //         });
-        //     }, observerOptions);
-
-        //     const animatedElements = document.querySelectorAll('.card-custom, .footer-section');
-        //     animatedElements.forEach(el => observer.observe(el));
-        // }
-
-        // // تطبيق اللغة المفضلة بعد تحميل الصفحة
-        // setTimeout(autoApplyPreferredLanguage, 500);
-
-        // // معالج الأخطاء العامة
-        // window.addEventListener('error', function(e) {
-        //     console.error('Global error:', e.error);
-        // });
-
-        // // مراقبة الأداء
-        // window.addEventListener('load', function() {
-        //     const loadTime = performance.timing.loadEventEnd - performance.timing.navigationStart;
-        //     console.log('Page load time:', loadTime + 'ms');
-        // });
-
-
-
-        //        (function() {
-        //     'use strict';
-
-        //     const LanguageTester = {
-        //         // معلومات النظام
-        //         info: {
-        //             currentLang: document.documentElement.lang,
-        //             direction: document.dir,
-        //             userAgent: navigator.userAgent,
-        //             cookiesEnabled: navigator.cookieEnabled
-        //         },
-
-        //         // فحص شامل
-        //         runDiagnostics() {
-        //             console.group('🔍 Language System Diagnostics');
-
-        //             this.checkBasicSetup();
-        //             this.checkCookies();
-        //             this.checkForms();
-        //             this.checkScripts();
-        //             this.checkStyles();
-
-        //             console.groupEnd();
-        //         },
-
-        //         // فحص الإعدادات الأساسية
-        //         checkBasicSetup() {
-        //             console.group('📋 Basic Setup');
-
-        //             console.log('Current Language:', this.info.currentLang);
-        //             console.log('Direction:', this.info.direction);
-        //             console.log('HTML Lang Attribute:', document.documentElement.getAttribute('lang'));
-        //             console.log('HTML Dir Attribute:', document.documentElement.getAttribute('dir'));
-        //             console.log('Cookies Enabled:', this.info.cookiesEnabled);
-
-        //             console.groupEnd();
-        //         },
-
-        //         // فحص الكوكيز
-        //         checkCookies() {
-        //             console.group('🍪 Cookies Check');
-
-        //             const cookies = document.cookie.split(';').reduce((acc, cookie) => {
-        //                 const [key, value] = cookie.trim().split('=');
-        //                 acc[key] = value;
-        //                 return acc;
-        //             }, {});
-
-        //             console.log('All Cookies:', cookies);
-
-        //             const cultureCookie = cookies['.AspNetCore.Culture'];
-        //             if (cultureCookie) {
-        //                 console.log('✅ Culture Cookie Found:', decodeURIComponent(cultureCookie));
-        //             } else {
-        //                 console.warn('⚠️ Culture Cookie NOT Found!');
-        //             }
-
-        //             console.groupEnd();
-        //         },
-
-        //         // فحص النماذج
-        //         checkForms() {
-        //             console.group('📝 Forms Check');
-
-        //             const forms = document.querySelectorAll('.language-form');
-        //             console.log('Language Forms Count:', forms.length);
-
-        //             forms.forEach((form, index) => {
-        //                 const culture = form.querySelector('input[name="culture"]')?.value;
-        //                 const returnUrl = form.querySelector('input[name="returnUrl"]')?.value;
-        //                 const token = form.querySelector('input[name="__RequestVerificationToken"]')?.value;
-
-        //                 console.log(`Form ${index + 1}:`, {
-        //                     culture,
-        //                     returnUrl,
-        //                     hasToken: !!token,
-        //                     action: form.action
-        //                 });
-        //             });
-
-        //             console.groupEnd();
-        //         },
-
-        //         // فحص السكريبتات
-        //         checkScripts() {
-        //             console.group('📜 Scripts Check');
-
-        //             console.log('Language Manager Loaded:', !!window.LanguageManager);
-        //             console.log('Language Manager Instance:', !!window.languageManager);
-
-        //             if (window.languageManager) {
-        //                 console.log('Current Language (from manager):', window.languageManager.getCurrentLanguage());
-        //             }
-
-        //             const scripts = Array.from(document.scripts)
-        //                 .filter(s => s.src.includes('language'))
-        //                 .map(s => s.src);
-
-        //             console.log('Language Scripts:', scripts);
-
-        //             console.groupEnd();
-        //         },
-
-        //         // فحص الأنماط
-        //         checkStyles() {
-        //             console.group('🎨 Styles Check');
-
-        //             const stylesheets = Array.from(document.styleSheets)
-        //                 .filter(sheet => sheet.href)
-        //                 .map(sheet => ({
-        //                     href: sheet.href,
-        //                     isRTL: sheet.href.includes('rtl'),
-        //                     isKurdish: sheet.href.includes('kurdish')
-        //                 }));
-
-        //             console.table(stylesheets);
-
-        //             const bootstrapRTL = stylesheets.some(s => s.isRTL && s.href.includes('bootstrap'));
-        //             console.log('Bootstrap RTL Loaded:', bootstrapRTL);
-
-        //             const kurdishCSS = stylesheets.some(s => s.isKurdish);
-        //             console.log('Kurdish CSS Loaded:', kurdishCSS);
-
-        //             console.groupEnd();
-        //         },
-
-        //         // اختبار تغيير اللغة
-        //         async testLanguageChange(culture) {
-        //             console.group(`🧪 Testing Language Change to: ${culture}`);
-
-        //             const form = document.querySelector(`input[name="culture"][value="${culture}"]`)?.closest('form');
-
-        //             if (!form) {
-        //                 console.error('❌ Form not found for culture:', culture);
-        //                 console.groupEnd();
-        //                 return false;
-        //             }
-
-        //             const formData = new FormData(form);
-
-        //             console.log('Form Data:', {
-        //                 culture: formData.get('culture'),
-        //                 returnUrl: formData.get('returnUrl'),
-        //                 hasToken: !!formData.get('__RequestVerificationToken')
-        //             });
-
-        //             try {
-        //                 const response = await fetch(form.action, {
-        //                     method: 'POST',
-        //                     body: formData,
-        //                     headers: {
-        //                         'X-Requested-With': 'XMLHttpRequest'
-        //                     }
-        //                 });
-
-        //                 console.log('Response Status:', response.status);
-        //                 console.log('Response OK:', response.ok);
-
-        //                 if (response.ok) {
-        //                     const contentType = response.headers.get('content-type');
-
-        //                     if (contentType && contentType.includes('application/json')) {
-        //                         const data = await response.json();
-        //                         console.log('✅ Response Data:', data);
-        //                     } else {
-        //                         const text = await response.text();
-        //                         console.log('Response Text (first 200 chars):', text.substring(0, 200));
-        //                     }
-
-        //                     console.log('✅ Language change request successful!');
-        //                 } else {
-        //                     console.error('❌ Request failed:', response.statusText);
-        //                 }
-
-        //             } catch (error) {
-        //                 console.error('❌ Error:', error);
-        //             }
-
-        //             console.groupEnd();
-        //             return true;
-        //         },
-
-        //         // تصدير التقرير
-        //         exportReport() {
-        //             const report = {
-        //                 timestamp: new Date().toISOString(),
-        //                 info: this.info,
-        //                 cookies: document.cookie,
-        //                 forms: Array.from(document.querySelectorAll('.language-form')).map(form => ({
-        //                     culture: form.querySelector('input[name="culture"]')?.value,
-        //                     action: form.action
-        //                 })),
-        //                 scripts: Array.from(document.scripts)
-        //                     .filter(s => s.src)
-        //                     .map(s => s.src),
-        //                 styles: Array.from(document.styleSheets)
-        //                     .filter(s => s.href)
-        //                     .map(s => s.href),
-        //                 languageManager: {
-        //                     loaded: !!window.LanguageManager,
-        //                     instance: !!window.languageManager,
-        //                     currentLang: window.languageManager?.getCurrentLanguage()
-        //                 }
-        //             };
-
-        //             console.log('📊 Complete Report:', report);
-
-        //             // نسخ إلى الحافظة
-        //             const reportText = JSON.stringify(report, null, 2);
-
-        //             if (navigator.clipboard) {
-        //                 navigator.clipboard.writeText(reportText)
-        //                     .then(() => console.log('✅ Report copied to clipboard!'))
-        //                     .catch(err => console.error('❌ Failed to copy:', err));
-        //             }
-
-        //             return report;
-        //         }
-        //     };
-
-        //     // تصدير للاستخدام العالمي
-        //     window.LanguageTester = LanguageTester;
-
-        //     // تشغيل الفحص التلقائي عند التحميل (اختياري)
-        //     if (window.location.search.includes('debug=language')) {
-        //         document.addEventListener('DOMContentLoaded', () => {
-        //             setTimeout(() => {
-        //                 LanguageTester.runDiagnostics();
-        //             }, 1000);
-        //         });
-        //     }
-
-        //     console.log('🔧 Language Tester loaded. Use:');
-        //     console.log('  LanguageTester.runDiagnostics() - للفحص الشامل');
-        //     console.log('  LanguageTester.testLanguageChange("en") - لاختبار تغيير اللغة');
-        //     console.log('  LanguageTester.exportReport() - لتصدير التقرير');
-        //     console.log('  Or add ?debug=language to URL for auto-diagnostics');
-        // })();
-    </script>
-
-    <!-- Page-specific Scripts -->
-    @await RenderSectionAsync("Scripts", required: false)
-
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Bootstrap Bundle - يجب أن يكون أولاً -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+            crossorigin="anonymous"></script>
+
+    <!-- Language Manager -->
     <script src="~/js/language-manager.js"></script>
 
+    <!-- اختبار Bootstrap -->
     <script>
+        if (typeof bootstrap === 'undefined') {
+            console.error('❌ Bootstrap غير محمل');
+            alert('خطأ: Bootstrap غير محمل. تحقق من الاتصال بالإنترنت.');
+        } else {
+            console.log('✅ Bootstrap محمل بنجاح');
+        }
+
         console.log('🌐 اللغة الحالية:', '@currentLanguage');
         console.log('📂 الاتجاه:', '@direction');
     </script>
+
+    @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

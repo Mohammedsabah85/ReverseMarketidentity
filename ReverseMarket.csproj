@@ -39,4 +39,16 @@
 		<Folder Include="wwwroot\uploads\profiles\" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <EmbeddedResource Update="Resources\SharedResource.ar.resx">
+	    <Generator>PublicResXFileCodeGenerator</Generator>
+	  </EmbeddedResource>
+	  <EmbeddedResource Update="Resources\SharedResource.en.resx">
+	    <Generator>PublicResXFileCodeGenerator</Generator>
+	  </EmbeddedResource>
+	  <EmbeddedResource Update="Resources\SharedResource.ku.resx">
+	    <Generator>PublicResXFileCodeGenerator</Generator>
+	  </EmbeddedResource>
+	</ItemGroup>
+
 </Project>

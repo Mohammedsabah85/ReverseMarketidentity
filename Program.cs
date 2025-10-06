@@ -35,20 +35,29 @@ var supportedCultures = new[]
     new CultureInfo("ku")
 };
 
+//builder.Services.Configure<RequestLocalizationOptions>(options =>
+//{
+//    options.DefaultRequestCulture = new RequestCulture("ar");
+//    options.SupportedCultures = supportedCultures;
+//    options.SupportedUICultures = supportedCultures;
+
+//    options.RequestCultureProviders = new List<IRequestCultureProvider>
+//    {
+//        new CookieRequestCultureProvider(),
+//        new QueryStringRequestCultureProvider(),
+//        new AcceptLanguageHeaderRequestCultureProvider()
+//    };
+//});
 builder.Services.Configure<RequestLocalizationOptions>(options =>
 {
-    options.DefaultRequestCulture = new RequestCulture("ar");
-    options.SupportedCultures = supportedCultures;
-    options.SupportedUICultures = supportedCultures;
+    var supportedCultures = new[] { "ar", "en", "ku" };
+    options.SetDefaultCulture("ar")
+        .AddSupportedCultures(supportedCultures)
+        .AddSupportedUICultures(supportedCultures);
 
-    options.RequestCultureProviders = new List<IRequestCultureProvider>
-    {
-        new CookieRequestCultureProvider(),
-        new QueryStringRequestCultureProvider(),
-        new AcceptLanguageHeaderRequestCultureProvider()
-    };
+ 
+    options.RequestCultureProviders.Insert(0, new CookieRequestCultureProvider());
 });
-
 
 
 
