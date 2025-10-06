@@ -1,321 +1,158 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
-    <!-- Terms of Use -->
-    <data name="TermsOfUse" xml:space="preserve">
-    <value>مەرجەکانی بەکارهێنان</value>
-  </data>
-    <data name="PrivacyPolicy" xml:space="preserve">
-    <value>سیاسەتی تایبەتێتی</value>
-  </data>
-    <data name="LastUpdated" xml:space="preserve">
-    <value>دوایین نوێکردنەوە</value>
-  </data>
-    <data name="Introduction" xml:space="preserve">
-    <value>پێشەکی</value>
-  </data>
-    <data name="TermsIntroText" xml:space="preserve">
-    <value>بەخێربێیت بۆ بازاڕی پێچەوانە. ئەم مەرجانە یاساکان دیاری دەکەن بۆ بەکارهێنانی ماڵپەڕەکەمان.</value>
-  </data>
-    <data name="AcceptanceOfTerms" xml:space="preserve">
-    <value>پەسەندکردنی مەرجەکان</value>
-  </data>
-    <data name="AcceptanceText" xml:space="preserve">
-    <value>بە بەکارهێنانی ئەم ماڵپەڕە، تۆ ڕازی دەبیت بە پەیڕەوکردنی ئەم مەرجانە.</value>
-  </data>
-    <data name="UserRegistration" xml:space="preserve">
-    <value>تۆمارکردنی بەکارهێنەر</value>
-  </data>
+	<!--
+		Microsoft ResX Schema
 
-    <!-- Navigation -->
-    <data name="Home" xml:space="preserve">
-    <value>سەرەکی</value>
-  </data>
-    <data name="Requests" xml:space="preserve">
-    <value>داواکاریەکان</value>
-  </data>
-    <data name="Stores" xml:space="preserve">
-    <value>فرۆشگاکان</value>
-  </data>
-    <data name="About" xml:space="preserve">
-    <value>دەربارەمان</value>
-  </data>
-    <data name="Contact" xml:space="preserve">
-    <value>پەیوەندی</value>
-  </data>
-    <data name="Login" xml:space="preserve">
-    <value>چوونەژوورەوە</value>
-  </data>
-    <data name="Logout" xml:space="preserve">
-    <value>چوونەدەرەوە</value>
-  </data>
-    <data name="AddRequest" xml:space="preserve">
-    <value>زیادکردنی داواکاری</value>
-  </data>
-    <data name="MyRequests" xml:space="preserve">
-    <value>داواکاریەکانم</value>
-  </data>
-    <data name="Profile" xml:space="preserve">
-    <value>پرۆفایل</value>
-  </data>
-    <data name="AdminPanel" xml:space="preserve">
-    <value>پانێلی بەڕێوەبەر</value>
-  </data>
+		Version 1.3
 
-    <!-- Common -->
-    <data name="SiteName" xml:space="preserve">
-    <value>بازاڕی پێچەوانە</value>
-  </data>
-    <data name="SiteDescription" xml:space="preserve">
-    <value>داواکاریەکەت زیاد بکە و با فرۆشگاکان پێکەوە بکەون بۆ خزمەتکردنت</value>
-  </data>
-    <data name="ContactInfo" xml:space="preserve">
-    <value>زانیاری پەیوەندی</value>
-  </data>
-    <data name="ImportantLinks" xml:space="preserve">
-    <value>بەستەرە گرنگەکان</value>
-  </data>
-    <data name="Copyright" xml:space="preserve">
-    <value>© 2024 بازاڕی پێچەوانە. هەموو مافەکان پارێزراون.</value>
-  </data>
-    <data name="Email" xml:space="preserve">
-    <value>ئیمەیڵ</value>
-  </data>
-    <data name="Phone" xml:space="preserve">
-    <value>تەلەفۆن</value>
-  </data>
-    <data name="BackToHome" xml:space="preserve">
-    <value>گەڕانەوە بۆ سەرەکی</value>
-  </data>
-    <data name="ContactUs" xml:space="preserve">
-    <value>پەیوەندیمان پێوە بکە</value>
-  </data>
-    <data name="Success" xml:space="preserve">
-    <value>سەرکەوتوو</value>
-  </data>
-    <data name="Error" xml:space="preserve">
-    <value>هەڵە</value>
-  </data>
+		The primary goals of this format is to allow a simple XML format
+		that is mostly human readable. The generation and parsing of the
+		various data types are done through the TypeConverter classes
+		associated with the data types.
 
-    <!-- Add these keys to SharedResource.ku.resx -->
-    <!-- Contact Page -->
-    <data name="ContactDescription" xml:space="preserve">
-    <value>ئێمە لێرەین بۆ خزمەتکردنت، دوودڵ مەبە لە پەیوەندیکردن</value>
-  </data>
-    <data name="WhatsApp" xml:space="preserve">
-    <value>واتساپ</value>
-  </data>
-    <data name="Location" xml:space="preserve">
-    <value>شوێن</value>
-  </data>
-    <data name="LocationAddress" xml:space="preserve">
-    <value>بەغدا، عێراق</value>
-  </data>
-    <data name="SendMessage" xml:space="preserve">
-    <value>ناردنی نامە</value>
-  </data>
-    <data name="FullName" xml:space="preserve">
-    <value>ناوی تەواو</value>
-  </data>
-    <data name="Subject" xml:space="preserve">
-    <value>بابەت</value>
-  </data>
-    <data name="SelectSubject" xml:space="preserve">
-    <value>بابەت هەڵبژێرە</value>
-  </data>
-    <data name="GeneralInquiry" xml:space="preserve">
-    <value>پرسیاری گشتی</value>
-  </data>
-    <data name="TechnicalIssue" xml:space="preserve">
-    <value>کێشەی تەکنیکی</value>
-  </data>
-    <data name="Suggestion" xml:space="preserve">
-    <value>پێشنیار</value>
-  </data>
-    <data name="Complaint" xml:space="preserve">
-    <value>سکاڵا</value>
-  </data>
-    <data name="Message" xml:space="preserve">
-    <value>نامە</value>
-  </data>
-    <data name="MessageSentSuccess" xml:space="preserve">
-    <value>نامەکەت بە سەرکەوتوویی نێردرا! بە زووانە پەیوەندیت پێوە دەکەین.</value>
-  </data>
-    <data name="FAQ" xml:space="preserve">
-    <value>پرسیارە باوەکان</value>
-  </data>
-    <data name="FAQ1Question" xml:space="preserve">
-    <value>چۆن داواکاری زیاد بکەم؟</value>
-  </data>
-    <data name="FAQ1Answer" xml:space="preserve">
-    <value>دەتوانیت داواکاریەکەت زیاد بکەیت بە کرتەکردن لەسەر "زیادکردنی داواکاری" لە لیستەی سەرەوە، پاشان زانیاری پێویست پڕبکەرەوە.</value>
-  </data>
-    <data name="FAQ2Question" xml:space="preserve">
-    <value>چەند کات دەخایەنێت بۆ وەرگرتنی پێشنیارەکان؟</value>
-  </data>
-    <data name="FAQ2Answer" xml:space="preserve">
-    <value>بە شێوەیەکی ئاسایی پێشنیارەکان دەست پێدەکەن لە ماوەی چەند کاتژمێرێکدا لە دوای پەسەندکردنی داواکاری.</value>
-  </data>
+		Example:
 
-    <!-- Terms Additional -->
-    <data name="RegistrationRule1" xml:space="preserve">
-    <value>دەبێت تەمەنت زیاتر بێت لە ١٨ ساڵ بۆ تۆمارکردن</value>
-  </data>
-    <data name="RegistrationRule2" xml:space="preserve">
-    <value>دەبێت زانیاری راست و دروست پێشکەش بکەیت</value>
-  </data>
-    <data name="RegistrationRule3" xml:space="preserve">
-    <value>تۆ بەرپرسیاری بە نهێنی هێشتنەوەی وشەی نهێنی</value>
-  </data>
-    <data name="RegistrationRule4" xml:space="preserve">
-    <value>تەنها یەک هەژمار بۆ هەر بەکارهێنەرێک</value>
-  </data>
-    <data name="UserResponsibilities" xml:space="preserve">
-    <value>بەرپرسیارێتیەکانی بەکارهێنەر</value>
-  </data>
-    <data name="Responsibility1" xml:space="preserve">
-    <value>بەکارهێنانی پلاتفۆرم بە شێوەیەکی یاسایی و دروست</value>
-  </data>
-    <data name="Responsibility2" xml:space="preserve">
-    <value>پێشێلنەکردنی مافەکانی کەسانی تر</value>
-  </data>
-    <data name="Responsibility3" xml:space="preserve">
-    <value>پەیڕەوکردنی هەموو یاسا و ڕێساکان</value>
-  </data>
-    <data name="Responsibility4" xml:space="preserve">
-    <value>پێشکەشکردنی زانیاری راست و دروست</value>
-  </data>
-    <data name="ProhibitedActivities" xml:space="preserve">
-    <value>چالاکیە قەدەغەکراوەکان</value>
-  </data>
-    <data name="Prohibited1" xml:space="preserve">
-    <value>بڵاوکردنەوەی ناوەڕۆکی ناشایست یان نایاسایی</value>
-  </data>
-    <data name="Prohibited2" xml:space="preserve">
-    <value>ساختەکاری یان چەواشەکاری</value>
-  </data>
-    <data name="Prohibited3" xml:space="preserve">
-    <value>پێشێلکردنی مافی مووڵکی زیهنی</value>
-  </data>
-    <data name="Prohibited4" xml:space="preserve">
-    <value>هەوڵدان بۆ هاککردن یان خراپکردنی سیستەم</value>
-  </data>
-    <data name="IntellectualProperty" xml:space="preserve">
-    <value>مووڵکی زیهنی</value>
-  </data>
-    <data name="IntellectualPropertyText" xml:space="preserve">
-    <value>هەموو ناوەڕۆک و مارکە بازرگانیەکانی ئەم ماڵپەڕە پارێزراون لەژێر یاساکانی مووڵکی زیهنی.</value>
-  </data>
-    <data name="LimitationOfLiability" xml:space="preserve">
-    <value>سنووری بەرپرسیارێتی</value>
-  </data>
-    <data name="LiabilityText" xml:space="preserve">
-    <value>ئێمە بەرپرسیار نین لە هیچ زیانێکی ڕاستەوخۆ یان ناڕاستەوخۆ کە لە بەکارهێنانی پلاتفۆرم دروست دەبێت.</value>
-  </data>
-    <data name="TerminationOfService" xml:space="preserve">
-    <value>کۆتاییهێنان بە خزمەتگوزاری</value>
-  </data>
-    <data name="TerminationText" xml:space="preserve">
-    <value>ئێمە مافی ئەوەمان هەیە هەژمارەکەت ڕابگرین یان کۆتایی پێ بهێنین لە حاڵەتی پێشێلکردنی مەرجەکان.</value>
-  </data>
-    <data name="ChangesToTerms" xml:space="preserve">
-    <value>گۆڕانکاری لە مەرجەکان</value>
-  </data>
-    <data name="ChangesText" xml:space="preserve">
-    <value>لەوانەیە ئەم مەرجانە نوێ بکەینەوە لە کاتی خۆیدا. ئاگادارت دەکەینەوە لە هەر گۆڕانکاریەکی گرنگ.</value>
-  </data>
-    <data name="ContactTermsText" xml:space="preserve">
-    <value>ئەگەر پرسیارت هەیە دەربارەی ئەم مەرجانە، تکایە پەیوەندیمان پێوە بکە:</value>
-  </data>
+		... ado.net/XML headers & schema ...
+		<resheader name="resmimetype">text/microsoft-resx</resheader>
+		<resheader name="version">1.3</resheader>
+		<resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+		<resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+		<data name="Name1">this is my long string</data>
+		<data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+		<data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+			[base64 mime encoded serialized .NET Framework object]
+		</data>
+		<data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+			[base64 mime encoded string representing a byte array form of the .NET Framework object]
+		</data>
 
-    <!-- Privacy Policy Additional -->
-    <data name="HowWeUseInformation" xml:space="preserve">
-    <value>چۆن زانیاری بەکاردەهێنین</value>
+		There are any number of "resheader" rows that contain simple
+		name/value pairs.
+
+		Each data row contains a name, and value. The row also contains a
+		type or mimetype. Type corresponds to a .NET class that support
+		text/value conversion through the TypeConverter architecture.
+		Classes that don't support this are serialized and stored with the
+		mimetype set.
+
+		The mimetype is used for serialized objects, and tells the
+		ResXResourceReader how to depersist the object. This is currently not
+		extensible. For a given mimetype the value must be set accordingly:
+
+		Note - application/x-microsoft.net.object.binary.base64 is the format
+		that the ResXResourceWriter will generate, however the reader can
+		read any of the formats listed below.
+
+		mimetype: application/x-microsoft.net.object.binary.base64
+		value   : The object must be serialized with
+			: System.Serialization.Formatters.Binary.BinaryFormatter
+			: and then encoded with base64 encoding.
+
+		mimetype: application/x-microsoft.net.object.soap.base64
+		value   : The object must be serialized with
+			: System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+			: and then encoded with base64 encoding.
+
+		mimetype: application/x-microsoft.net.object.bytearray.base64
+		value   : The object must be serialized into a byte array
+			: using a System.ComponentModel.TypeConverter
+			: and then encoded with base64 encoding.
+	-->
+
+	<xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+		<xsd:element name="root" msdata:IsDataSet="true">
+			<xsd:complexType>
+				<xsd:choice maxOccurs="unbounded">
+					<xsd:element name="data">
+						<xsd:complexType>
+							<xsd:sequence>
+								<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+								<xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+							</xsd:sequence>
+							<xsd:attribute name="name" type="xsd:string" msdata:Ordinal="1" />
+							<xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+							<xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+						</xsd:complexType>
+					</xsd:element>
+					<xsd:element name="resheader">
+						<xsd:complexType>
+							<xsd:sequence>
+								<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+							</xsd:sequence>
+							<xsd:attribute name="name" type="xsd:string" use="required" />
+						</xsd:complexType>
+					</xsd:element>
+				</xsd:choice>
+			</xsd:complexType>
+		</xsd:element>
+	</xsd:schema>
+	<resheader name="resmimetype">
+		<value>text/microsoft-resx</value>
+	</resheader>
+	<resheader name="version">
+		<value>1.3</value>
+	</resheader>
+	<resheader name="reader">
+		<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.3500.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	</resheader>
+	<resheader name="writer">
+		<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.3500.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	</resheader>
+	<data name="SiteName" xml:space="preserve">
+	<value>بازاڕی پێچەوانە</value>
   </data>
-    <data name="UseInfo1" xml:space="preserve">
-    <value>پێشکەشکردن و باشترکردنی خزمەتگوزاریەکانمان</value>
+	<data name="SiteDescription" xml:space="preserve">
+	<value>پلاتفۆرمی بەستنەوەی کڕیاران بە فرۆشگاکان لە عێراق</value>
   </data>
-    <data name="UseInfo2" xml:space="preserve">
-    <value>پەیوەندیکردن لەگەڵت دەربارەی هەژمارەکەت</value>
+	<data name="Home" xml:space="preserve">
+	<value>سەرەکی</value>
   </data>
-    <data name="UseInfo3" xml:space="preserve">
-    <value>تایبەتکردنی ئەزموونەکەت</value>
+	<data name="Requests" xml:space="preserve">
+	<value>داواکاریەکان</value>
   </data>
-    <data name="UseInfo4" xml:space="preserve">
-    <value>پاراستنی ئاسایش و ڕێگریکردن لە ساختەکاری</value>
+	<data name="Stores" xml:space="preserve">
+	<value>فرۆشگاکان</value>
   </data>
-    <data name="UseInfo5" xml:space="preserve">
-    <value>جێبەجێکردنی پێداویستیە یاساییەکان</value>
+	<data name="About" xml:space="preserve">
+	<value>دەربارەی ئێمە</value>
   </data>
-    <data name="DataProtection" xml:space="preserve">
-    <value>پاراستنی داتا</value>
+	<data name="Contact" xml:space="preserve">
+	<value>پەیوەندی</value>
   </data>
-    <data name="DataProtectionText" xml:space="preserve">
-    <value>ئێمە ڕێوشوێنە ئەمنیەتیە گونجاوەکان دەگرینەبەر بۆ پاراستنی زانیاری کەسیەکانت:</value>
+	<data name="Login" xml:space="preserve">
+	<value>چوونە ژوورەوە</value>
   </data>
-    <data name="Protection1" xml:space="preserve">
-    <value>شفرەکردنی داتا هەستیارەکان</value>
+	<data name="Logout" xml:space="preserve">
+	<value>چوونەدەرەوە</value>
   </data>
-    <data name="Protection2" xml:space="preserve">
-    <value>کۆنترۆڵکردنی دەستگەیشتن تەنها بۆ ستافی مۆڵەتپێدراو</value>
+	<data name="Profile" xml:space="preserve">
+	<value>پرۆفایل</value>
   </data>
-    <data name="Protection3" xml:space="preserve">
-    <value>چاودێریکردن و نوێکردنەوەی سیستەمی ئەمنیەتی بە بەردەوامی</value>
+	<data name="AddRequest" xml:space="preserve">
+	<value>زیادکردنی داواکاری</value>
   </data>
-    <data name="InformationSharing" xml:space="preserve">
-    <value>هاوبەشکردنی زانیاری</value>
+	<data name="MyRequests" xml:space="preserve">
+	<value>داواکاریەکانم</value>
   </data>
-    <data name="SharingText" xml:space="preserve">
-    <value>ئێمە زانیاری کەسیەکانت نافرۆشین. لەوانەیە هاوبەشی بکەین لە حاڵەتەکانی خوارەوە:</value>
+	<data name="AdminPanel" xml:space="preserve">
+	<value>پانێلی بەڕێوەبەر</value>
   </data>
-    <data name="Sharing1" xml:space="preserve">
-    <value>بە ڕەزامەندی ڕوونی تۆ</value>
+	<data name="ContactInfo" xml:space="preserve">
+	<value>زانیاری پەیوەندی</value>
   </data>
-    <data name="Sharing2" xml:space="preserve">
-    <value>لەگەڵ دابینکارانی خزمەتگوزاری متمانەپێکراو</value>
+	<data name="ImportantLinks" xml:space="preserve">
+	<value>لینکە گرنگەکان</value>
   </data>
-    <data name="Sharing3" xml:space="preserve">
-    <value>کاتێک بە یاسایی پێویستە</value>
+	<data name="PrivacyPolicy" xml:space="preserve">
+	<value>سیاسەتی تایبەتمەندی</value>
   </data>
-    <data name="Cookies" xml:space="preserve">
-    <value>کووکیز</value>
+	<data name="Copyright" xml:space="preserve">
+	<value>© 2025 بازاڕی پێچەوانە. هەموو مافەکان پارێزراون</value>
   </data>
-    <data name="CookiesText" xml:space="preserve">
-    <value>ئێمە کووکیز بەکاردەهێنین بۆ باشترکردنی ئەزموونەکەت و شیکردنەوەی بەکارهێنانی ماڵپەڕ.</value>
+	<data name="Success" xml:space="preserve">
+	<value>سەرکەوتوو</value>
   </data>
-    <data name="YourRights" xml:space="preserve">
-    <value>مافەکانت</value>
-  </data>
-    <data name="Right1" xml:space="preserve">
-    <value>دەستگەیشتن بە زانیاری کەسیەکانت</value>
-  </data>
-    <data name="Right2" xml:space="preserve">
-    <value>ڕاستکردنەوەی زانیاری هەڵە</value>
-  </data>
-    <data name="Right3" xml:space="preserve">
-    <value>داواکردنی سڕینەوەی زانیاریەکانت</value>
-  </data>
-    <data name="Right4" xml:space="preserve">
-    <value>ناڕەزایەتی لە پرۆسێسکردنی داتا</value>
-  </data>
-    <data name="DataRetention" xml:space="preserve">
-    <value>هێشتنەوەی داتا</value>
-  </data>
-    <data name="RetentionText" xml:space="preserve">
-    <value>ئێمە زانیاریەکانت دەهێڵینەوە تا ئەو کاتەی هەژمارەکەت چالاکە یان بەپێی پێویست بۆ پێشکەشکردنی خزمەتگوزاریەکانمان.</value>
-  </data>
-    <data name="ChildrenPrivacy" xml:space="preserve">
-    <value>تایبەتێتی منداڵان</value>
-  </data>
-    <data name="ChildrenText" xml:space="preserve">
-    <value>خزمەتگوزاریەکانمان ئاراستەی منداڵانی خوار ١٨ ساڵ نییە. ئێمە بەزانست زانیاری لە منداڵان کۆناکەینەوە.</value>
-  </data>
-    <data name="PolicyChanges" xml:space="preserve">
-    <value>گۆڕانکاریەکانی سیاسەت</value>
-  </data>
-    <data name="PolicyChangesText" xml:space="preserve">
-    <value>لەوانەیە ئەم سیاسەتەی تایبەتێتی نوێ بکەینەوە. هەر گۆڕانکارییەک بڵاودەکەینەوە لەسەر ئەم لاپەڕەیە.</value>
-  </data>
-    <data name="ContactPrivacyText" xml:space="preserve">
-    <value>ئەگەر پرسیارت هەیە دەربارەی سیاسەتی تایبەتێتی، پەیوەندیمان پێوە بکە:</value>
+	<data name="Error" xml:space="preserve">
+	<value>هەڵە</value>
   </data>
 </root>

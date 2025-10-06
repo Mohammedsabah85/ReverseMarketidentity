@@ -98,61 +98,63 @@
 	<resheader name="writer">
 		<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.3500.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
 	</resheader>
-	<data name="SiteName" xml:space="preserve">
-	<value>Reverse Market</value>
+
+		<data name="SiteName" xml:space="preserve">
+		<value>السوق العكسي</value>
   </data>
-	<data name="SiteDescription" xml:space="preserve">
-	<value>Platform connecting customers with stores in Iraq</value>
+		<data name="SiteDescription" xml:space="preserve">
+		<value>منصة تربط العملاء بالمتاجر في العراق</value>
   </data>
-	<data name="Home" xml:space="preserve">
-	<value>Home</value>
+		<data name="Home" xml:space="preserve">
+		<value>الرئيسية</value>
   </data>
-	<data name="Requests" xml:space="preserve">
-	<value>Requests</value>
+		<data name="Requests" xml:space="preserve">
+		<value>الطلبات</value>
   </data>
-	<data name="Stores" xml:space="preserve">
-	<value>Stores</value>
+		<data name="Stores" xml:space="preserve">
+		<value>المتاجر</value>
   </data>
-	<data name="About" xml:space="preserve">
-	<value>About Us</value>
+		<data name="About" xml:space="preserve">
+		<value>من نحن</value>
   </data>
-	<data name="Contact" xml:space="preserve">
-	<value>Contact Us</value>
+		<data name="Contact" xml:space="preserve">
+		<value>اتصل بنا</value>
   </data>
-	<data name="Login" xml:space="preserve">
-	<value>Login</value>
+		<data name="Login" xml:space="preserve">
+		<value>تسجيل الدخول</value>
   </data>
-	<data name="Logout" xml:space="preserve">
-	<value>Logout</value>
+		<data name="Logout" xml:space="preserve">
+		<value>تسجيل الخروج</value>
   </data>
-	<data name="Profile" xml:space="preserve">
-	<value>Profile</value>
+		<data name="Profile" xml:space="preserve">
+		<value>الملف الشخصي</value>
   </data>
-	<data name="AddRequest" xml:space="preserve">
-	<value>Add Request</value>
+		<data name="AddRequest" xml:space="preserve">
+		<value>إضافة طلب</value>
   </data>
-	<data name="MyRequests" xml:space="preserve">
-	<value>My Requests</value>
+		<data name="MyRequests" xml:space="preserve">
+		<value>طلباتي</value>
   </data>
-	<data name="AdminPanel" xml:space="preserve">
-	<value>Admin Panel</value>
+		<data name="AdminPanel" xml:space="preserve">
+		<value>لوحة التحكم</value>
   </data>
-	<data name="ContactInfo" xml:space="preserve">
-	<value>Contact Information</value>
+		<data name="ContactInfo" xml:space="preserve">
+		<value>معلومات التواصل</value>
   </data>
-	<data name="ImportantLinks" xml:space="preserve">
-	<value>Important Links</value>
+		<data name="ImportantLinks" xml:space="preserve">
+		<value>روابط مهمة</value>
   </data>
-	<data name="PrivacyPolicy" xml:space="preserve">
-	<value>Privacy Policy</value>
+		<data name="PrivacyPolicy" xml:space="preserve">
+		<value>سياسة الخصوصية</value>
   </data>
-	<data name="Copyright" xml:space="preserve">
-	<value>© 2025 Reverse Market. All Rights Reserved</value>
+		<data name="Copyright" xml:space="preserve">
+		<value>© 2025 السوق العكسي. جميع الحقوق محفوظة</value>
   </data>
-	<data name="Success" xml:space="preserve">
-	<value>Success</value>
+		<data name="Success" xml:space="preserve">
+		<value>نجاح</value>
   </data>
-	<data name="Error" xml:space="preserve">
-	<value>Error</value>
+		<data name="Error" xml:space="preserve">
+		<value>خطأ</value>
   </data>
+
 </root>

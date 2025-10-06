@@ -59,6 +59,7 @@
 
         this.isChanging = true;
 
+        // ✅ إنشاء FormData هنا
         const formData = new FormData(form);
         const culture = formData.get('culture');
         const returnUrl = formData.get('returnUrl') || window.location.href;
@@ -87,7 +88,10 @@
             const response = await fetch(form.action, {
                 method: 'POST',
                 body: formData,
-                credentials: 'same-origin'
+                credentials: 'same-origin',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
             });
 
             console.log('📥 الاستجابة:', response.status, response.ok);
@@ -96,15 +100,21 @@
                 throw new Error(`HTTP ${response.status}`);
             }
 
-            // ✅ الحل: إعادة تحميل الصفحة بالكامل
-            console.log('🔄 إعادة تحميل الصفحة...');
+            const data = await response.json();
+            console.log('📊 البيانات المستلمة:', data);
 
-            // استخدام reload مع true لإجبار التحميل من السيرفر
-            window.location.reload(true);
+            if (data.success) {
+                console.log('✅ تم تغيير اللغة بنجاح');
+
+                // إعادة التحميل باستخدام URL المعاد من السيرفر
+                window.location.href = data.redirectUrl || returnUrl;
+            } else {
+                throw new Error(data.message || 'فشل تغيير اللغة');
+            }
 
         } catch (error) {
             console.error('❌ خطأ:', error);
-            this.showError(this.getErrorMessage());
+            this.showError(this.getErrorMessage(error.message));
             this.hideLoading(form);
             this.isChanging = false;
         }
@@ -125,6 +135,7 @@
 
         button.innerHTML = `<i class="fas fa-spinner fa-spin me-2"></i>${loadingText}`;
 
+        // تعطيل جميع أزرار اللغة
         document.querySelectorAll('.language-form button').forEach(btn => {
             btn.disabled = true;
         });
@@ -138,21 +149,23 @@
             delete button.dataset.original;
         }
 
+        // إعادة تفعيل جميع الأزرار
         document.querySelectorAll('.language-form button').forEach(btn => {
             btn.disabled = false;
         });
     }
 
-    getErrorMessage() {
+    getErrorMessage(specificError = '') {
         const messages = {
-            'ar': 'حدث خطأ في تغيير اللغة',
-            'en': 'Error changing language',
-            'ku': 'هەڵەیەک ڕوویدا'
+            'ar': specificError || 'حدث خطأ في تغيير اللغة',
+            'en': specificError || 'Error changing language',
+            'ku': specificError || 'هەڵەیەک ڕوویدا'
         };
         return messages[this.currentLanguage] || messages['ar'];
     }
 
     showError(message) {
+        // إزالة التنبيهات السابقة
         document.querySelectorAll('.language-error').forEach(el => el.remove());
 
         const alert = document.createElement('div');
@@ -185,10 +198,12 @@ if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
         languageManager = new LanguageManager();
         window.languageManager = languageManager;
+        console.log('✅ تم تهيئة مدير اللغات');
     });
 } else {
     languageManager = new LanguageManager();
     window.languageManager = languageManager;
+    console.log('✅ تم تهيئة مدير اللغات');
 }
 
 window.LanguageManager = LanguageManager;

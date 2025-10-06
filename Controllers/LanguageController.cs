@@ -13,53 +13,8 @@ namespace ReverseMarket.Controllers
             _logger = logger;
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-    
-        public IActionResult SetLanguage(string culture, string returnUrl)
-        {
-            try
-            {
-                _logger.LogInformation("تغيير اللغة مطلوب إلى: {Culture}", culture);
-
-                if (string.IsNullOrEmpty(culture))
-                {
-                    return BadRequest(new { success = false, message = "معامل اللغة مطلوب" });
-                }
-
-                var validCultures = new[] { "ar", "en", "ku" };
-                culture = culture.ToLower().Trim();
-
-                if (!validCultures.Contains(culture))
-                {
-                    return BadRequest(new { success = false, message = "لغة غير صالحة" });
-                }
-
-                // ✅ حفظ الكوكيز بشكل صحيح
-                Response.Cookies.Append(
-                    CookieRequestCultureProvider.DefaultCookieName,
-                    CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(culture)),
-                    new CookieOptions
-                    {
-                        Expires = DateTimeOffset.UtcNow.AddYears(1),
-                        IsEssential = true,
-                        Path = "/",
-                        SameSite = SameSiteMode.Lax,
-                        HttpOnly = false // مهم للقراءة من JavaScript
-                    }
-                );
-
-                _logger.LogInformation("تم حفظ كوكيز اللغة بنجاح: {Culture}", culture);
-
-                // ✅ إرجاع OK فقط
-                return Ok(new { success = true, culture = culture });
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "خطأ في تغيير اللغة");
-                return BadRequest(new { success = false, message = ex.Message });
-            }
-        }
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
         //public IActionResult SetLanguage(string culture, string returnUrl)
         //{
         //    try
@@ -83,7 +38,7 @@ namespace ReverseMarket.Controllers
         //            return BadRequest(new { success = false, message = "لغة غير صالحة" });
         //        }
 
-        //        // إنشاء وحفظ الكوكيز
+        //        // حفظ الكوكيز بشكل صحيح
         //        Response.Cookies.Append(
         //            CookieRequestCultureProvider.DefaultCookieName,
         //            CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(culture)),
@@ -93,8 +48,8 @@ namespace ReverseMarket.Controllers
         //                IsEssential = true,
         //                Path = "/",
         //                SameSite = SameSiteMode.Lax,
-        //                Secure = false, // اجعله true في الإنتاج مع HTTPS
-        //                HttpOnly = false // مهم: للسماح لـ JavaScript بالقراءة
+        //                HttpOnly = false,
+        //                Secure = false // في الإنتاج، غيرها إلى true مع HTTPS
         //            }
         //        );
 
@@ -104,25 +59,22 @@ namespace ReverseMarket.Controllers
         //        if (string.IsNullOrEmpty(returnUrl) || !Url.IsLocalUrl(returnUrl))
         //        {
         //            returnUrl = "/";
-        //            _logger.LogWarning("URL غير محلي، إعادة التوجيه إلى الصفحة الرئيسية");
         //        }
 
-        //        // إذا كان طلب AJAX
+        //        // إذا كان طلب AJAX، إرجاع JSON مع redirect URL
         //        if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
         //        {
-        //            _logger.LogInformation("طلب AJAX - إرجاع JSON");
         //            return Json(new
         //            {
         //                success = true,
         //                culture = culture,
-        //                returnUrl = returnUrl,
+        //                redirectUrl = returnUrl,
         //                message = "تم تغيير اللغة بنجاح"
         //            });
         //        }
 
         //        // إعادة التوجيه العادية
-        //        _logger.LogInformation("إعادة التوجيه إلى: {ReturnUrl}", returnUrl);
-        //        return Redirect(returnUrl);
+        //        return LocalRedirect(returnUrl);
         //    }
         //    catch (Exception ex)
         //    {
@@ -137,9 +89,43 @@ namespace ReverseMarket.Controllers
         //            });
         //        }
 
-        //        return BadRequest("خطأ في تغيير اللغة");
+        //        return BadRequest(new { success = false, message = ex.Message });
         //    }
         //}
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult SetLanguage(string culture, string returnUrl)
+        {
+            // حفظ الكوكيز
+            Response.Cookies.Append(
+                CookieRequestCultureProvider.DefaultCookieName,
+                CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(culture)),
+                new CookieOptions
+                {
+                    Expires = DateTimeOffset.UtcNow.AddYears(1),
+                    IsEssential = true,
+                    Path = "/",
+                    SameSite = SameSiteMode.Lax,
+                    HttpOnly = false
+                }
+            );
+
+            // إذا كان AJAX، أرجع JSON
+            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+            {
+                return Json(new
+                {
+                    success = true,
+                    culture = culture,
+                    redirectUrl = returnUrl,
+                    message = "تم تغيير اللغة بنجاح"
+                });
+            }
+
+            // وإلا أعد التوجيه مباشرة
+            return LocalRedirect(returnUrl);
+        }
 
         [HttpGet]
         public IActionResult GetCurrentLanguage()

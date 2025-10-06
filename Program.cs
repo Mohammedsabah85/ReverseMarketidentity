@@ -13,50 +13,53 @@ using ReverseMarket.Services;
 using ReverseMarket.SignalR;
 using System.Globalization;
 
+
 using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// ≈÷«›… Œœ„«  Localization
+builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
 
-builder.Services.AddLocalization(options =>
+builder.Services.Configure<RequestLocalizationOptions>(options =>
 {
-    options.ResourcesPath = "Resources";
+    var supportedCultures = new[]
+    {
+        new CultureInfo("ar"),
+        new CultureInfo("en"),
+        new CultureInfo("ku")
+    };
+
+    options.DefaultRequestCulture = new RequestCulture("ar");
+    options.SupportedCultures = supportedCultures;
+    options.SupportedUICultures = supportedCultures;
+
+    //  — Ì» Providers „Â„ Ãœ«
+    options.RequestCultureProviders = new List<IRequestCultureProvider>
+    {
+        // 1. Cookie Provider - «·√Ê·ÊÌ… «·√Ê·Ï
+        new CookieRequestCultureProvider
+        {
+            CookieName = CookieRequestCultureProvider.DefaultCookieName
+        },
+        // 2. Query String Provider
+        new QueryStringRequestCultureProvider(),
+        // 3. Accept Language Header
+        new AcceptLanguageHeaderRequestCultureProvider()
+    };
 });
 
+// ≈÷«›… «·„“Ìœ „‰ «·Œœ„«  Õ”» «Õ Ì«Ãﬂ
 builder.Services.AddControllersWithViews()
     .AddViewLocalization()
     .AddDataAnnotationsLocalization();
 
-// «··€«  «·„œ⁄Ê„…
-var supportedCultures = new[]
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddSession(options =>
 {
-    new CultureInfo("ar"),
-    new CultureInfo("en"),
-    new CultureInfo("ku")
-};
-
-//builder.Services.Configure<RequestLocalizationOptions>(options =>
-//{
-//    options.DefaultRequestCulture = new RequestCulture("ar");
-//    options.SupportedCultures = supportedCultures;
-//    options.SupportedUICultures = supportedCultures;
-
-//    options.RequestCultureProviders = new List<IRequestCultureProvider>
-//    {
-//        new CookieRequestCultureProvider(),
-//        new QueryStringRequestCultureProvider(),
-//        new AcceptLanguageHeaderRequestCultureProvider()
-//    };
-//});
-builder.Services.Configure<RequestLocalizationOptions>(options =>
-{
-    var supportedCultures = new[] { "ar", "en", "ku" };
-    options.SetDefaultCulture("ar")
-        .AddSupportedCultures(supportedCultures)
-        .AddSupportedUICultures(supportedCultures);
-
- 
-    options.RequestCultureProviders.Insert(0, new CookieRequestCultureProvider());
+    options.IdleTimeout = TimeSpan.FromMinutes(30);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
 });
 
 

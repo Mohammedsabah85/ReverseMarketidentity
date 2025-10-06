@@ -40,14 +40,26 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Compile Update="Resources\SharedResource.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>SharedResource.resx</DependentUpon>
+	  </Compile>
+	</ItemGroup>
+
+	<ItemGroup>
 	  <EmbeddedResource Update="Resources\SharedResource.ar.resx">
-	    <Generator>PublicResXFileCodeGenerator</Generator>
+	    <Generator></Generator>
 	  </EmbeddedResource>
 	  <EmbeddedResource Update="Resources\SharedResource.en.resx">
-	    <Generator>PublicResXFileCodeGenerator</Generator>
+	    <Generator></Generator>
 	  </EmbeddedResource>
 	  <EmbeddedResource Update="Resources\SharedResource.ku.resx">
+	    <Generator></Generator>
+	  </EmbeddedResource>
+	  <EmbeddedResource Update="Resources\SharedResource.resx">
 	    <Generator>PublicResXFileCodeGenerator</Generator>
+	    <LastGenOutput>SharedResource.Designer.cs</LastGenOutput>
 	  </EmbeddedResource>
 	</ItemGroup>
 

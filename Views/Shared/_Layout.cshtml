@@ -670,6 +670,8 @@
                     </ul>
 
                     <ul class="navbar-nav">
+                        <!-- استبدل الكود في السطر 885 من _Layout.cshtml بهذا الكود: -->
+
                         <li class="nav-item dropdown language-selector">
                             <a class="nav-link dropdown-toggle language-dropdown" href="#" id="languageMenu"
                                role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -684,7 +686,9 @@
                                             @Html.AntiForgeryToken()
                                             <input type="hidden" name="culture" value="@language.Code" />
                                             <input type="hidden" name="returnUrl" value="@(Context.Request.Path + Context.Request.QueryString)" />
-                                            <button type="submit" class="dropdown-item @(currentLanguage == language.Code ? "active" : "")" @(currentLanguage == language.Code ? "disabled" : "")>
+                                            <button type="submit"
+                                                    class="dropdown-item @(currentLanguage == language.Code ? "active" : "")"
+                                                    @(currentLanguage == language.Code ? "disabled" : "")>
                                                 <span class="flag">@language.Flag</span>
                                                 <span>@language.NativeName</span>
                                                 @if (currentLanguage == language.Code)
@@ -697,6 +701,7 @@
                                 }
                             </ul>
                         </li>
+
 
                         @if (isLoggedIn)
                         {
@@ -931,12 +936,10 @@
         <i class="fas fa-arrow-up"></i>
     </button>
 
-    <!-- Bootstrap Bundle - يجب أن يكون أولاً -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
-            crossorigin="anonymous"></script>
+    <!-- Bootstrap أولاً -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
-    <!-- Language Manager -->
+    <!-- ثم language-manager -->
     <script src="~/js/language-manager.js"></script>
 
     <!-- اختبار Bootstrap -->
