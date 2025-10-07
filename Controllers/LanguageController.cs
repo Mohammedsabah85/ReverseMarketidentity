@@ -13,118 +13,84 @@ namespace ReverseMarket.Controllers
             _logger = logger;
         }
 
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public IActionResult SetLanguage(string culture, string returnUrl)
-        //{
-        //    try
-        //    {
-        //        _logger.LogInformation("تغيير اللغة مطلوب إلى: {Culture}", culture);
-
-        //        // التحقق من وجود اللغة
-        //        if (string.IsNullOrEmpty(culture))
-        //        {
-        //            _logger.LogWarning("معامل اللغة فارغ");
-        //            return BadRequest(new { success = false, message = "معامل اللغة مطلوب" });
-        //        }
-
-        //        // التحقق من صحة اللغة
-        //        var validCultures = new[] { "ar", "en", "ku" };
-        //        culture = culture.ToLower().Trim();
-
-        //        if (!validCultures.Contains(culture))
-        //        {
-        //            _logger.LogWarning("لغة غير صالحة: {Culture}", culture);
-        //            return BadRequest(new { success = false, message = "لغة غير صالحة" });
-        //        }
-
-        //        // حفظ الكوكيز بشكل صحيح
-        //        Response.Cookies.Append(
-        //            CookieRequestCultureProvider.DefaultCookieName,
-        //            CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(culture)),
-        //            new CookieOptions
-        //            {
-        //                Expires = DateTimeOffset.UtcNow.AddYears(1),
-        //                IsEssential = true,
-        //                Path = "/",
-        //                SameSite = SameSiteMode.Lax,
-        //                HttpOnly = false,
-        //                Secure = false // في الإنتاج، غيرها إلى true مع HTTPS
-        //            }
-        //        );
-
-        //        _logger.LogInformation("تم حفظ كوكيز اللغة بنجاح: {Culture}", culture);
-
-        //        // التحقق من URL الرجوع
-        //        if (string.IsNullOrEmpty(returnUrl) || !Url.IsLocalUrl(returnUrl))
-        //        {
-        //            returnUrl = "/";
-        //        }
-
-        //        // إذا كان طلب AJAX، إرجاع JSON مع redirect URL
-        //        if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
-        //        {
-        //            return Json(new
-        //            {
-        //                success = true,
-        //                culture = culture,
-        //                redirectUrl = returnUrl,
-        //                message = "تم تغيير اللغة بنجاح"
-        //            });
-        //        }
-
-        //        // إعادة التوجيه العادية
-        //        return LocalRedirect(returnUrl);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _logger.LogError(ex, "خطأ في تغيير اللغة");
-
-        //        if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
-        //        {
-        //            return Json(new
-        //            {
-        //                success = false,
-        //                message = "خطأ في تغيير اللغة: " + ex.Message
-        //            });
-        //        }
-
-        //        return BadRequest(new { success = false, message = ex.Message });
-        //    }
-        //}
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult SetLanguage(string culture, string returnUrl)
         {
-            // حفظ الكوكيز
-            Response.Cookies.Append(
-                CookieRequestCultureProvider.DefaultCookieName,
-                CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(culture)),
-                new CookieOptions
-                {
-                    Expires = DateTimeOffset.UtcNow.AddYears(1),
-                    IsEssential = true,
-                    Path = "/",
-                    SameSite = SameSiteMode.Lax,
-                    HttpOnly = false
-                }
-            );
-
-            // إذا كان AJAX، أرجع JSON
-            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+            try
             {
-                return Json(new
-                {
-                    success = true,
-                    culture = culture,
-                    redirectUrl = returnUrl,
-                    message = "تم تغيير اللغة بنجاح"
-                });
-            }
+                _logger.LogInformation("تغيير اللغة مطلوب إلى: {Culture}", culture);
 
-            // وإلا أعد التوجيه مباشرة
-            return LocalRedirect(returnUrl);
+                // التحقق من وجود اللغة
+                if (string.IsNullOrEmpty(culture))
+                {
+                    _logger.LogWarning("معامل اللغة فارغ");
+                    return BadRequest(new { success = false, message = "معامل اللغة مطلوب" });
+                }
+
+                // التحقق من صحة اللغة
+                var validCultures = new[] { "ar", "en", "ku" };
+                culture = culture.ToLower().Trim();
+
+                if (!validCultures.Contains(culture))
+                {
+                    _logger.LogWarning("لغة غير صالحة: {Culture}", culture);
+                    return BadRequest(new { success = false, message = "لغة غير صالحة" });
+                }
+
+                // حفظ الكوكيز بشكل صحيح
+                Response.Cookies.Append(
+                    CookieRequestCultureProvider.DefaultCookieName,
+                    CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(culture)),
+                    new CookieOptions
+                    {
+                        Expires = DateTimeOffset.UtcNow.AddYears(1),
+                        IsEssential = true,
+                        Path = "/",
+                        SameSite = SameSiteMode.Lax,
+                        HttpOnly = false,
+                        Secure = false // في الإنتاج، غيرها إلى true مع HTTPS
+                    }
+                );
+
+                _logger.LogInformation("تم حفظ كوكيز اللغة بنجاح: {Culture}", culture);
+
+                // التحقق من URL الرجوع
+                if (string.IsNullOrEmpty(returnUrl) || !Url.IsLocalUrl(returnUrl))
+                {
+                    returnUrl = "/";
+                }
+
+                // إذا كان طلب AJAX، إرجاع JSON مع redirect URL
+                if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                {
+                    return Json(new
+                    {
+                        success = true,
+                        culture = culture,
+                        redirectUrl = returnUrl,
+                        message = "تم تغيير اللغة بنجاح"
+                    });
+                }
+
+                // إعادة التوجيه العادية
+                return LocalRedirect(returnUrl);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "خطأ في تغيير اللغة");
+
+                if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                {
+                    return Json(new
+                    {
+                        success = false,
+                        message = "خطأ في تغيير اللغة: " + ex.Message
+                    });
+                }
+
+                return BadRequest(new { success = false, message = ex.Message });
+            }
         }
 
         [HttpGet]

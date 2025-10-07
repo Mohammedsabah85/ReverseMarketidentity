@@ -43,32 +43,63 @@ builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
 // ====================================
 // 3. Localization Configuration
 // ====================================
-builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
+////builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
+
+////builder.Services.Configure<RequestLocalizationOptions>(options =>
+////{
+////    var supportedCultures = new[]
+////    {
+////        new CultureInfo("ar"),
+////        new CultureInfo("en"),
+////        new CultureInfo("ku")
+////    };
+
+////    options.DefaultRequestCulture = new RequestCulture("ar");
+////    options.SupportedCultures = supportedCultures;
+////    options.SupportedUICultures = supportedCultures;
+
+////    //  — Ì» Providers „Â„ Ãœ« - Cookie √Ê·«
+////    options.RequestCultureProviders = new List<IRequestCultureProvider>
+////    {
+////        new CookieRequestCultureProvider
+////        {
+////            CookieName = CookieRequestCultureProvider.DefaultCookieName
+////        },
+////        new QueryStringRequestCultureProvider(),
+////        new AcceptLanguageHeaderRequestCultureProvider()
+////    };
+////});
+///builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
+
+builder.Services.AddControllersWithViews()
+    .AddViewLocalization(Microsoft.AspNetCore.Mvc.Razor.LanguageViewLocationExpanderFormat.Suffix)
+    .AddDataAnnotationsLocalization();
 
 builder.Services.Configure<RequestLocalizationOptions>(options =>
 {
     var supportedCultures = new[]
     {
-        new CultureInfo("ar"),
-        new CultureInfo("en"),
-        new CultureInfo("ku")
+        new System.Globalization.CultureInfo("ar"),
+        new System.Globalization.CultureInfo("en"),
+        new System.Globalization.CultureInfo("ku")
     };
 
-    options.DefaultRequestCulture = new RequestCulture("ar");
+    options.DefaultRequestCulture = new Microsoft.AspNetCore.Localization.RequestCulture("ar");
     options.SupportedCultures = supportedCultures;
     options.SupportedUICultures = supportedCultures;
 
-    //  — Ì» Providers „Â„ Ãœ« - Cookie √Ê·«
-    options.RequestCultureProviders = new List<IRequestCultureProvider>
+    // ? „Â„:  — Ì» Providers
+    options.RequestCultureProviders = new List<Microsoft.AspNetCore.Localization.IRequestCultureProvider>
     {
-        new CookieRequestCultureProvider
+        new Microsoft.AspNetCore.Localization.CookieRequestCultureProvider
         {
-            CookieName = CookieRequestCultureProvider.DefaultCookieName
+            CookieName = ".AspNetCore.Culture"
         },
-        new QueryStringRequestCultureProvider(),
-        new AcceptLanguageHeaderRequestCultureProvider()
+        new Microsoft.AspNetCore.Localization.QueryStringRequestCultureProvider(),
+        new Microsoft.AspNetCore.Localization.AcceptLanguageHeaderRequestCultureProvider()
     };
 });
+
 
 // ====================================
 // 4. MVC and Views Configuration
