@@ -1,6 +1,11 @@
-﻿@model HomeViewModel
+﻿@using Microsoft.Extensions.Localization
+@using ReverseMarket.Resources
+@inject IStringLocalizer<SharedResource> Localizer
+@inject ReverseMarket.Services.ILanguageService LanguageService
+@model HomeViewModel
 @{
-    ViewData["Title"] = "الرئيسية";
+    ViewData["Title"] = Localizer["Home"];
+    var currentLang = LanguageService.GetCurrentLanguage();
 }
 
 <!-- Advertisements Slider Section -->
@@ -14,7 +19,7 @@
                     {
                         <button type="button" data-bs-target="#advertisementsCarousel" data-bs-slide-to="@i"
                                 class="@(i == 0 ? "active" : "")" aria-current="@(i == 0 ? "true" : "false")"
-                                aria-label="إعلان @(i + 1)"></button>
+                                aria-label="@Localizer["Advertisement"] @(i + 1)"></button>
                     }
                 </div>
                 <div class="carousel-inner">
@@ -53,11 +58,11 @@
                 {
                     <button class="carousel-control-prev" type="button" data-bs-target="#advertisementsCarousel" data-bs-slide="prev">
                         <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                        <span class="visually-hidden">السابق</span>
+                        <span class="visually-hidden">@Localizer["Previous"]</span>
                     </button>
                     <button class="carousel-control-next" type="button" data-bs-target="#advertisementsCarousel" data-bs-slide="next">
                         <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                        <span class="visually-hidden">التالي</span>
+                        <span class="visually-hidden">@Localizer["Next"]</span>
                     </button>
                 }
             </div>
@@ -68,11 +73,11 @@
 <!-- Hero Section -->
 <section class="hero-section">
     <div class="container">
-        <h1>مرحباً بك في السوق العكسي</h1>
-        <p>أضف طلبك ودع المتاجر تتنافس لخدمتك</p>
+        <h1>@Localizer["Welcome"]</h1>
+        <p>@Localizer["WelcomeMessage"]</p>
         <div class="d-flex gap-3 justify-content-center flex-wrap">
-            <a href="/Requests/Create" class="btn-custom">أضف طلبك الآن</a>
-            <a href="/Requests" class="btn-outline-custom">تصفح الطلبات</a>
+            <a href="/Requests/Create" class="btn-custom">@Localizer["AddRequestNow"]</a>
+            <a href="/Requests" class="btn-outline-custom">@Localizer["BrowseRequests"]</a>
         </div>
     </div>
 </section>
@@ -82,11 +87,11 @@
     <div class="container">
         <form class="search-form" method="get" action="/Requests">
             <div class="flex-grow-1">
-                <input type="text" name="search" class="form-control" placeholder="ابحث عن طلب معين...">
+                <input type="text" name="search" class="form-control" placeholder="@Localizer["SearchPlaceholder"]">
             </div>
             <div>
                 <select name="categoryId" class="form-control">
-                    <option value="">جميع الفئات</option>
+                    <option value="">@Localizer["AllCategories"]</option>
                     @foreach (var category in Model.Categories)
                     {
                         <option value="@category.Id">@category.Name</option>
@@ -96,7 +101,7 @@
             <div>
                 <button type="submit" class="btn btn-custom">
                     <i class="fas fa-search me-1"></i>
-                    بحث
+                    @Localizer["Search"]
                 </button>
             </div>
         </form>
@@ -107,8 +112,8 @@
 <section class="py-5">
     <div class="container">
         <div class="section-title">
-            <h2>أفضل الفئات</h2>
-            <p>اختر من بين مجموعة واسعة من الفئات</p>
+            <h2>@Localizer["BestCategories"]</h2>
+            <p>@Localizer["BestCategoriesSubtitle"]</p>
         </div>
 
         <div class="row g-4">
@@ -137,7 +142,7 @@
                                 }
                                 else
                                 {
-                                    <p class="text-muted">اكتشف المنتجات والخدمات</p>
+                                    <p class="text-muted">@Localizer["DiscoverProducts"]</p>
                                 }
                             </div>
                         </div>
@@ -152,8 +157,8 @@
 <section class="py-5 bg-light">
     <div class="container">
         <div class="section-title">
-            <h2>الطلبات المضافة مؤخراً</h2>
-            <p>آخر الطلبات المتاحة من العملاء</p>
+            <h2>@Localizer["RecentRequests"]</h2>
+            <p>@Localizer["RecentRequestsSubtitle"]</p>
         </div>
 
         @if (Model.RecentRequests.Any())
@@ -182,7 +187,7 @@
                                                             request.Description.Substring(0, 80) + "..." :
                                                             request.Description)
                         </p>
-                        <a href="/Requests/Details/@request.Id" class="btn btn-outline-custom btn-sm">عرض التفاصيل</a>
+                        <a href="/Requests/Details/@request.Id" class="btn btn-outline-custom btn-sm">@Localizer["ViewDetails"]</a>
                     </div>
                 </div>
             </div>
@@ -193,11 +198,11 @@
         {
             <div class="text-center py-5">
                 <i class="fas fa-inbox fa-4x text-muted mb-3"></i>
-                <h5 class="text-muted">لا توجد طلبات حديثة</h5>
-                <p class="text-muted">كن أول من يضيف طلباً</p>
+                <h5 class="text-muted">@Localizer["NoRecentRequests"]</h5>
+                <p class="text-muted">@Localizer["BeFirstToAddRequest"]</p>
                 <a href="/Requests/Create" class="btn btn-custom">
                     <i class="fas fa-plus me-2"></i>
-                    أضف أول طلب
+                    @Localizer["AddFirstRequest"]
                 </a>
             </div>
         }
@@ -205,7 +210,7 @@
         @if (Model.RecentRequests.Any())
         {
             <div class="text-center mt-4">
-                <a href="/Requests" class="btn btn-custom">عرض جميع الطلبات</a>
+                <a href="/Requests" class="btn btn-custom">@Localizer["ViewAllRequests"]</a>
             </div>
         }
     </div>
@@ -215,37 +220,37 @@
 <section class="how-it-works">
     <div class="container">
         <div class="section-title">
-            <h2>كيف يعمل السوق العكسي؟</h2>
-            <p>خطوات بسيطة للحصول على ما تريد</p>
+            <h2>@Localizer["HowItWorks"]</h2>
+            <p>@Localizer["HowItWorksSubtitle"]</p>
         </div>
 
         <div class="row g-4">
             <div class="col-lg-3 col-md-6">
                 <div class="step-card">
                     <div class="step-number">1</div>
-                    <h5>أضف طلبك</h5>
-                    <p>اكتب تفاصيل ما تحتاجه بوضوح</p>
+                    <h5>@Localizer["Step1Title"]</h5>
+                    <p>@Localizer["Step1Description"]</p>
                 </div>
             </div>
             <div class="col-lg-3 col-md-6">
                 <div class="step-card">
                     <div class="step-number">2</div>
-                    <h5>انتظر الموافقة</h5>
-                    <p>سيتم مراجعة طلبك والموافقة عليه</p>
+                    <h5>@Localizer["Step2Title"]</h5>
+                    <p>@Localizer["Step2Description"]</p>
                 </div>
             </div>
             <div class="col-lg-3 col-md-6">
                 <div class="step-card">
                     <div class="step-number">3</div>
-                    <h5>المتاجر تتواصل معك</h5>
-                    <p>ستحصل على عروض من المتاجر المختصة</p>
+                    <h5>@Localizer["Step3Title"]</h5>
+                    <p>@Localizer["Step3Description"]</p>
                 </div>
             </div>
             <div class="col-lg-3 col-md-6">
                 <div class="step-card">
                     <div class="step-number">4</div>
-                    <h5>اختر الأفضل</h5>
-                    <p>قارن العروض واختر الأنسب لك</p>
+                    <h5>@Localizer["Step4Title"]</h5>
+                    <p>@Localizer["Step4Description"]</p>
                 </div>
             </div>
         </div>
@@ -259,25 +264,25 @@
             <div class="col-lg-3 col-md-6">
                 <div class="stat-item">
                     <h3>@(Model.RecentRequests.Count + 1500)</h3>
-                    <p>طلب منجز</p>
+                    <p>@Localizer["CompletedRequests"]</p>
                 </div>
             </div>
             <div class="col-lg-3 col-md-6">
                 <div class="stat-item">
                     <h3>500+</h3>
-                    <p>متجر مسجل</p>
+                    <p>@Localizer["RegisteredStores"]</p>
                 </div>
             </div>
             <div class="col-lg-3 col-md-6">
                 <div class="stat-item">
                     <h3>2000+</h3>
-                    <p>عميل راضي</p>
+                    <p>@Localizer["SatisfiedCustomers"]</p>
                 </div>
             </div>
             <div class="col-lg-3 col-md-6">
                 <div class="stat-item">
                     <h3>@Model.Categories.Count</h3>
-                    <p>فئة متاحة</p>
+                    <p>@Localizer["AvailableCategories"]</p>
                 </div>
             </div>
         </div>
