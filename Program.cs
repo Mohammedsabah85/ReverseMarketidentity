@@ -1,9 +1,8 @@
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using ReverseMarket.CustomWhatsappService;
 using ReverseMarket.Data;
 using ReverseMarket.Extensions;
@@ -13,80 +12,17 @@ using ReverseMarket.Services;
 using ReverseMarket.SignalR;
 using System.Globalization;
 
-
-using Microsoft.Extensions.Options;
-
 var builder = WebApplication.CreateBuilder(args);
 
-// ≈÷«›… Œœ„«  Localization
-builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
-
-builder.Services.Configure<RequestLocalizationOptions>(options =>
-{
-    var supportedCultures = new[]
-    {
-        new CultureInfo("ar"),
-        new CultureInfo("en"),
-        new CultureInfo("ku")
-    };
-
-    options.DefaultRequestCulture = new RequestCulture("ar");
-    options.SupportedCultures = supportedCultures;
-    options.SupportedUICultures = supportedCultures;
-
-    //  — Ì» Providers „Â„ Ãœ«
-    options.RequestCultureProviders = new List<IRequestCultureProvider>
-    {
-        // 1. Cookie Provider - «·√Ê·ÊÌ… «·√Ê·Ï
-        new CookieRequestCultureProvider
-        {
-            CookieName = CookieRequestCultureProvider.DefaultCookieName
-        },
-        // 2. Query String Provider
-        new QueryStringRequestCultureProvider(),
-        // 3. Accept Language Header
-        new AcceptLanguageHeaderRequestCultureProvider()
-    };
-});
-
-// ≈÷«›… «·„“Ìœ „‰ «·Œœ„«  Õ”» «Õ Ì«Ãﬂ
-builder.Services.AddControllersWithViews()
-    .AddViewLocalization()
-    .AddDataAnnotationsLocalization();
-
-builder.Services.AddHttpContextAccessor();
-builder.Services.AddSession(options =>
-{
-    options.IdleTimeout = TimeSpan.FromMinutes(30);
-    options.Cookie.HttpOnly = true;
-    options.Cookie.IsEssential = true;
-});
-
-
-
-
-// ≈⁄œ«œ ﬁ«⁄œ… «·»Ì«‰« 
+// ====================================
+// 1. Database Configuration
+// ====================================
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-
-builder.Services.AddHttpContextAccessor();
-
-
-builder.Services.AddScoped<ILanguageService, LanguageService>();
-
-// Session
-builder.Services.AddSession(options =>
-{
-    options.IdleTimeout = TimeSpan.FromMinutes(30);
-    options.Cookie.IsEssential = true;
-});
-
-
-
-
-
-// ≈⁄œ«œ Identity „⁄ «·√œÊ«—
+// ====================================
+// 2. Identity Configuration
+// ====================================
 builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
 {
     // ≈⁄œ«œ«   ”ÃÌ· «·œŒÊ·
@@ -104,41 +40,48 @@ builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
 .AddEntityFrameworkStores<ApplicationDbContext>()
 .AddDefaultTokenProviders();
 
+// ====================================
+// 3. Localization Configuration
+// ====================================
+builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
 
+builder.Services.Configure<RequestLocalizationOptions>(options =>
+{
+    var supportedCultures = new[]
+    {
+        new CultureInfo("ar"),
+        new CultureInfo("en"),
+        new CultureInfo("ku")
+    };
 
+    options.DefaultRequestCulture = new RequestCulture("ar");
+    options.SupportedCultures = supportedCultures;
+    options.SupportedUICultures = supportedCultures;
 
-////// ≈⁄œ«œ «· —Ã„… Ê«· œÊÌ·
-////var supportedCultures = new[]
-////{
-////    new CultureInfo("ar-IQ"),
-////    new CultureInfo("en-US"),
-////    new CultureInfo("ku")
-////};
+    //  — Ì» Providers „Â„ Ãœ« - Cookie √Ê·«
+    options.RequestCultureProviders = new List<IRequestCultureProvider>
+    {
+        new CookieRequestCultureProvider
+        {
+            CookieName = CookieRequestCultureProvider.DefaultCookieName
+        },
+        new QueryStringRequestCultureProvider(),
+        new AcceptLanguageHeaderRequestCultureProvider()
+    };
+});
 
-////builder.Services.Configure<RequestLocalizationOptions>(options =>
-////{
-////    options.DefaultRequestCulture = new RequestCulture("ar-IQ");
-////    options.SupportedCultures = supportedCultures;
-////    options.SupportedUICultures = supportedCultures;
+// ====================================
+// 4. MVC and Views Configuration
+// ====================================
+builder.Services.AddControllersWithViews()
+    .AddViewLocalization()
+    .AddDataAnnotationsLocalization();
 
-////    options.RequestCultureProviders = new List<IRequestCultureProvider>
-////    {
-////        new CookieRequestCultureProvider(),
-////        new AcceptLanguageHeaderRequestCultureProvider()
-////    };
-////});
-
-////builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
-
-// ≈⁄œ«œ «·Œœ„«  «·„Œ’’…
-builder.Services.AddScoped<ILanguageService, LanguageService>();
-builder.Services.AddHttpContextAccessor();
-
-// ≈⁄œ«œ MVC Ê«·’›Õ« 
-builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 
-// ≈⁄œ«œ Session
+// ====================================
+// 5. Session Configuration
+// ====================================
 builder.Services.AddSession(options =>
 {
     options.IdleTimeout = TimeSpan.FromMinutes(30);
@@ -146,30 +89,48 @@ builder.Services.AddSession(options =>
     options.Cookie.IsEssential = true;
 });
 
-// ≈÷«›… Œœ„«  «· ÿ»Ìﬁ
+// ====================================
+// 6. Application Services
+// ====================================
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<ILanguageService, LanguageService>();
 builder.Services.AddApplicationServices(builder.Configuration);
 
-// ›Ì »Ì∆… «· ÿÊÌ— ›ﬁÿ
+// ====================================
+// 7. SignalR for Real-time Chat
+// ====================================
+builder.Services.AddSignalR();
+builder.Services.AddSingleton<IUserIdProvider, NameUserIdProvider>();
+
+// ====================================
+// 8. WhatsApp Service Configuration
+// ====================================
+builder.Services.Configure<WhatsSettings>(
+    builder.Configuration.GetSection("WhatsAppSettings"));
+builder.Services.AddHttpClient<WhatsAppService>();
+
+// ====================================
+// 9. Development Tools
+// ====================================
 if (builder.Environment.IsDevelopment())
 {
     builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 }
 
-// for real time chat : 
-builder.Services.AddSignalR();
-builder.Services.AddSingleton<IUserIdProvider, NameUserIdProvider>();
-
-// custome whatsapp message : 
-builder.Services.Configure<WhatsSettings>(
-    builder.Configuration.GetSection("WhatsAppSettings"));
-builder.Services.AddHttpClient<WhatsAppService>();
-
+// ====================================
+// BUILD APP
+// ====================================
 var app = builder.Build();
 
+// ====================================
+// 10. Request Pipeline Configuration
+// ====================================
 
+// Localization (ÌÃ» √‰ ÌﬂÊ‰ Ê«Õœ ›ﬁÿ)
 var localizationOptions = app.Services.GetRequiredService<IOptions<RequestLocalizationOptions>>().Value;
 app.UseRequestLocalization(localizationOptions);
-// ≈⁄œ«œ Pipeline ··ÿ·»« 
+
+// Error Handling
 if (app.Environment.IsDevelopment())
 {
     app.UseMigrationsEndPoint();
@@ -180,23 +141,24 @@ else
     app.UseHsts();
 }
 
+// Static Files
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
+// Routing
 app.UseRouting();
 
-//  — Ì» „Â„: Localization ﬁ»· Authentication
-app.UseRequestLocalization();
-
+// Authentication & Authorization
 app.UseAuthentication();
 app.UseAuthorization();
 
-// for real time chat : 
-app.MapHub<ChatHub>("/chathub");
-
+// Session
 app.UseSession();
 
-// ≈⁄œ«œ «·„”«—« 
+// SignalR Hub
+app.MapHub<ChatHub>("/chathub");
+
+// Routes
 app.MapControllerRoute(
     name: "areas",
     pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
@@ -207,7 +169,9 @@ app.MapControllerRoute(
 
 app.MapRazorPages();
 
-//  ÂÌ∆… «·»Ì«‰«  «·√”«”Ì…
+// ====================================
+// 11. Data Seeding
+// ====================================
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
@@ -228,7 +192,10 @@ using (var scope = app.Services.CreateScope())
 
 app.Run();
 
-// œÊ«·  ÂÌ∆… «·»Ì«‰«  «·√”«”Ì…
+// ====================================
+// HELPER METHODS - Data Seeding
+// ====================================
+
 static async Task SeedRolesAsync(RoleManager<ApplicationRole> roleManager)
 {
     var roles = new[]
