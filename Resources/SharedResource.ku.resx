@@ -307,5 +307,5 @@
 	<data name="LanguageChanged" xml:space="preserve"><value>زمان بە سەرکەوتوویی گۆڕدرا</value></data>
 	<data name="LoadingLanguage" xml:space="preserve"><value>بارکردنی زمان...</value></data>
 	<data name="LanguageError" xml:space="preserve"><value>هەڵە لە گۆڕینی زمان</value></data>
-
+	<data name="IntellectualProperty" xml:space="preserve"><value>موڵکی زیهنی</value></data>
 </root>

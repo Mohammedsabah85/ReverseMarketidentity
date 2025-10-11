@@ -307,5 +307,6 @@
 	<data name="LanguageChanged" xml:space="preserve"><value>Language changed successfully</value></data>
 	<data name="LoadingLanguage" xml:space="preserve"><value>Loading language...</value></data>
 	<data name="LanguageError" xml:space="preserve"><value>Error changing language</value></data>
+	<data name="IntellectualProperty" xml:space="preserve"><value>Intellectual Property</value></data>
 
 </root>

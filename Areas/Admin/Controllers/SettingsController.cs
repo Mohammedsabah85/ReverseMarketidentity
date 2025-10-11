@@ -43,17 +43,42 @@ namespace ReverseMarket.Areas.Admin.Controllers
                     settings.SiteLogo = logoPath;
                 }
 
+                // About Us
                 settings.AboutUs = model.AboutUs;
+                settings.AboutUsEn = model.AboutUsEn;
+                settings.AboutUsKu = model.AboutUsKu;
+
+                // Contact Information
                 settings.ContactPhone = model.ContactPhone;
                 settings.ContactWhatsApp = model.ContactWhatsApp;
                 settings.ContactEmail = model.ContactEmail;
+
+                // Social Media
                 settings.FacebookUrl = model.FacebookUrl;
                 settings.InstagramUrl = model.InstagramUrl;
                 settings.TwitterUrl = model.TwitterUrl;
                 settings.YouTubeUrl = model.YouTubeUrl;
+
+                // Privacy Policy
                 settings.PrivacyPolicy = model.PrivacyPolicy;
+                settings.PrivacyPolicyEn = model.PrivacyPolicyEn;
+                settings.PrivacyPolicyKu = model.PrivacyPolicyKu;
+
+                // Terms of Use
                 settings.TermsOfUse = model.TermsOfUse;
+                settings.TermsOfUseEn = model.TermsOfUseEn;
+                settings.TermsOfUseKu = model.TermsOfUseKu;
+
+                // Copyright Info
                 settings.CopyrightInfo = model.CopyrightInfo;
+                settings.CopyrightInfoEn = model.CopyrightInfoEn;
+                settings.CopyrightInfoKu = model.CopyrightInfoKu;
+
+                // Intellectual Property
+                settings.IntellectualProperty = model.IntellectualProperty;
+                settings.IntellectualPropertyEn = model.IntellectualPropertyEn;
+                settings.IntellectualPropertyKu = model.IntellectualPropertyKu;
+
                 settings.UpdatedAt = DateTime.Now;
 
                 await _context.SaveChangesAsync();

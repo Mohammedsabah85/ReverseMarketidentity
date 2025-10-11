@@ -1,4 +1,4 @@
-﻿@using Microsoft.Extensions.Localization
+@using Microsoft.Extensions.Localization
 @using ReverseMarket.Resources
 @inject IStringLocalizer<SharedResource> Localizer
 @inject ReverseMarket.Services.ILanguageService LanguageService
@@ -178,20 +178,20 @@
                                     <i class="fas fa-image fa-3x text-muted"></i>
                                 </div>
                             }
-                        <div class="request-card-body">
-                            <span class="badge-custom">@request.Category.Name</span>
-                            <h6 class="mt-2">@request.Title</h6>
-                            <p class="text-muted small">@request.City - @request.District</p>
-                            <p class="text-muted">
-                                @(request.Description.Length > 80 ?
-                                                            request.Description.Substring(0, 80) + "..." :
-                                                            request.Description)
-                        </p>
-                        <a href="/Requests/Details/@request.Id" class="btn btn-outline-custom btn-sm">@Localizer["ViewDetails"]</a>
+                            <div class="request-card-body">
+                                <span class="badge-custom">@request.Category.Name</span>
+                                <h6 class="mt-2">@request.Title</h6>
+                                <p class="text-muted small">@request.City - @request.District</p>
+                                <p class="text-muted">
+                                    @(request.Description.Length > 80 ?
+                                        request.Description.Substring(0, 80) + "..." :
+                                        request.Description)
+                                </p>
+                                <a href="/Requests/Details/@request.Id" class="btn btn-outline-custom btn-sm">@Localizer["ViewDetails"]</a>
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </div>
-                        }
+                }
             </div>
         }
         else
@@ -251,38 +251,6 @@
                     <div class="step-number">4</div>
                     <h5>@Localizer["Step4Title"]</h5>
                     <p>@Localizer["Step4Description"]</p>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- Stats Section -->
-<section class="stats-section">
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-3 col-md-6">
-                <div class="stat-item">
-                    <h3>@(Model.RecentRequests.Count + 1500)</h3>
-                    <p>@Localizer["CompletedRequests"]</p>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-6">
-                <div class="stat-item">
-                    <h3>500+</h3>
-                    <p>@Localizer["RegisteredStores"]</p>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-6">
-                <div class="stat-item">
-                    <h3>2000+</h3>
-                    <p>@Localizer["SatisfiedCustomers"]</p>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-6">
-                <div class="stat-item">
-                    <h3>@Model.Categories.Count</h3>
-                    <p>@Localizer["AvailableCategories"]</p>
                 </div>
             </div>
         </div>
@@ -500,24 +468,6 @@
             margin-bottom: 0.5rem;
         }
 
-    .stats-section {
-        background: var(--primary-color);
-        color: white;
-        padding: 3rem 0;
-        margin: 3rem 0;
-    }
-
-    .stat-item {
-        text-align: center;
-        padding: 1rem;
-    }
-
-        .stat-item h3 {
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-        }
-
     .how-it-works {
         background: white;
         padding: 4rem 0;
@@ -543,307 +493,29 @@
     }
 
     @@media (max-width: 768px) {
-        .hero-section h1
-
-    {
-        font-size: 2rem;
-    }
-
-    .search-form {
-        flex-direction: column;
-    }
-
-        .search-form .form-control,
-        .search-form .btn {
-            width: 100%;
-        }
-
-    .advertisement-image {
-        height: 200px;
-    }
-
-    .category-image-container {
-        height: 100px;
-    }
-
-    .category-content {
-        padding: 1rem;
-    }
-
-    }
-</style>
-
-
-@* <style>
-    .advertisements-section {
-        padding: 2rem 0;
-    }
-
-    .advertisement-image {
-        height: 300px;
-        object-fit: cover;
-        border-radius: 15px;
-    }
-
-    .carousel-caption {
-        background: rgba(0,0,0,0.6);
-        border-radius: 10px;
-        padding: 1rem;
-    }
-
-    .hero-section {
-        background: linear-gradient(135deg, rgba(179., 150, 50, 1), rgba(229, 183, 7, 0.9)), url('');
-        background-size: cover;
-        background-position: center;
-        padding: 4rem 0;
-        color: white;
-        text-align: center;
-    }
-
         .hero-section h1 {
-            font-size: 3rem;
-            font-weight: 700;
-            margin-bottom: 1rem;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            font-size: 2rem;
         }
 
-        .hero-section p {
-            font-size: 1.2rem;
-            margin-bottom: 2rem;
-            opacity: 0.9;
+        .search-form {
+            flex-direction: column;
         }
 
-    .btn-outline-custom {
-        border: 2px solid white;
-        color: white;
-        background: transparent;
-        padding: 0.75rem 2rem;
-        border-radius: 25px;
-        font-weight: 600;
-        transition: all 0.3s ease;
-        text-decoration: none;
-        display: inline-block;
-    }
-
-        .btn-outline-custom:hover {
-            background: white;
-            color: #b3962d;
-            transform: translateY(-2px);
-        }
-
-    .search-section {
-        background: white;
-        padding: 2rem 0;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        margin-top: -3rem;
-        border-radius: 15px;
-        position: relative;
-        z-index: 10;
-    }
-
-    .search-form {
-        display: flex;
-        gap: 1rem;
-        align-items: center;
-        flex-wrap: wrap;
-    }
-
-        .search-form .form-control {
-            border-radius: 25px;
-            border: 2px solid var(--border-color);
-            padding: 0.75rem 1.5rem;
-            font-size: 1rem;
-        }
-
-            .search-form .form-control:focus {
-                border-color: #b3962d;
-                box-shadow: 0 0 0 0.2rem rgba(44, 90, 160, 0.25);
+            .search-form .form-control,
+            .search-form .btn {
+                width: 100%;
             }
 
-    .category-card {
-        background: white;
-        border-radius: 20px;
-        overflow: hidden;
-        transition: all 0.4s ease;
-        border: 1px solid var(--border-color);
-        height: 100%;
-        color: inherit;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-        position: relative;
-    }
-
-        .category-card:hover {
-            transform: translateY(-8px) scale(1.02);
-            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
-            border-color: #b3962d;
-            color: inherit;
-            text-decoration: none;
-        }
-
-    .category-image-container {
-        height: 120px;
-        width: 100%;
-        overflow: hidden;
-        position: relative;
-        background: linear-gradient(135deg, #f8f9fa, #e9ecef);
-    }
-
-    .category-image {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        transition: transform 0.4s ease;
-    }
-
-    .category-card:hover .category-image {
-        transform: scale(1.1);
-    }
-
-    .category-placeholder {
-        width: 100%;
-        height: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: linear-gradient(135deg, #b3962d, var(--primary-light));
-        color: white;
-    }
-
-        .category-placeholder i {
-            font-size: 2.5rem;
-            opacity: 0.8;
-        }
-
-    .category-content {
-        padding: 1.5rem;
-        text-align: center;
-    }
-
-        .category-content h5 {
-            font-weight: 700;
-            color: var(--text-color);
-            margin-bottom: 0.5rem;
-            font-size: 1.1rem;
-        }
-
-        .category-content p {
-            font-size: 0.9rem;
-            margin: 0;
-            line-height: 1.4;
-        }
-
-    .request-card {
-        background: white;
-        border-radius: 15px;
-        overflow: hidden;
-        transition: all 0.3s ease;
-        border: 1px solid var(--border-color);
-        height: 100%;
-    }
-
-        .request-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-        }
-
-        .request-card img {
-            width: 100%;
+        .advertisement-image {
             height: 200px;
-            object-fit: cover;
         }
 
-    .request-card-body {
-        padding: 1.5rem;
-    }
-
-    .badge-custom {
-        background: var(--accent-color);
-        color: white;
-        padding: 0.3rem 0.8rem;
-        border-radius: 15px;
-        font-size: 0.8rem;
-    }
-
-    .section-title {
-        text-align: center;
-        margin-bottom: 3rem;
-    }
-
-        .section-title h2 {
-            font-weight: 700;
-            color: var(--text-color);
-            margin-bottom: 0.5rem;
+        .category-image-container {
+            height: 100px;
         }
 
-    .stats-section {
-        background: #b3962d;
-        color: white;
-        padding: 3rem 0;
-        margin: 3rem 0;
-    }
-
-    .stat-item {
-        text-align: center;
-        padding: 1rem;
-    }
-
-        .stat-item h3 {
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
+        .category-content {
+            padding: 1rem;
         }
-
-    .how-it-works {
-        background: white;
-        padding: 4rem 0;
     }
-
-    .step-card {
-        text-align: center;
-        padding: 2rem 1rem;
-    }
-
-    .step-number {
-        width: 60px;
-        height: 60px;
-        background: var(--secondary-color);
-        color: white;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.5rem;
-        font-weight: 700;
-        margin: 0 auto 1rem;
-    }
-
-    @@media (max-width: 768px) {
-        .hero-section h1
-
-    {
-        font-size: 2rem;
-    }
-
-    .search-form {
-        flex-direction: column;
-    }
-
-        .search-form .form-control,
-        .search-form .btn {
-            width: 100%;
-        }
-
-    .advertisement-image {
-        height: 200px;
-    }
-
-    .category-image-container {
-        height: 100px;
-    }
-
-    .category-content {
-        padding: 1rem;
-    }
-
-    }
-</style> *@
+</style>

@@ -80,7 +80,10 @@ namespace ReverseMarket.Controllers
             ViewBag.SiteSettings = siteSettings;
             return View();
         }
-
+        public IActionResult IntellectualProperty()
+        {
+            return View();
+        }
 
         [HttpPost]
         public async Task<IActionResult> Contact(ContactFormModel model)

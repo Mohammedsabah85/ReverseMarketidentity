@@ -309,5 +309,6 @@
 	<data name="LanguageChanged" xml:space="preserve"><value>تم تغيير اللغة بنجاح</value></data>
 	<data name="LoadingLanguage" xml:space="preserve"><value>جاري تحميل اللغة...</value></data>
 	<data name="LanguageError" xml:space="preserve"><value>حدث خطأ في تغيير اللغة</value></data>
+	<data name="IntellectualProperty" xml:space="preserve"><value>الملكية الفكرية</value></data>
 
 </root>
