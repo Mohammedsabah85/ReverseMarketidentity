@@ -79,7 +79,7 @@
                                  !string.IsNullOrEmpty(siteSettings?.YouTubeUrl))
                             {
                                 <div class="mb-3">
-                                    <h6><i class="fas fa-share-alt text-primary me-2"></i>مواقع التواصل الاجتماعي</h6>
+                                    <h6><i class="fas fa-share-alt text-primary me-2"></i>@Localizer["SocialMedia"]</h6>
                                     <div class="social-links d-flex gap-3">
                                         @if (!string.IsNullOrEmpty(siteSettings?.FacebookUrl))
                                         {
@@ -198,17 +198,6 @@
     <script>
         document.getElementById('contactForm').addEventListener('submit', function(e) {
             e.preventDefault();
-
-            // Get form values
-            const name = document.getElementById('name').value;
-            const email = document.getElementById('email').value;
-            const phone = document.getElementById('phone').value;
-            const subject = document.getElementById('subject').value;
-            const message = document.getElementById('message').value;
-
-            // Here you would normally send the data to the server
-            // For now, we'll just show a success message
-
             alert('@Localizer["MessageSentSuccess"]');
             this.reset();
         });

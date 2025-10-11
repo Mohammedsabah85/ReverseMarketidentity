@@ -17,12 +17,14 @@ namespace ReverseMarket.Areas.Admin.Controllers
             _webHostEnvironment = webHostEnvironment;
         }
 
+        // GET: Admin/Settings
         public async Task<IActionResult> Index()
         {
             var settings = await _context.SiteSettings.FirstOrDefaultAsync() ?? new SiteSettings();
             return View(settings);
         }
 
+        // POST: Admin/Settings
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Index(SiteSettings model, IFormFile? logoFile)
@@ -37,13 +39,14 @@ namespace ReverseMarket.Areas.Admin.Controllers
                     _context.SiteSettings.Add(settings);
                 }
 
+                // Upload Logo if provided
                 if (logoFile != null)
                 {
                     var logoPath = await SaveLogoAsync(logoFile);
                     settings.SiteLogo = logoPath;
                 }
 
-                // About Us
+                // About Us - Multilingual
                 settings.AboutUs = model.AboutUs;
                 settings.AboutUsEn = model.AboutUsEn;
                 settings.AboutUsKu = model.AboutUsKu;
@@ -53,32 +56,33 @@ namespace ReverseMarket.Areas.Admin.Controllers
                 settings.ContactWhatsApp = model.ContactWhatsApp;
                 settings.ContactEmail = model.ContactEmail;
 
-                // Social Media
+                // Social Media URLs
                 settings.FacebookUrl = model.FacebookUrl;
                 settings.InstagramUrl = model.InstagramUrl;
                 settings.TwitterUrl = model.TwitterUrl;
                 settings.YouTubeUrl = model.YouTubeUrl;
 
-                // Privacy Policy
-                settings.PrivacyPolicy = model.PrivacyPolicy;
-                settings.PrivacyPolicyEn = model.PrivacyPolicyEn;
-                settings.PrivacyPolicyKu = model.PrivacyPolicyKu;
-
-                // Terms of Use
-                settings.TermsOfUse = model.TermsOfUse;
-                settings.TermsOfUseEn = model.TermsOfUseEn;
-                settings.TermsOfUseKu = model.TermsOfUseKu;
-
-                // Copyright Info
+                // Copyright Info - Multilingual
                 settings.CopyrightInfo = model.CopyrightInfo;
                 settings.CopyrightInfoEn = model.CopyrightInfoEn;
                 settings.CopyrightInfoKu = model.CopyrightInfoKu;
 
-                // Intellectual Property
+                // Privacy Policy - Multilingual
+                settings.PrivacyPolicy = model.PrivacyPolicy;
+                settings.PrivacyPolicyEn = model.PrivacyPolicyEn;
+                settings.PrivacyPolicyKu = model.PrivacyPolicyKu;
+
+                // Terms of Use - Multilingual
+                settings.TermsOfUse = model.TermsOfUse;
+                settings.TermsOfUseEn = model.TermsOfUseEn;
+                settings.TermsOfUseKu = model.TermsOfUseKu;
+
+                // Intellectual Property - Multilingual
                 settings.IntellectualProperty = model.IntellectualProperty;
                 settings.IntellectualPropertyEn = model.IntellectualPropertyEn;
                 settings.IntellectualPropertyKu = model.IntellectualPropertyKu;
 
+                // Update timestamp
                 settings.UpdatedAt = DateTime.Now;
 
                 await _context.SaveChangesAsync();
@@ -90,6 +94,7 @@ namespace ReverseMarket.Areas.Admin.Controllers
             return View(model);
         }
 
+        // Helper method to save logo file
         private async Task<string> SaveLogoAsync(IFormFile logo)
         {
             var uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "uploads", "site");

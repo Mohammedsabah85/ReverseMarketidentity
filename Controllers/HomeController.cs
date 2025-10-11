@@ -28,14 +28,21 @@ namespace ReverseMarket.Controllers
             _context = context;
             _localizer = localizer;
         }
+        public override void OnActionExecuting(Microsoft.AspNetCore.Mvc.Filters.ActionExecutingContext context)
+        {
+            base.OnActionExecuting(context);
 
+            // تحميل إعدادات الموقع وتمريرها لجميع الصفحات
+            var siteSettings = _context.SiteSettings.FirstOrDefault();
+            ViewBag.SiteSettings = siteSettings;
+        }
         public async Task<IActionResult> Index()
         {
             // _twilio.SendWhatsAppMessage("+9647801861182", $"code is {"99998520"} do not share");
             
             // الحصول على إعدادات الموقع
-            var siteSettings = await _context.SiteSettings.FirstOrDefaultAsync();
-            ViewBag.SiteSettings = siteSettings;
+            //var siteSettings = await _context.SiteSettings.FirstOrDefaultAsync();
+            //ViewBag.SiteSettings = siteSettings;
 
             var model = new ReverseMarket.Models.HomeViewModel
             {
@@ -61,7 +68,7 @@ namespace ReverseMarket.Controllers
                     .Take(12)
                     .ToListAsync(),
 
-                SiteSettings = siteSettings
+                //SiteSettings = SiteSettings
             };
 
             return View(model);

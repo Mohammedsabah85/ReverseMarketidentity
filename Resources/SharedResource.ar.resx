@@ -310,5 +310,29 @@
 	<data name="LoadingLanguage" xml:space="preserve"><value>جاري تحميل اللغة...</value></data>
 	<data name="LanguageError" xml:space="preserve"><value>حدث خطأ في تغيير اللغة</value></data>
 	<data name="IntellectualProperty" xml:space="preserve"><value>الملكية الفكرية</value></data>
+	<!-- صفحة من نحن -->
+	<data name="AboutSubtitle" xml:space="preserve"><value>منصة مبتكرة لربط المشترين بالبائعين</value></data>
+	<data name="OurVision" xml:space="preserve"><value>رؤيتنا</value></data>
+	<data name="VisionText" xml:space="preserve"><value>أن نكون المنصة الرائدة في العراق لربط المشترين بالبائعين من خلال نموذج السوق العكسي المبتكر</value></data>
+	<data name="OurMission" xml:space="preserve"><value>رسالتنا</value></data>
+	<data name="MissionText" xml:space="preserve"><value>تسهيل عملية التسوق وتوفير الوقت والجهد للعملاء من خلال جعل المتاجر تتنافس لخدمتهم</value></data>
+	<data name="OurAdvantages" xml:space="preserve"><value>مزايانا</value></data>
+	<data name="TimeSaving" xml:space="preserve"><value>توفير الوقت</value></data>
+	<data name="TimeSavingText" xml:space="preserve"><value>بدلاً من البحث في عشرات المتاجر، المتاجر تأتي إليك</value></data>
+	<data name="BestOffers" xml:space="preserve"><value>أفضل العروض</value></data>
+	<data name="BestOffersText" xml:space="preserve"><value>المتاجر تتنافس لتقديم أفضل الأسعار والخدمات</value></data>
+	<data name="SafetyTrust" xml:space="preserve"><value>الأمان والثقة</value></data>
+	<data name="SafetyTrustText" xml:space="preserve"><value>جميع المتاجر مُراجعة ومُعتمدة من قبلنا</value></data>
+	<data name="StartNow" xml:space="preserve"><value>ابدأ الآن</value></data>
 
+	<!-- مواقع التواصل الاجتماعي -->
+	<data name="SocialMedia" xml:space="preserve"><value>مواقع التواصل الاجتماعي</value></data>
+	<data name="Facebook" xml:space="preserve"><value>فيسبوك</value></data>
+	<data name="Instagram" xml:space="preserve"><value>إنستغرام</value></data>
+	<data name="Twitter" xml:space="preserve"><value>تويتر</value></data>
+	<data name="YouTube" xml:space="preserve"><value>يوتيوب</value></data>
+
+	<!-- صفحة شروط الاستخدام - من قاعدة البيانات -->
+	<data name="TermsFromDatabase" xml:space="preserve"><value>شروط الاستخدام من قاعدة البيانات</value></data>
+	<data name="IntellectualPropertyFromDatabase" xml:space="preserve"><value>حقوق الملكية الفكرية من قاعدة البيانات</value></data>
 </root>

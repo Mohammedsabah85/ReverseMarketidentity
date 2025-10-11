@@ -308,4 +308,30 @@
 	<data name="LoadingLanguage" xml:space="preserve"><value>بارکردنی زمان...</value></data>
 	<data name="LanguageError" xml:space="preserve"><value>هەڵە لە گۆڕینی زمان</value></data>
 	<data name="IntellectualProperty" xml:space="preserve"><value>موڵکی زیهنی</value></data>
+
+	<!-- لاپەڕەی دەربارە -->
+	<data name="AboutSubtitle" xml:space="preserve"><value>پلاتفۆرمێکی داهێنەر بۆ بەستنەوەی کڕیاران بە فرۆشیارەکان</value></data>
+	<data name="OurVision" xml:space="preserve"><value>دیدگامان</value></data>
+	<data name="VisionText" xml:space="preserve"><value>بوون بە پلاتفۆرمی پێشەنگ لە عێراق بۆ بەستنەوەی کڕیاران بە فرۆشیارەکان لە ڕێگەی مۆدێلی نوێی بازاڕی پێچەوانە</value></data>
+	<data name="OurMission" xml:space="preserve"><value>ئامانجمان</value></data>
+	<data name="MissionText" xml:space="preserve"><value>ئاسانکردنی کڕینەوە و پاشەکەوتکردنی کات و هەوڵ بۆ کڕیارەکان لە ڕێگەی وا لێکردنی فرۆشگاکان بۆ پێکەوە کێشان لە خزمەتکردنیان</value></data>
+	<data name="OurAdvantages" xml:space="preserve"><value>سەرنجڕاکێشەکانمان</value></data>
+	<data name="TimeSaving" xml:space="preserve"><value>پاشەکەوتکردنی کات</value></data>
+	<data name="TimeSavingText" xml:space="preserve"><value>لە جیاتی گەڕان لە دەیان فرۆشگادا، فرۆشگاکان دێنە لات</value></data>
+	<data name="BestOffers" xml:space="preserve"><value>باشترین پێشنیارەکان</value></data>
+	<data name="BestOffersText" xml:space="preserve"><value>فرۆشگاکان پێکەوە دەکێشن بۆ پێشکەشکردنی باشترین نرخ و خزمەتگوزاریەکان</value></data>
+	<data name="SafetyTrust" xml:space="preserve"><value>سەلامەتی و متمانە</value></data>
+	<data name="SafetyTrustText" xml:space="preserve"><value>هەموو فرۆشگاکان پێداچوونەوە و پەسەندکراون لەلایەن ئێمەوە</value></data>
+	<data name="StartNow" xml:space="preserve"><value>ئێستا دەست پێ بکە</value></data>
+
+	<!-- سۆشیال میدیا -->
+	<data name="SocialMedia" xml:space="preserve"><value>تۆڕە کۆمەڵایەتیەکان</value></data>
+	<data name="Facebook" xml:space="preserve"><value>فەیسبووک</value></data>
+	<data name="Instagram" xml:space="preserve"><value>ئینستاگرام</value></data>
+	<data name="Twitter" xml:space="preserve"><value>تویتەر</value></data>
+	<data name="YouTube" xml:space="preserve"><value>یوتیوب</value></data>
+
+	<!-- پێپەڕ -->
+	<data name="AllRightsReserved" xml:space="preserve"><value>هەموو مافەکان پارێزراون</value></data>
+	<data name="MadeWithLoveInIraq" xml:space="preserve"><value>بە خۆشەویستی دروستکراوە لە عێراق</value></data>
 </root>

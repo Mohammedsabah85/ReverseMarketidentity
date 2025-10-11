@@ -1,5 +1,8 @@
-﻿@{
-    ViewData["Title"] = "حولنا";
+@using Microsoft.Extensions.Localization
+@using ReverseMarket.Resources
+@inject IStringLocalizer<SharedResource> Localizer
+@{
+    ViewData["Title"] = Localizer["About"];
 }
 
 <div class="container-custom">
@@ -9,39 +12,39 @@
                 <div class="text-center mb-4">
                     <h1 class="display-4 text-primary">
                         <i class="fas fa-store me-3"></i>
-                        حول السوق العكسي
+                        @Localizer["About"] @Localizer["SiteName"]
                     </h1>
-                    <p class="lead text-muted">منصة مبتكرة لربط المشترين بالبائعين</p>
+                    <p class="lead text-muted">@Localizer["AboutSubtitle"]</p>
                 </div>
 
                 <div class="row g-4">
                     <div class="col-md-6">
                         <div class="text-center">
                             <i class="fas fa-bullseye fa-3x text-primary mb-3"></i>
-                            <h4>رؤيتنا</h4>
-                            <p>أن نكون المنصة الرائدة في العراق لربط المشترين بالبائعين من خلال نموذج السوق العكسي المبتكر.</p>
+                            <h4>@Localizer["OurVision"]</h4>
+                            <p>@Localizer["VisionText"]</p>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="text-center">
                             <i class="fas fa-heart fa-3x text-primary mb-3"></i>
-                            <h4>رسالتنا</h4>
-                            <p>تسهيل عملية التسوق وتوفير الوقت والجهد للعملاء من خلال جعل المتاجر تتنافس لخدمتهم.</p>
+                            <h4>@Localizer["OurMission"]</h4>
+                            <p>@Localizer["MissionText"]</p>
                         </div>
                     </div>
                 </div>
 
                 <hr class="my-5">
 
-                <h3 class="text-center mb-4">كيف نعمل؟</h3>
+                <h3 class="text-center mb-4">@Localizer["HowItWorks"]</h3>
                 <div class="row g-4">
                     <div class="col-md-3">
                         <div class="text-center">
                             <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
                                 <span class="fw-bold fs-4">1</span>
                             </div>
-                            <h5 class="mt-3">أضف طلبك</h5>
-                            <p class="small">العميل يضيف طلبه بالتفصيل</p>
+                            <h5 class="mt-3">@Localizer["Step1Title"]</h5>
+                            <p class="small">@Localizer["Step1Description"]</p>
                         </div>
                     </div>
                     <div class="col-md-3">
@@ -49,8 +52,8 @@
                             <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
                                 <span class="fw-bold fs-4">2</span>
                             </div>
-                            <h5 class="mt-3">مراجعة وموافقة</h5>
-                            <p class="small">نراجع الطلب ونوافق عليه</p>
+                            <h5 class="mt-3">@Localizer["Step2Title"]</h5>
+                            <p class="small">@Localizer["Step2Description"]</p>
                         </div>
                     </div>
                     <div class="col-md-3">
@@ -58,8 +61,8 @@
                             <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
                                 <span class="fw-bold fs-4">3</span>
                             </div>
-                            <h5 class="mt-3">إشعار المتاجر</h5>
-                            <p class="small">المتاجر المتخصصة تتلقى إشعار</p>
+                            <h5 class="mt-3">@Localizer["Step3Title"]</h5>
+                            <p class="small">@Localizer["Step3Description"]</p>
                         </div>
                     </div>
                     <div class="col-md-3">
@@ -67,35 +70,35 @@
                             <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
                                 <span class="fw-bold fs-4">4</span>
                             </div>
-                            <h5 class="mt-3">التواصل المباشر</h5>
-                            <p class="small">المتاجر تتواصل مع العميل مباشرة</p>
+                            <h5 class="mt-3">@Localizer["Step4Title"]</h5>
+                            <p class="small">@Localizer["Step4Description"]</p>
                         </div>
                     </div>
                 </div>
 
                 <hr class="my-5">
 
-                <h3 class="text-center mb-4">مزايانا</h3>
+                <h3 class="text-center mb-4">@Localizer["OurAdvantages"]</h3>
                 <div class="row g-4">
                     <div class="col-md-4">
                         <div class="text-center">
                             <i class="fas fa-clock fa-2x text-success mb-3"></i>
-                            <h5>توفير الوقت</h5>
-                            <p>بدلاً من البحث في عشرات المتاجر، المتاجر تأتي إليك</p>
+                            <h5>@Localizer["TimeSaving"]</h5>
+                            <p>@Localizer["TimeSavingText"]</p>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="text-center">
                             <i class="fas fa-trophy fa-2x text-success mb-3"></i>
-                            <h5>أفضل العروض</h5>
-                            <p>المتاجر تتنافس لتقديم أفضل الأسعار والخدمات</p>
+                            <h5>@Localizer["BestOffers"]</h5>
+                            <p>@Localizer["BestOffersText"]</p>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="text-center">
                             <i class="fas fa-shield-alt fa-2x text-success mb-3"></i>
-                            <h5>الأمان والثقة</h5>
-                            <p>جميع المتاجر مُراجعة ومُعتمدة من قبلنا</p>
+                            <h5>@Localizer["SafetyTrust"]</h5>
+                            <p>@Localizer["SafetyTrustText"]</p>
                         </div>
                     </div>
                 </div>
@@ -103,7 +106,7 @@
                 <div class="text-center mt-5">
                     <a href="/Requests/Create" class="btn btn-custom btn-lg">
                         <i class="fas fa-plus me-2"></i>
-                        ابدأ الآن
+                        @Localizer["StartNow"]
                     </a>
                 </div>
             </div>

@@ -308,5 +308,30 @@
 	<data name="LoadingLanguage" xml:space="preserve"><value>Loading language...</value></data>
 	<data name="LanguageError" xml:space="preserve"><value>Error changing language</value></data>
 	<data name="IntellectualProperty" xml:space="preserve"><value>Intellectual Property</value></data>
+	<!-- About Page -->
+	<data name="AboutSubtitle" xml:space="preserve"><value>An innovative platform connecting buyers with sellers</value></data>
+	<data name="OurVision" xml:space="preserve"><value>Our Vision</value></data>
+	<data name="VisionText" xml:space="preserve"><value>To be the leading platform in Iraq for connecting buyers with sellers through the innovative reverse market model</value></data>
+	<data name="OurMission" xml:space="preserve"><value>Our Mission</value></data>
+	<data name="MissionText" xml:space="preserve"><value>Facilitate shopping and save time and effort for customers by making stores compete to serve them</value></data>
+	<data name="OurAdvantages" xml:space="preserve"><value>Our Advantages</value></data>
+	<data name="TimeSaving" xml:space="preserve"><value>Time Saving</value></data>
+	<data name="TimeSavingText" xml:space="preserve"><value>Instead of searching dozens of stores, stores come to you</value></data>
+	<data name="BestOffers" xml:space="preserve"><value>Best Offers</value></data>
+	<data name="BestOffersText" xml:space="preserve"><value>Stores compete to offer the best prices and services</value></data>
+	<data name="SafetyTrust" xml:space="preserve"><value>Safety and Trust</value></data>
+	<data name="SafetyTrustText" xml:space="preserve"><value>All stores are reviewed and approved by us</value></data>
+	<data name="StartNow" xml:space="preserve"><value>Start Now</value></data>
+
+	<!-- Social Media -->
+	<data name="SocialMedia" xml:space="preserve"><value>Social Media</value></data>
+	<data name="Facebook" xml:space="preserve"><value>Facebook</value></data>
+	<data name="Instagram" xml:space="preserve"><value>Instagram</value></data>
+	<data name="Twitter" xml:space="preserve"><value>Twitter</value></data>
+	<data name="YouTube" xml:space="preserve"><value>YouTube</value></data>
+
+	<!-- Footer -->
+	<data name="AllRightsReserved" xml:space="preserve"><value>All Rights Reserved</value></data>
+	<data name="MadeWithLoveInIraq" xml:space="preserve"><value>Made with love in Iraq</value></data>
 
 </root>
