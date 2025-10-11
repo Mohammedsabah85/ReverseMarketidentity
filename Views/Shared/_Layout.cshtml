@@ -635,7 +635,7 @@
         <div class="container">
             <div class="row g-4">
                 <!-- Logo and About Section -->
-                <div class="col-lg-3 footer-section">
+                <div class="col-lg-3 col-md-6 footer-section">
                     @if (!string.IsNullOrEmpty(siteSettings?.SiteLogo))
                     {
                         <img src="@siteSettings.SiteLogo" alt="@Localizer["SiteName"]" class="footer-logo" />
@@ -645,26 +645,29 @@
                         <h5>@Localizer["SiteName"]</h5>
                     }
                     <p class="mb-3">
-                        @if (!string.IsNullOrEmpty(siteSettings?.AboutUs))
-                        {
-                            @(siteSettings.AboutUs.Length > 150 ? siteSettings.AboutUs.Substring(0, 150) + "..." : siteSettings.AboutUs)
-                        }
-                        else
-                        {
-                            @Localizer["SiteDescription"]
+                        @{
+                            var aboutUsText = siteSettings?.GetAboutUs(currentLanguage);
+                            if (!string.IsNullOrEmpty(aboutUsText))
+                            {
+                                @(aboutUsText.Length > 150 ? aboutUsText.Substring(0, 150) + "..." : aboutUsText)
+                            }
+                            else
+                            {
+                                @Localizer["SiteDescription"]
+                            }
                         }
                     </p>
                 </div>
 
                 <!-- Social Media Links -->
-                <div class="col-lg-3 footer-section">
-                    <h5>مواقع التواصل الاجتماعي</h5>
+                <div class="col-lg-2 col-md-6 footer-section">
+                    <h5>@Localizer["SocialMedia"]</h5>
                     <ul class="list-unstyled">
                         @if (!string.IsNullOrEmpty(siteSettings?.FacebookUrl))
                         {
                             <li>
                                 <a href="@siteSettings.FacebookUrl" target="_blank">
-                                    <i class="fab fa-facebook"></i> فيسبوك
+                                    <i class="fab fa-facebook"></i> @Localizer["Facebook"]
                                 </a>
                             </li>
                         }
@@ -672,7 +675,7 @@
                         {
                             <li>
                                 <a href="@siteSettings.InstagramUrl" target="_blank">
-                                    <i class="fab fa-instagram"></i> إنستغرام
+                                    <i class="fab fa-instagram"></i> @Localizer["Instagram"]
                                 </a>
                             </li>
                         }
@@ -680,7 +683,7 @@
                         {
                             <li>
                                 <a href="@siteSettings.TwitterUrl" target="_blank">
-                                    <i class="fab fa-twitter"></i> تويتر
+                                    <i class="fab fa-twitter"></i> @Localizer["Twitter"]
                                 </a>
                             </li>
                         }
@@ -688,7 +691,7 @@
                         {
                             <li>
                                 <a href="@siteSettings.YouTubeUrl" target="_blank">
-                                    <i class="fab fa-youtube"></i> يوتيوب
+                                    <i class="fab fa-youtube"></i> @Localizer["YouTube"]
                                 </a>
                             </li>
                         }
@@ -696,8 +699,8 @@
                 </div>
 
                 <!-- Contact Information -->
-                <div class="col-lg-3 footer-section">
-                    <h5>اتصل بنا</h5>
+                <div class="col-lg-3 col-md-6 footer-section">
+                    <h5>@Localizer["Contact"]</h5>
                     <ul class="list-unstyled">
                         @if (!string.IsNullOrEmpty(siteSettings?.ContactPhone))
                         {
@@ -726,8 +729,8 @@
                     </ul>
                 </div>
 
-
-                <div class="col-lg-4 footer-section">
+                <!-- Important Links -->
+                <div class="col-lg-4 col-md-6 footer-section">
                     <h5>@Localizer["ImportantLinks"]</h5>
                     <div class="row">
                         <div class="col-6">
@@ -748,33 +751,37 @@
                         </div>
                     </div>
                 </div>
-               @*  <div class="col-lg-3 footer-section">
-                    <h5>حولنا</h5>
-                    <ul class="list-unstyled">
-                        <li><a href="/Home/About"><i class="fas fa-info-circle"></i> حول المنصة</a></li>
-                        <li><a href="/Home/Privacy"><i class="fas fa-shield-alt"></i> سياسة الخصوصية</a></li>
-                        <li><a href="/Home/Terms"><i class="fas fa-file-contract"></i> شروط الاستخدام</a></li>
-                        <li><a href="/Home/Contact"><i class="fas fa-copyright"></i> الحقوق الفكرية</a></li>
-                    </ul>
-                </div> *@
             </div>
 
             <div class="footer-bottom">
                 <div class="row align-items-center">
                     <div class="col-md-12 text-center">
-                        <p class="mb-2">
-                            @if (!string.IsNullOrEmpty(siteSettings?.CopyrightInfo))
-                            {
-                                @siteSettings.CopyrightInfo
-                            }
-                            else
-                            {
-                                <text>© @DateTime.Now.Year السوق العكسي. جميع الحقوق محفوظة.</text>
-                            }
-                        </p>
                         <p class="mb-0">
+                            @{
+                                var copyrightText = siteSettings?.GetCopyrightInfo(currentLanguage);
+                                if (!string.IsNullOrEmpty(copyrightText))
+                                {
+                                    @copyrightText
+                                }
+                                else
+                                {
+                                    @Localizer["Copyright"]
+                                }
+                            }
+                            <span class="@(direction == "rtl" ? "me-2 ms-2" : "mx-2")">|</span>
                             <i class="fas fa-heart text-danger"></i>
-                            صُنع بحب في العراق
+                            @if (currentLanguage == "ar")
+                            {
+                                <text>صُنع بحب في العراق</text>
+                            }
+                            else if (currentLanguage == "en")
+                            {
+                                <text>Made with love in Iraq</text>
+                            }
+                            else if (currentLanguage == "ku")
+                            {
+                                <text>بە خۆشەویستی دروستکراوە لە عێراق</text>
+                            }
                         </p>
                     </div>
                 </div>
