@@ -7,27 +7,31 @@ using ReverseMarket.Services;
 using System.Diagnostics;
 using Twilio.Types;
 using static System.Net.Mime.MediaTypeNames;
-
-
 using Microsoft.Extensions.Localization;
-
 using ReverseMarket.Resources;
-
 
 namespace ReverseMarket.Controllers
 {
     public class HomeController : Controller
     {
         private readonly ApplicationDbContext _context;
-        TwilioWhatsapp _twilio=new TwilioWhatsapp();
+        private readonly TwilioWhatsapp _twilio = new TwilioWhatsapp();
         private readonly IStringLocalizer<SharedResource> _localizer;
+        private readonly IEmailService _emailService;
+        private readonly ILogger<HomeController> _logger;
 
-
-        public HomeController(ApplicationDbContext context, IStringLocalizer<SharedResource> localizer)
+        public HomeController(
+            ApplicationDbContext context,
+            IStringLocalizer<SharedResource> localizer,
+            IEmailService emailService,
+            ILogger<HomeController> logger)
         {
             _context = context;
             _localizer = localizer;
+            _emailService = emailService;
+            _logger = logger;
         }
+
         public override void OnActionExecuting(Microsoft.AspNetCore.Mvc.Filters.ActionExecutingContext context)
         {
             base.OnActionExecuting(context);
@@ -36,13 +40,10 @@ namespace ReverseMarket.Controllers
             var siteSettings = _context.SiteSettings.FirstOrDefault();
             ViewBag.SiteSettings = siteSettings;
         }
+
         public async Task<IActionResult> Index()
         {
             // _twilio.SendWhatsAppMessage("+9647801861182", $"code is {"99998520"} do not share");
-            
-            // الحصول على إعدادات الموقع
-            //var siteSettings = await _context.SiteSettings.FirstOrDefaultAsync();
-            //ViewBag.SiteSettings = siteSettings;
 
             var model = new ReverseMarket.Models.HomeViewModel
             {
@@ -66,9 +67,7 @@ namespace ReverseMarket.Controllers
                     .Include(r => r.Images)
                     .OrderByDescending(r => r.ApprovedAt)
                     .Take(12)
-                    .ToListAsync(),
-
-                //SiteSettings = SiteSettings
+                    .ToListAsync()
             };
 
             return View(model);
@@ -87,22 +86,57 @@ namespace ReverseMarket.Controllers
             ViewBag.SiteSettings = siteSettings;
             return View();
         }
+
         public IActionResult IntellectualProperty()
         {
             return View();
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Contact(ContactFormModel model)
         {
             if (ModelState.IsValid)
             {
-                // هنا يمكنك إضافة منطق إرسال البريد الإلكتروني أو حفظ الرسالة في قاعدة البيانات
+                try
+                {
+                    _logger.LogInformation("Attempting to send contact form email");
 
-                TempData["SuccessMessage"] = _localizer["MessageSentSuccess"];
-                return RedirectToAction(nameof(Contact));
+                    // إرسال البريد الإلكتروني
+                    var result = await _emailService.SendContactFormEmailAsync(
+                        model.Name,
+                        model.Email,
+                        model.Phone,
+                        model.Subject,
+                        model.Message
+                    );
+
+                    if (result)
+                    {
+                        TempData["SuccessMessage"] = "تم إرسال رسالتك بنجاح! سنرد عليك قريباً.";
+                        _logger.LogInformation("Contact form email sent successfully");
+                        return RedirectToAction(nameof(Contact));
+                    }
+                    else
+                    {
+                        _logger.LogError("Failed to send contact form email");
+                        TempData["ErrorMessage"] = "عذراً، حدث خطأ في إرسال الرسالة. يرجى التأكد من إعدادات البريد الإلكتروني أو المحاولة لاحقاً.";
+                        return View(model);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    // تسجيل الخطأ التفصيلي
+                    _logger.LogError($"Exception in Contact form: {ex.Message}");
+                    _logger.LogError($"Stack trace: {ex.StackTrace}");
+
+                    TempData["ErrorMessage"] = "حدث خطأ غير متوقع. يرجى المحاولة مرة أخرى لاحقاً.";
+                    return View(model);
+                }
             }
 
+            var siteSettings = await _context.SiteSettings.FirstOrDefaultAsync();
+            ViewBag.SiteSettings = siteSettings;
             return View(model);
         }
 
@@ -110,6 +144,7 @@ namespace ReverseMarket.Controllers
         {
             return View();
         }
+
         public async Task<IActionResult> Privacy()
         {
             var siteSettings = await _context.SiteSettings.FirstOrDefaultAsync();
@@ -123,6 +158,7 @@ namespace ReverseMarket.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
     }
+
     public class ContactFormModel
     {
         public string Name { get; set; }

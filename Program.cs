@@ -39,7 +39,7 @@ builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
 })
 .AddEntityFrameworkStores<ApplicationDbContext>()
 .AddDefaultTokenProviders();
-
+builder.Services.AddScoped<IEmailService, EmailService>();
 // ====================================
 // 3. Localization Configuration
 // ====================================

@@ -1,3 +1,4 @@
+@model ReverseMarket.Controllers.ContactFormModel
 @using Microsoft.Extensions.Localization
 @using ReverseMarket.Resources
 @inject IStringLocalizer<SharedResource> Localizer
@@ -17,6 +18,24 @@
                     </h1>
                     <p class="lead text-muted">@Localizer["ContactDescription"]</p>
                 </div>
+
+                @if (TempData["SuccessMessage"] != null)
+                {
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        <i class="fas fa-check-circle me-2"></i>
+                        @TempData["SuccessMessage"]
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                }
+
+                @if (TempData["ErrorMessage"] != null)
+                {
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <i class="fas fa-exclamation-circle me-2"></i>
+                        @TempData["ErrorMessage"]
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                }
 
                 <div class="row g-4">
                     <div class="col-md-6">
@@ -73,10 +92,10 @@
                                 <p class="text-muted">@Localizer["LocationAddress"]</p>
                             </div>
 
-                            @if (!string.IsNullOrEmpty(siteSettings?.FacebookUrl) || 
-                                 !string.IsNullOrEmpty(siteSettings?.InstagramUrl) || 
-                                 !string.IsNullOrEmpty(siteSettings?.TwitterUrl) || 
-                                 !string.IsNullOrEmpty(siteSettings?.YouTubeUrl))
+                            @if (!string.IsNullOrEmpty(siteSettings?.FacebookUrl) ||
+                                                        !string.IsNullOrEmpty(siteSettings?.InstagramUrl) ||
+                                                        !string.IsNullOrEmpty(siteSettings?.TwitterUrl) ||
+                                                        !string.IsNullOrEmpty(siteSettings?.YouTubeUrl))
                             {
                                 <div class="mb-3">
                                     <h6><i class="fas fa-share-alt text-primary me-2"></i>@Localizer["SocialMedia"]</h6>
@@ -112,44 +131,51 @@
                     </div>
 
                     <div class="col-md-6">
-                        <form id="contactForm">
+                        <form asp-action="Contact" method="post" id="contactForm">
+                            @Html.AntiForgeryToken()
+
                             <h4 class="text-primary mb-3">
                                 <i class="fas fa-paper-plane me-2"></i>
                                 @Localizer["SendMessage"]
                             </h4>
 
                             <div class="mb-3">
-                                <label for="name" class="form-label">@Localizer["FullName"] *</label>
-                                <input type="text" class="form-control" id="name" required>
+                                <label asp-for="Name" class="form-label">@Localizer["FullName"] *</label>
+                                <input asp-for="Name" type="text" class="form-control" required>
+                                <span asp-validation-for="Name" class="text-danger"></span>
                             </div>
 
                             <div class="mb-3">
-                                <label for="email" class="form-label">@Localizer["Email"] *</label>
-                                <input type="email" class="form-control" id="email" required>
+                                <label asp-for="Email" class="form-label">@Localizer["Email"] *</label>
+                                <input asp-for="Email" type="email" class="form-control" required>
+                                <span asp-validation-for="Email" class="text-danger"></span>
                             </div>
 
                             <div class="mb-3">
-                                <label for="phone" class="form-label">@Localizer["Phone"]</label>
-                                <input type="tel" class="form-control" id="phone">
+                                <label asp-for="Phone" class="form-label">@Localizer["Phone"]</label>
+                                <input asp-for="Phone" type="tel" class="form-control">
+                                <span asp-validation-for="Phone" class="text-danger"></span>
                             </div>
 
                             <div class="mb-3">
-                                <label for="subject" class="form-label">@Localizer["Subject"] *</label>
-                                <select class="form-control" id="subject" required>
+                                <label asp-for="Subject" class="form-label">@Localizer["Subject"] *</label>
+                                <select asp-for="Subject" class="form-control" required>
                                     <option value="">@Localizer["SelectSubject"]</option>
                                     <option value="general">@Localizer["GeneralInquiry"]</option>
                                     <option value="technical">@Localizer["TechnicalIssue"]</option>
                                     <option value="suggestion">@Localizer["Suggestion"]</option>
                                     <option value="complaint">@Localizer["Complaint"]</option>
                                 </select>
+                                <span asp-validation-for="Subject" class="text-danger"></span>
                             </div>
 
                             <div class="mb-3">
-                                <label for="message" class="form-label">@Localizer["Message"] *</label>
-                                <textarea class="form-control" id="message" rows="5" required></textarea>
+                                <label asp-for="Message" class="form-label">@Localizer["Message"] *</label>
+                                <textarea asp-for="Message" class="form-control" rows="5" required></textarea>
+                                <span asp-validation-for="Message" class="text-danger"></span>
                             </div>
 
-                            <button type="submit" class="btn btn-custom w-100">
+                            <button type="submit" class="btn btn-custom w-100" id="submitBtn">
                                 <i class="fas fa-paper-plane me-2"></i>
                                 @Localizer["SendMessage"]
                             </button>
@@ -195,11 +221,15 @@
 </div>
 
 @section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
     <script>
         document.getElementById('contactForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            alert('@Localizer["MessageSentSuccess"]');
-            this.reset();
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>@Localizer["Sending"]...';
         });
     </script>
 }
@@ -209,7 +239,7 @@
         transition: transform 0.3s ease;
     }
 
-    .social-links a:hover {
-        transform: translateY(-3px);
-    }
+        .social-links a:hover {
+            transform: translateY(-3px);
+        }
 </style>
