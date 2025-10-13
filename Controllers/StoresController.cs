@@ -20,12 +20,13 @@ namespace ReverseMarket.Controllers
             var pageSize = 12;
 
             var query = _context.Users
-                .Where(u => u.UserType == UserType.Seller &&
-                           !string.IsNullOrEmpty(u.StoreName) &&
-                           u.IsActive)
-                .Include(u => u.StoreCategories)
-                .ThenInclude(sc => sc.Category)
-                .AsQueryable();
+           .Where(u => u.UserType == UserType.Seller &&
+                      !string.IsNullOrEmpty(u.StoreName) &&
+                      u.IsActive &&
+                      u.IsStoreApproved) // إضافة شرط الموافقة
+           .Include(u => u.StoreCategories)
+           .ThenInclude(sc => sc.Category)
+           .AsQueryable();
 
             if (!string.IsNullOrEmpty(search))
             {

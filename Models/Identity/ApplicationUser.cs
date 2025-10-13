@@ -60,7 +60,9 @@ namespace ReverseMarket.Models.Identity
         public string? WebsiteUrl3 { get; set; }
 
         public bool IsActive { get; set; } = true;
-
+        public bool IsStoreApproved { get; set; } = false;
+        public DateTime? StoreApprovedAt { get; set; }
+        public string? StoreApprovedBy { get; set; }
         // Navigation properties
         //public virtual ICollection<Request> Requests { get; set; } = new List<Request>();
         //public virtual ICollection<StoreCategory> StoreCategories { get; set; } = new List<StoreCategory>();

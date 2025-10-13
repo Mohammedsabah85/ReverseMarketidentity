@@ -277,9 +277,9 @@ namespace ReverseMarket.Controllers
             ViewBag.LoginType = loginType;
             return View(new VerifyOTPViewModel());
         }
-
         [HttpPost]
         [ValidateAntiForgeryToken]
+      
         public async Task<IActionResult> VerifyOTP(VerifyOTPViewModel model)
         {
             if (ModelState.IsValid)
@@ -296,8 +296,20 @@ namespace ReverseMarket.Controllers
                     {
                         if (loginType == "ExistingVerifiedUser")
                         {
-                            // Sign in verified user
+                            // Sign in verified user مع isPersistent = true
                             await _signInManager.SignInAsync(user, isPersistent: true);
+
+                            // إضافة الـ Claims للجلسة
+                            var claims = new List<Claim>
+                    {
+                        new Claim(ClaimTypes.Name, $"{user.FirstName} {user.LastName}"),
+                        new Claim(ClaimTypes.GivenName, user.FirstName),
+                        new Claim(ClaimTypes.Surname, user.LastName),
+                        new Claim("UserType", user.UserType.ToString())
+                    };
+
+                            await _userManager.AddClaimsAsync(user, claims);
+
                             ClearVerificationSession();
 
                             TempData["SuccessMessage"] = $"مرحباً بعودتك {user.FirstName}!";
@@ -311,8 +323,17 @@ namespace ReverseMarket.Controllers
 
                             if (updateResult.Succeeded)
                             {
-                                // Add phone confirmation claim
-                                await _userManager.AddClaimAsync(user, new Claim("PhoneNumberConfirmed", "true"));
+                                // Add claims
+                                var claims = new List<Claim>
+                        {
+                            new Claim("PhoneNumberConfirmed", "true"),
+                            new Claim(ClaimTypes.Name, $"{user.FirstName} {user.LastName}"),
+                            new Claim(ClaimTypes.GivenName, user.FirstName),
+                            new Claim(ClaimTypes.Surname, user.LastName),
+                            new Claim("UserType", user.UserType.ToString())
+                        };
+
+                                await _userManager.AddClaimsAsync(user, claims);
 
                                 await _signInManager.SignInAsync(user, isPersistent: true);
                                 ClearVerificationSession();
@@ -331,6 +352,59 @@ namespace ReverseMarket.Controllers
             ViewBag.LoginType = HttpContext.Session.GetString("LoginType");
             return View(model);
         }
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public async Task<IActionResult> VerifyOTP(VerifyOTPViewModel model)
+        //{
+        //    if (ModelState.IsValid)
+        //    {
+        //        var storedOTP = HttpContext.Session.GetString("OTP");
+        //        var phoneNumber = HttpContext.Session.GetString("PhoneNumber");
+        //        var loginType = HttpContext.Session.GetString("LoginType");
+        //        var userId = HttpContext.Session.GetString("UserId");
+
+        //        if (model.OTP == storedOTP && !string.IsNullOrEmpty(phoneNumber) && !string.IsNullOrEmpty(userId))
+        //        {
+        //            var user = await _userManager.FindByIdAsync(userId);
+        //            if (user != null)
+        //            {
+        //                if (loginType == "ExistingVerifiedUser")
+        //                {
+        //                    // Sign in verified user
+        //                    await _signInManager.SignInAsync(user, isPersistent: true);
+        //                    ClearVerificationSession();
+
+        //                    TempData["SuccessMessage"] = $"مرحباً بعودتك {user.FirstName}!";
+        //                    return RedirectToAction("Index", "Home");
+        //                }
+        //                else if (loginType == "ExistingUnverifiedUser")
+        //                {
+        //                    // Confirm phone and sign in
+        //                    user.PhoneNumberConfirmed = true;
+        //                    var updateResult = await _userManager.UpdateAsync(user);
+
+        //                    if (updateResult.Succeeded)
+        //                    {
+        //                        // Add phone confirmation claim
+        //                        await _userManager.AddClaimAsync(user, new Claim("PhoneNumberConfirmed", "true"));
+
+        //                        await _signInManager.SignInAsync(user, isPersistent: true);
+        //                        ClearVerificationSession();
+
+        //                        TempData["SuccessMessage"] = $"تم تأكيد حسابك بنجاح! مرحباً بك {user.FirstName}";
+        //                        return RedirectToAction("Index", "Home");
+        //                    }
+        //                }
+        //            }
+        //        }
+
+        //        ModelState.AddModelError("", "رمز التحقق غير صحيح");
+        //    }
+
+        //    ViewBag.PhoneNumber = HttpContext.Session.GetString("PhoneNumber");
+        //    ViewBag.LoginType = HttpContext.Session.GetString("LoginType");
+        //    return View(model);
+        //}
 
         [HttpGet]
         public IActionResult VerifyPhone()
@@ -422,7 +496,6 @@ namespace ReverseMarket.Controllers
 
             return View(new CreateAccountViewModel());
         }
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateAccount(CreateAccountViewModel model)
@@ -481,6 +554,8 @@ namespace ReverseMarket.Controllers
                     PhoneNumberConfirmed = true,
                     IsPhoneVerified = true,
                     IsActive = true,
+                    // إضافة حقل الموافقة على المتجر
+                    IsStoreApproved = model.UserType == UserType.Buyer ? true : false, // المشترون تلقائي، البائعون يحتاجون موافقة
                     CreatedAt = DateTime.Now
                 };
 
@@ -491,7 +566,7 @@ namespace ReverseMarket.Controllers
                     user.ProfileImage = imagePath;
                 }
 
-                // Create user with a temporary password (will be changed to OTP-based later)
+                // Create user with a temporary password
                 var result = await _userManager.CreateAsync(user, "TempPassword@123");
 
                 if (result.Succeeded)
@@ -500,8 +575,17 @@ namespace ReverseMarket.Controllers
                     var roleName = model.UserType == UserType.Seller ? "Seller" : "Buyer";
                     await _userManager.AddToRoleAsync(user, roleName);
 
-                    // Add phone confirmation claim
-                    await _userManager.AddClaimAsync(user, new Claim("PhoneNumberConfirmed", "true"));
+                    // Add claims
+                    var claims = new List<Claim>
+            {
+                new Claim("PhoneNumberConfirmed", "true"),
+                new Claim(ClaimTypes.Name, $"{user.FirstName} {user.LastName}"),
+                new Claim(ClaimTypes.GivenName, user.FirstName),
+                new Claim(ClaimTypes.Surname, user.LastName),
+                new Claim("UserType", user.UserType.ToString())
+            };
+
+                    await _userManager.AddClaimsAsync(user, claims);
 
                     // Add store categories for sellers
                     if (model.UserType == UserType.Seller && model.StoreCategories?.Any() == true)
@@ -519,16 +603,22 @@ namespace ReverseMarket.Controllers
                         await _context.SaveChangesAsync();
                     }
 
-                    // Sign in the user
+                    // Sign in the user مع isPersistent = true للحفاظ على الجلسة
                     await _signInManager.SignInAsync(user, isPersistent: true);
-
-                    // Send welcome message
-                    //await _whatsAppService.SendWelcomeMessageAsync(phoneNumber, user.FirstName, user.UserType.ToString());
 
                     // Clear session
                     ClearVerificationSession();
 
-                    TempData["SuccessMessage"] = $"مرحباً بك {user.FirstName}! تم إنشاء حسابك بنجاح";
+                    // رسالة مختلفة حسب نوع المستخدم
+                    if (model.UserType == UserType.Seller)
+                    {
+                        TempData["WarningMessage"] = $"مرحباً بك {user.FirstName}! تم إنشاء حسابك بنجاح. متجرك قيد المراجعة من الإدارة.";
+                    }
+                    else
+                    {
+                        TempData["SuccessMessage"] = $"مرحباً بك {user.FirstName}! تم إنشاء حسابك بنجاح";
+                    }
+
                     return RedirectToAction("Index", "Home");
                 }
                 else
@@ -543,6 +633,126 @@ namespace ReverseMarket.Controllers
             ViewBag.Categories = await _context.Categories.Where(c => c.IsActive).ToListAsync();
             return View(model);
         }
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public async Task<IActionResult> CreateAccount(CreateAccountViewModel model)
+        //{
+        //    if (ModelState.IsValid)
+        //    {
+        //        var phoneNumber = HttpContext.Session.GetString("PhoneNumber");
+        //        var phoneVerified = HttpContext.Session.GetString("PhoneVerified");
+        //        var loginType = HttpContext.Session.GetString("LoginType");
+
+        //        if (string.IsNullOrEmpty(phoneNumber) || phoneVerified != "true" || loginType != "NewUser")
+        //        {
+        //            ModelState.AddModelError("", "جلسة التحقق منتهية الصلاحية");
+        //            return RedirectToAction("Login");
+        //        }
+
+        //        // Check if user already exists
+        //        var existingUser = await _userManager.FindByNameAsync(phoneNumber);
+        //        if (existingUser != null)
+        //        {
+        //            ModelState.AddModelError("", "هذا الرقم مسجل مسبقاً");
+        //            return RedirectToAction("Login");
+        //        }
+
+        //        // Check email uniqueness if provided
+        //        if (!string.IsNullOrEmpty(model.Email))
+        //        {
+        //            var emailExists = await _userManager.FindByEmailAsync(model.Email);
+        //            if (emailExists != null)
+        //            {
+        //                ModelState.AddModelError("Email", "هذا البريد الإلكتروني مستخدم مسبقاً");
+        //                ViewBag.Categories = await _context.Categories.Where(c => c.IsActive).ToListAsync();
+        //                return View(model);
+        //            }
+        //        }
+
+        //        // Create new user
+        //        var user = new ApplicationUser
+        //        {
+        //            UserName = phoneNumber,
+        //            PhoneNumber = phoneNumber,
+        //            FirstName = model.FirstName,
+        //            LastName = model.LastName,
+        //            DateOfBirth = model.DateOfBirth,
+        //            Gender = model.Gender,
+        //            City = model.City,
+        //            District = model.District,
+        //            Location = model.Location,
+        //            Email = model.Email,
+        //            UserType = model.UserType,
+        //            StoreName = model.StoreName,
+        //            StoreDescription = model.StoreDescription,
+        //            WebsiteUrl1 = model.WebsiteUrl1,
+        //            WebsiteUrl2 = model.WebsiteUrl2,
+        //            WebsiteUrl3 = model.WebsiteUrl3,
+        //            PhoneNumberConfirmed = true,
+        //            IsPhoneVerified = true,
+        //            IsActive = true,
+        //            CreatedAt = DateTime.Now
+        //        };
+
+        //        // Save profile image if provided
+        //        if (model.ProfileImage != null)
+        //        {
+        //            var imagePath = await SaveProfileImageAsync(model.ProfileImage);
+        //            user.ProfileImage = imagePath;
+        //        }
+
+        //        // Create user with a temporary password (will be changed to OTP-based later)
+        //        var result = await _userManager.CreateAsync(user, "TempPassword@123");
+
+        //        if (result.Succeeded)
+        //        {
+        //            // Assign role based on user type
+        //            var roleName = model.UserType == UserType.Seller ? "Seller" : "Buyer";
+        //            await _userManager.AddToRoleAsync(user, roleName);
+
+        //            // Add phone confirmation claim
+        //            await _userManager.AddClaimAsync(user, new Claim("PhoneNumberConfirmed", "true"));
+
+        //            // Add store categories for sellers
+        //            if (model.UserType == UserType.Seller && model.StoreCategories?.Any() == true)
+        //            {
+        //                foreach (var categoryId in model.StoreCategories)
+        //                {
+        //                    var storeCategory = new StoreCategory
+        //                    {
+        //                        UserId = user.Id,
+        //                        CategoryId = categoryId,
+        //                        CreatedAt = DateTime.Now
+        //                    };
+        //                    _context.StoreCategories.Add(storeCategory);
+        //                }
+        //                await _context.SaveChangesAsync();
+        //            }
+
+        //            // Sign in the user
+        //            await _signInManager.SignInAsync(user, isPersistent: true);
+
+        //            // Send welcome message
+        //            //await _whatsAppService.SendWelcomeMessageAsync(phoneNumber, user.FirstName, user.UserType.ToString());
+
+        //            // Clear session
+        //            ClearVerificationSession();
+
+        //            TempData["SuccessMessage"] = $"مرحباً بك {user.FirstName}! تم إنشاء حسابك بنجاح";
+        //            return RedirectToAction("Index", "Home");
+        //        }
+        //        else
+        //        {
+        //            foreach (var error in result.Errors)
+        //            {
+        //                ModelState.AddModelError("", error.Description);
+        //            }
+        //        }
+        //    }
+
+        //    ViewBag.Categories = await _context.Categories.Where(c => c.IsActive).ToListAsync();
+        //    return View(model);
+        //}
 
         [HttpPost]
         public async Task<IActionResult> ResendCode()
