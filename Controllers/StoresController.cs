@@ -47,7 +47,7 @@ namespace ReverseMarket.Controllers
 
             var model = new StoresViewModel
             {
-                Stores = stores, // إزالة Cast<User>()
+                Stores = stores, // ApplicationUser مباشرة
                 Categories = await _context.Categories.Where(c => c.IsActive).ToListAsync(),
                 CurrentPage = page,
                 TotalPages = (int)Math.Ceiling((double)totalStores / pageSize),
@@ -58,7 +58,7 @@ namespace ReverseMarket.Controllers
             return View(model);
         }
 
-        public async Task<IActionResult> Details(int id)
+        public async Task<IActionResult> Details(string id) // غيّر من int إلى string
         {
             var store = await _context.Users
                 .Include(u => u.StoreCategories)
@@ -67,7 +67,7 @@ namespace ReverseMarket.Controllers
                 .ThenInclude(sc => sc.SubCategory1)
                 .Include(u => u.StoreCategories)
                 .ThenInclude(sc => sc.SubCategory2)
-                .FirstOrDefaultAsync(u => u.Id == id.ToString() &&
+                .FirstOrDefaultAsync(u => u.Id == id &&
                                          u.UserType == UserType.Seller &&
                                          u.IsActive);
 
