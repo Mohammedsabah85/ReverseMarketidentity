@@ -1,7 +1,6 @@
-@model StoresViewModel
-@inject IStringLocalizer<SharedResource> Localizer
+﻿@model StoresViewModel
 @{
-    ViewData["Title"] = Localizer["Stores"];
+    ViewData["Title"] = "المتاجر";
 }
 
 <div class="container-custom">
@@ -10,14 +9,14 @@
         <div class="col-md-8">
             <h1 class="display-6 text-primary">
                 <i class="fas fa-store me-3"></i>
-                @Localizer["StoresDirectory"]
+                دليل المتاجر
             </h1>
-            <p class="text-muted">@Localizer["BrowseRegisteredStores"]</p>
+            <p class="text-muted">تصفح المتاجر المسجلة في منصتنا</p>
         </div>
         <div class="col-md-4 text-end">
             <a href="/Account/Login" class="btn btn-outline-primary">
                 <i class="fas fa-plus me-2"></i>
-                @Localizer["RegisterYourStore"]
+                سجل متجرك
             </a>
         </div>
     </div>
@@ -26,14 +25,14 @@
     <div class="card-custom mb-4">
         <form method="get" class="row g-3">
             <div class="col-md-6">
-                <label for="search" class="form-label">@Localizer["Search"]</label>
+                <label for="search" class="form-label">البحث</label>
                 <input type="text" name="search" id="search" class="form-control"
-                       placeholder="@Localizer["SearchInStoreNameOrDescription"]" value="@Model.Search">
+                       placeholder="ابحث في اسم المتجر أو الوصف..." value="@Model.Search">
             </div>
             <div class="col-md-4">
-                <label for="categoryId" class="form-label">@Localizer["Category"]</label>
+                <label for="categoryId" class="form-label">الفئة</label>
                 <select name="categoryId" id="categoryId" class="form-control">
-                    <option value="">@Localizer["AllCategories"]</option>
+                    <option value="">جميع الفئات</option>
                     @foreach (var category in Model.Categories)
                     {
                         if (Model.SelectedCategoryId == category.Id)
@@ -50,7 +49,7 @@
             <div class="col-md-2 d-flex align-items-end">
                 <button type="submit" class="btn btn-primary w-100">
                     <i class="fas fa-search me-1"></i>
-                    @Localizer["Search"]
+                    بحث
                 </button>
             </div>
         </form>
@@ -110,7 +109,7 @@
                                     @store.City - @store.District
                                 </small>
                                 <a href="/Stores/Details/@store.Id" class="btn btn-outline-primary btn-sm">
-                                    @Localizer["ViewStore"]
+                                    عرض المتجر
                                 </a>
                             </div>
                         </div>
@@ -156,11 +155,11 @@
     {
         <div class="text-center py-5">
             <i class="fas fa-store fa-4x text-muted mb-3"></i>
-            <h4 class="text-muted">@Localizer["NoStores"]</h4>
-            <p class="text-muted">@Localizer["NoStoresMatchCriteria"]</p>
+            <h4 class="text-muted">لا توجد متاجر</h4>
+            <p class="text-muted">لم يتم العثور على متاجر تطابق معايير البحث</p>
             <a href="/Account/Login" class="btn btn-custom">
                 <i class="fas fa-plus me-2"></i>
-                @Localizer["RegisterYourStoreNow"]
+                سجل متجرك الآن
             </a>
         </div>
     }

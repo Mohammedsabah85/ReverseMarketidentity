@@ -1,6 +1,7 @@
 ﻿@model CreateRequestViewModel
+@inject IStringLocalizer<SharedResource> Localizer
 @{
-    ViewData["Title"] = "إضافة طلب جديد";
+    ViewData["Title"] = Localizer["AddRequest"];
 }
 
 <div class="container-custom">
@@ -10,9 +11,9 @@
                 <div class="text-center mb-4">
                     <h1 class="display-6 text-primary">
                         <i class="fas fa-plus-circle me-3"></i>
-                        إضافة طلب جديد
+                        @Localizer["AddRequest"]
                     </h1>
-                    <p class="text-muted">أضف طلبك بالتفصيل وسنجد لك أفضل المتاجر</p>
+                    <p class="text-muted">@Localizer["AddRequestDescription"]</p>
                 </div>
 
                 <form asp-action="Create" method="post" enctype="multipart/form-data" id="requestForm">
@@ -22,22 +23,22 @@
                     <div class="form-section">
                         <h5 class="section-title">
                             <i class="fas fa-info-circle me-2"></i>
-                            المعلومات الأساسية
+                            @Localizer["BasicInfo"]
                         </h5>
 
                         <div class="row g-3">
                             <div class="col-12">
-                                <label asp-for="Title" class="form-label">عنوان الطلب *</label>
-                                <input asp-for="Title" class="form-control" placeholder="مثال: مطلوب جهاز لابتوب للعمل" required>
+                                <label asp-for="Title" class="form-label">@Localizer["Title"] *</label>
+                                <input asp-for="Title" class="form-control" placeholder="@Localizer["RequestTitleExample"]" required>
                                 <span asp-validation-for="Title" class="text-danger"></span>
                             </div>
 
                             <div class="col-12">
-                                <label asp-for="Description" class="form-label">تفاصيل الطلب *</label>
+                                <label asp-for="Description" class="form-label">@Localizer["Description"] *</label>
                                 <textarea asp-for="Description" class="form-control" rows="5"
-                                          placeholder="اكتب تفاصيل دقيقة عما تحتاجه (المواصفات، الميزانية، الموعد المطلوب...)" required></textarea>
+                                          placeholder="@Localizer["RequestDescriptionPlaceholder"]" required></textarea>
                                 <span asp-validation-for="Description" class="text-danger"></span>
-                                <div class="form-text">كلما كانت التفاصيل أوضح، كانت العروض أفضل</div>
+                                <div class="form-text">@Localizer["BetterDetailsNote"]</div>
                             </div>
                         </div>
                     </div>
@@ -46,14 +47,14 @@
                     <div class="form-section">
                         <h5 class="section-title">
                             <i class="fas fa-tags me-2"></i>
-                            التصنيف
+                            @Localizer["Category"]
                         </h5>
 
                         <div class="row g-3">
                             <div class="col-md-4">
-                                <label asp-for="CategoryId" class="form-label">الفئة الرئيسية *</label>
+                                <label asp-for="CategoryId" class="form-label">@Localizer["MainCategory"] *</label>
                                 <select asp-for="CategoryId" class="form-control" id="categorySelect" required>
-                                    <option value="">اختر الفئة</option>
+                                    <option value="">@Localizer["SelectCategory"]</option>
                                     @foreach (var category in ViewBag.Categories as List<Category>)
                                     {
                                         <option value="@category.Id">@category.Name</option>
@@ -63,17 +64,17 @@
                             </div>
 
                             <div class="col-md-4">
-                                <label asp-for="SubCategory1Id" class="form-label">الفئة الفرعية الأولى</label>
+                                <label asp-for="SubCategory1Id" class="form-label">@Localizer["SubCategory1"]</label>
                                 <select asp-for="SubCategory1Id" class="form-control" id="subCategory1Select">
-                                    <option value="">اختر التصنيف الفرعي الأول</option>
+                                    <option value="">@Localizer["SelectSubCategory1"]</option>
                                 </select>
                                 <span asp-validation-for="SubCategory1Id" class="text-danger"></span>
                             </div>
 
                             <div class="col-md-4">
-                                <label asp-for="SubCategory2Id" class="form-label">الفئة الفرعية الثانية</label>
+                                <label asp-for="SubCategory2Id" class="form-label">@Localizer["SubCategory2"]</label>
                                 <select asp-for="SubCategory2Id" class="form-control" id="subCategory2Select">
-                                    <option value="">اختر التصنيف الفرعي الثاني</option>
+                                    <option value="">@Localizer["SelectSubCategory2"]</option>
                                 </select>
                                 <span asp-validation-for="SubCategory2Id" class="text-danger"></span>
                             </div>
@@ -84,45 +85,45 @@
                     <div class="form-section">
                         <h5 class="section-title">
                             <i class="fas fa-map-marker-alt me-2"></i>
-                            معلومات الموقع
+                            @Localizer["LocationInfo"]
                         </h5>
 
                         <div class="row g-3">
                             <div class="col-md-4">
-                                <label asp-for="City" class="form-label">المحافظة *</label>
+                                <label asp-for="City" class="form-label">@Localizer["City"] *</label>
                                 <select asp-for="City" class="form-control" required>
-                                    <option value="">اختر المحافظة</option>
-                                    <option value="بغداد">بغداد</option>
-                                    <option value="البصرة">البصرة</option>
-                                    <option value="أربيل">أربيل</option>
-                                    <option value="النجف">النجف</option>
-                                    <option value="كربلاء">كربلاء</option>
-                                    <option value="الموصل">الموصل</option>
-                                    <option value="السليمانية">السليمانية</option>
-                                    <option value="بابل">بابل</option>
-                                    <option value="دهوك">دهوك</option>
-                                    <option value="كركوك">كركوك</option>
-                                    <option value="الأنبار">الأنبار</option>
-                                    <option value="ديالى">ديالى</option>
-                                    <option value="صلاح الدين">صلاح الدين</option>
-                                    <option value="واسط">واسط</option>
-                                    <option value="ذي قار">ذي قار</option>
-                                    <option value="المثنى">المثنى</option>
-                                    <option value="القادسية">القادسية</option>
-                                    <option value="ميسان">ميسان</option>
+                                    <option value="">@Localizer["SelectCity"]</option>
+                                    <option value="Baghdad">@Localizer["Baghdad"]</option>
+                                    <option value="Basra">@Localizer["Basra"]</option>
+                                    <option value="Erbil">@Localizer["Erbil"]</option>
+                                    <option value="Najaf">@Localizer["Najaf"]</option>
+                                    <option value="Karbala">@Localizer["Karbala"]</option>
+                                    <option value="Mosul">@Localizer["Mosul"]</option>
+                                    <option value="Sulaymaniyah">@Localizer["Sulaymaniyah"]</option>
+                                    <option value="Babylon">@Localizer["Babylon"]</option>
+                                    <option value="Dohuk">@Localizer["Dohuk"]</option>
+                                    <option value="Kirkuk">@Localizer["Kirkuk"]</option>
+                                    <option value="Anbar">@Localizer["Anbar"]</option>
+                                    <option value="Diyala">@Localizer["Diyala"]</option>
+                                    <option value="Saladin">@Localizer["Saladin"]</option>
+                                    <option value="Wasit">@Localizer["Wasit"]</option>
+                                    <option value="ThiQar">@Localizer["ThiQar"]</option>
+                                    <option value="Muthanna">@Localizer["Muthanna"]</option>
+                                    <option value="Qadisiyyah">@Localizer["Qadisiyyah"]</option>
+                                    <option value="Maysan">@Localizer["Maysan"]</option>
                                 </select>
                                 <span asp-validation-for="City" class="text-danger"></span>
                             </div>
 
                             <div class="col-md-4">
-                                <label asp-for="District" class="form-label">المنطقة *</label>
-                                <input asp-for="District" class="form-control" placeholder="مثال: الكرادة، المعقل، عنكاوا" required>
+                                <label asp-for="District" class="form-label">@Localizer["District"] *</label>
+                                <input asp-for="District" class="form-control" placeholder="@Localizer["DistrictExample"]" required>
                                 <span asp-validation-for="District" class="text-danger"></span>
                             </div>
 
                             <div class="col-md-4">
-                                <label asp-for="Location" class="form-label">العنوان التفصيلي</label>
-                                <input asp-for="Location" class="form-control" placeholder="الشارع، رقم البناء (اختياري)">
+                                <label asp-for="Location" class="form-label">@Localizer["DetailedAddress"]</label>
+                                <input asp-for="Location" class="form-control" placeholder="@Localizer["AddressOptional"]">
                                 <span asp-validation-for="Location" class="text-danger"></span>
                             </div>
                         </div>
@@ -132,22 +133,21 @@
                     <div class="form-section">
                         <h5 class="section-title">
                             <i class="fas fa-camera me-2"></i>
-                            الصور (اختياري)
+                            @Localizer["Images"] (@Localizer["Optional"])
                         </h5>
 
                         <div class="upload-area">
-                            <label for="images" class="form-label">رفع الصور</label>
+                            <label for="images" class="form-label">@Localizer["UploadImages"]</label>
                             <input type="file" name="Images" id="images" class="form-control"
                                    multiple accept="image/*" style="display: none;">
 
                             <div class="upload-zone" onclick="document.getElementById('images').click()">
                                 <div class="upload-content">
                                     <i class="fas fa-cloud-upload-alt fa-3x text-muted mb-3"></i>
-                                    <h5 class="text-muted">اضغط لرفع الصور</h5>
-                                    <p class="text-muted small mb-0">أو اسحب الصور هنا</p>
+                                    <h5 class="text-muted">@Localizer["ClickToUpload"]</h5>
+                                    <p class="text-muted small mb-0">@Localizer["OrDragImages"]</p>
                                     <small class="text-muted d-block mt-2">
-                                        يمكنك رفع حتى 3 صور بحجم أقصى 5 ميجابايت لكل صورة<br>
-                                        الأنواع المدعومة: JPG, PNG, GIF
+                                        @Localizer["UploadImagesNote"]
                                     </small>
                                 </div>
                             </div>
@@ -161,11 +161,11 @@
                     <div class="text-center">
                         <button type="submit" class="btn btn-custom btn-lg px-5" id="submitBtn">
                             <i class="fas fa-paper-plane me-2"></i>
-                            إرسال الطلب
+                            @Localizer["Submit"]
                         </button>
                         <div class="mt-2">
                             <small class="text-muted">
-                                سيتم مراجعة طلبك والموافقة عليه خلال 24 ساعة
+                                @Localizer["RequestReviewNote"]
                             </small>
                         </div>
                     </div>
@@ -274,13 +274,9 @@
 
 @section Scripts {
     <script>
-        // استخدام الكود JavaScript المحسن
-        @* تضمين الكود من الملف المنفصل *@
-
-        // متغيرات عامة
         let uploadedFiles = [];
         const maxFiles = 3;
-        const maxFileSize = 5 * 1024 * 1024; // 5MB
+        const maxFileSize = 5 * 1024 * 1024;
         const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
 
         document.addEventListener('DOMContentLoaded', function() {
@@ -305,13 +301,11 @@
             const uploadZone = document.querySelector('.upload-zone');
             if (!uploadZone) return;
 
-            // منع السلوك الافتراضي للمتصفح
             ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
                 uploadZone.addEventListener(eventName, preventDefaults, false);
                 document.body.addEventListener(eventName, preventDefaults, false);
             });
 
-            // إضافة تأثيرات بصرية
             ['dragenter', 'dragover'].forEach(eventName => {
                 uploadZone.addEventListener(eventName, highlight, false);
             });
@@ -320,7 +314,6 @@
                 uploadZone.addEventListener(eventName, unhighlight, false);
             });
 
-            // معالجة إفلات الملفات
             uploadZone.addEventListener('drop', handleDrop, false);
         }
 
@@ -341,19 +334,16 @@
             const dt = e.dataTransfer;
             const files = dt.files;
             const previewContainer = document.getElementById('imagePreview');
-
             handleImageSelection(files, previewContainer);
         }
 
         function handleImageSelection(files, previewContainer) {
-            // مسح المعاينة السابقة
             previewContainer.innerHTML = '';
             uploadedFiles = [];
 
-            // معالجة الملفات الجديدة
             Array.from(files).forEach((file, index) => {
                 if (index >= maxFiles) {
-                    showAlert(`يمكنك رفع ${maxFiles} صور كحد أقصى`, 'warning');
+                    showAlert(`@Localizer["MaxImagesAllowed"]: ${maxFiles}`, 'warning');
                     return;
                 }
 
@@ -369,15 +359,13 @@
         }
 
         function validateFile(file) {
-            // التحقق من نوع الملف
             if (!allowedTypes.includes(file.type)) {
-                showAlert(`نوع الملف ${file.name} غير مدعوم. الأنواع المدعومة: JPG, PNG, GIF`, 'error');
+                showAlert(`@Localizer["UnsupportedFileType"]: ${file.name}`, 'error');
                 return false;
             }
 
-            // التحقق من حجم الملف
             if (file.size > maxFileSize) {
-                showAlert(`حجم الملف ${file.name} كبير جداً. الحد الأقصى: 5 ميجابايت`, 'error');
+                showAlert(`@Localizer["FileTooLarge"]: ${file.name}`, 'error');
                 return false;
             }
 
@@ -397,11 +385,11 @@
                         <img src="${e.target.result}"
                              class="img-fluid w-100"
                              style="height: 200px; object-fit: cover;"
-                             alt="معاينة الصورة ${index + 1}">
+                             alt="@Localizer["ImagePreview"] ${index + 1}">
                         <button type="button"
                                 class="btn btn-danger btn-sm remove-image-btn"
                                 onclick="removeImage(${index})"
-                                title="حذف الصورة">
+                                title="@Localizer["Delete"]">
                             <i class="fas fa-times"></i>
                         </button>
                         <div class="image-info">
@@ -418,10 +406,7 @@
         }
 
         function removeImage(index) {
-            // إزالة الملف من المصفوفة
             uploadedFiles.splice(index, 1);
-
-            // إعادة إنشاء المعاينة
             const previewContainer = document.getElementById('imagePreview');
             previewContainer.innerHTML = '';
 
@@ -430,15 +415,12 @@
             });
 
             updateFileInput();
-            showAlert('تم حذف الصورة', 'success');
+            showAlert('@Localizer["ImageDeleted"]', 'success');
         }
 
         function updateFileInput() {
-            // إنشاء DataTransfer جديد للملفات
             const dt = new DataTransfer();
             uploadedFiles.forEach(file => dt.items.add(file));
-
-            // تحديث input
             const imageInput = document.getElementById('images');
             if (imageInput) {
                 imageInput.files = dt.files;
@@ -446,16 +428,13 @@
         }
 
         function formatFileSize(bytes) {
-            if (bytes === 0) return '0 بايت';
-
+            if (bytes === 0) return '0 @Localizer["Bytes"]';
             const k = 1024;
-            const sizes = ['بايت', 'كيلوبايت', 'ميجابايت'];
+            const sizes = ['@Localizer["Bytes"]', '@Localizer["KB"]', '@Localizer["MB"]'];
             const i = Math.floor(Math.log(bytes) / Math.log(k));
-
             return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
         }
 
-        // إعداد القوائم المنسدلة للفئات
         function initializeCategoryDropdowns() {
             const categorySelect = document.getElementById('categorySelect');
             const subCategory1Select = document.getElementById('subCategory1Select');
@@ -465,10 +444,8 @@
                 categorySelect.addEventListener('change', function() {
                     const categoryId = this.value;
                     loadSubCategories1(categoryId, subCategory1Select);
-
-                    // إعادة تعيين الفئة الفرعية الثانية
                     if (subCategory2Select) {
-                        subCategory2Select.innerHTML = '<option value="">اختر التصنيف الفرعي الثاني</option>';
+                        subCategory2Select.innerHTML = '<option value="">@Localizer["SelectSubCategory2"]</option>';
                     }
                 });
             }
@@ -484,23 +461,22 @@
         function loadSubCategories1(categoryId, targetSelect) {
             if (!categoryId || !targetSelect) {
                 if (targetSelect) {
-                    targetSelect.innerHTML = '<option value="">اختر التصنيف الفرعي الأول</option>';
+                    targetSelect.innerHTML = '<option value="">@Localizer["SelectSubCategory1"]</option>';
                 }
                 return;
             }
 
-            // إظهار حالة التحميل
-            targetSelect.innerHTML = '<option value="">جاري التحميل...</option>';
+            targetSelect.innerHTML = '<option value="">@Localizer["Loading"]...</option>';
 
             fetch(`/Requests/GetSubCategories1?categoryId=${categoryId}`)
                 .then(response => {
                     if (!response.ok) {
-                        throw new Error('خطأ في الشبكة');
+                        throw new Error('@Localizer["NetworkError"]');
                     }
                     return response.json();
                 })
                 .then(data => {
-                    targetSelect.innerHTML = '<option value="">اختر التصنيف الفرعي الأول</option>';
+                    targetSelect.innerHTML = '<option value="">@Localizer["SelectSubCategory1"]</option>';
                     data.forEach(item => {
                         const option = document.createElement('option');
                         option.value = item.id;
@@ -509,32 +485,31 @@
                     });
                 })
                 .catch(error => {
-                    console.error('خطأ في تحميل الفئات الفرعية:', error);
-                    targetSelect.innerHTML = '<option value="">خطأ في التحميل</option>';
-                    showAlert('خطأ في تحميل الفئات الفرعية', 'error');
+                    console.error('@Localizer["LoadingError"]:', error);
+                    targetSelect.innerHTML = '<option value="">@Localizer["LoadingError"]</option>';
+                    showAlert('@Localizer["SubCategoryLoadError"]', 'error');
                 });
         }
 
         function loadSubCategories2(subCategory1Id, targetSelect) {
             if (!subCategory1Id || !targetSelect) {
                 if (targetSelect) {
-                    targetSelect.innerHTML = '<option value="">اختر التصنيف الفرعي الثاني</option>';
+                    targetSelect.innerHTML = '<option value="">@Localizer["SelectSubCategory2"]</option>';
                 }
                 return;
             }
 
-            // إظهار حالة التحميل
-            targetSelect.innerHTML = '<option value="">جاري التحميل...</option>';
+            targetSelect.innerHTML = '<option value="">@Localizer["Loading"]...</option>';
 
             fetch(`/Requests/GetSubCategories2?subCategory1Id=${subCategory1Id}`)
                 .then(response => {
                     if (!response.ok) {
-                        throw new Error('خطأ في الشبكة');
+                        throw new Error('@Localizer["NetworkError"]');
                     }
                     return response.json();
                 })
                 .then(data => {
-                    targetSelect.innerHTML = '<option value="">اختر التصنيف الفرعي الثاني</option>';
+                    targetSelect.innerHTML = '<option value="">@Localizer["SelectSubCategory2"]</option>';
                     data.forEach(item => {
                         const option = document.createElement('option');
                         option.value = item.id;
@@ -543,9 +518,9 @@
                     });
                 })
                 .catch(error => {
-                    console.error('خطأ في تحميل الفئات الفرعية الثانية:', error);
-                    targetSelect.innerHTML = '<option value="">خطأ في التحميل</option>';
-                    showAlert('خطأ في تحميل الفئات الفرعية', 'error');
+                    console.error('@Localizer["LoadingError"]:', error);
+                    targetSelect.innerHTML = '<option value="">@Localizer["LoadingError"]</option>';
+                    showAlert('@Localizer["SubCategoryLoadError"]', 'error');
                 });
         }
 
@@ -555,26 +530,20 @@
 
             if (form) {
                 form.addEventListener('submit', function(e) {
-                    // إظهار حالة التحميل
                     submitBtn.disabled = true;
-                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>جاري الإرسال...';
+                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>@Localizer["Sending"]...';
 
-                    // يمكن إضافة تحققات إضافية هنا
-
-                    // في حالة وجود خطأ، إعادة تفعيل الزر
                     setTimeout(() => {
                         if (submitBtn.disabled) {
                             submitBtn.disabled = false;
-                            submitBtn.innerHTML = '<i class="fas fa-paper-plane me-2"></i>إرسال الطلب';
+                            submitBtn.innerHTML = '<i class="fas fa-paper-plane me-2"></i>@Localizer["Submit"]';
                         }
-                    }, 10000); // 10 ثوان timeout
+                    }, 10000);
                 });
             }
         }
 
-        // دالة لإظهار الرسائل
         function showAlert(message, type = 'info') {
-            // إزالة التنبيهات السابقة
             const existingAlerts = document.querySelectorAll('.alert.auto-dismiss');
             existingAlerts.forEach(alert => alert.remove());
 
@@ -601,7 +570,6 @@
 
             document.body.appendChild(alertDiv);
 
-            // إزالة التنبيه تلقائياً بعد 5 ثوان
             setTimeout(() => {
                 if (alertDiv.parentNode) {
                     alertDiv.remove();

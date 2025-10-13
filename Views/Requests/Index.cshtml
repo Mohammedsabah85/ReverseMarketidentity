@@ -1,6 +1,7 @@
 ﻿@model RequestsViewModel
+@inject IStringLocalizer<SharedResource> Localizer
 @{
-    ViewData["Title"] = "جميع الطلبات";
+    ViewData["Title"] = Localizer["Requests"];
 }
 
 <div class="container-custom">
@@ -9,14 +10,14 @@
         <div class="col-md-8">
             <h1 class="display-6 text-primary">
                 <i class="fas fa-list me-3"></i>
-                جميع الطلبات
+                @Localizer["AllRequests"]
             </h1>
-            <p class="text-muted">تصفح الطلبات المتاحة من العملاء</p>
+            <p class="text-muted">@Localizer["BrowseAvailableRequests"]</p>
         </div>
         <div class="col-md-4 text-end">
             <a href="/Requests/Create" class="btn btn-custom">
                 <i class="fas fa-plus me-2"></i>
-                إضافة طلب جديد
+                @Localizer["AddRequest"]
             </a>
         </div>
     </div>
@@ -25,14 +26,14 @@
     <div class="card-custom mb-4">
         <form method="get" class="row g-3">
             <div class="col-md-4">
-                <label for="search" class="form-label">البحث</label>
+                <label for="search" class="form-label">@Localizer["Search"]</label>
                 <input type="text" name="search" id="search" class="form-control"
-                       placeholder="ابحث في العنوان أو الوصف..." value="@Model.Search">
+                       placeholder="@Localizer["SearchInTitleOrDescription"]" value="@Model.Search">
             </div>
             <div class="col-md-4">
-                <label for="categoryId" class="form-label">الفئة</label>
+                <label for="categoryId" class="form-label">@Localizer["Category"]</label>
                 <select name="categoryId" id="categoryId" class="form-control">
-                    <option value="">جميع الفئات</option>
+                    <option value="">@Localizer["AllCategories"]</option>
                     @foreach (var category in Model.Categories)
                     {
                         if (Model.SelectedCategoryId == category.Id)
@@ -49,11 +50,11 @@
             <div class="col-md-4 d-flex align-items-end">
                 <button type="submit" class="btn btn-primary me-2">
                     <i class="fas fa-search me-1"></i>
-                    بحث
+                    @Localizer["Search"]
                 </button>
                 <a href="/Requests" class="btn btn-outline-secondary">
                     <i class="fas fa-redo me-1"></i>
-                    إعادة تعيين
+                    @Localizer["Reset"]
                 </a>
             </div>
         </form>
@@ -103,7 +104,7 @@
                                     @request.City - @request.District
                                 </small>
                                 <a href="/Requests/Details/@request.Id" class="btn btn-outline-primary btn-sm">
-                                    عرض التفاصيل
+                                    @Localizer["ViewDetails"]
                                 </a>
                             </div>
                         </div>
@@ -149,11 +150,11 @@
     {
         <div class="text-center py-5">
             <i class="fas fa-search fa-4x text-muted mb-3"></i>
-            <h4 class="text-muted">لا توجد طلبات</h4>
-            <p class="text-muted">لم يتم العثور على طلبات تطابق معايير البحث</p>
+            <h4 class="text-muted">@Localizer["NoRequests"]</h4>
+            <p class="text-muted">@Localizer["NoRequestsMatchCriteria"]</p>
             <a href="/Requests/Create" class="btn btn-custom">
                 <i class="fas fa-plus me-2"></i>
-                أضف أول طلب
+                @Localizer["AddFirstRequest"]
             </a>
         </div>
     }

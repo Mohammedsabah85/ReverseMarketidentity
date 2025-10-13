@@ -1,10 +1,10 @@
-@model User
-@inject IStringLocalizer<SharedResource> Localizer
+﻿@model User
 @{
     ViewData["Title"] = Model.StoreName;
     var isLoggedIn = Context.Session.GetString("IsLoggedIn") == "true";
     var currentUserId = Context.Session.GetInt32("UserId");
     var userType = Context.Session.GetString("UserType");
+
     bool canViewContact = isLoggedIn && (userType == "Admin" || currentUserId.HasValue);
 }
 
@@ -44,7 +44,7 @@
                         }
                         <p class="text-muted mb-0">
                             <i class="fas fa-calendar me-1"></i>
-                            @Localizer["MemberSince"] @Model.CreatedAt.ToString("MMMM yyyy")
+                            عضو منذ @Model.CreatedAt.ToString("MMMM yyyy")
                         </p>
                     </div>
                 </div>
@@ -55,7 +55,7 @@
                     <div class="mb-4">
                         <h4 class="text-primary mb-3">
                             <i class="fas fa-info-circle me-2"></i>
-                            @Localizer["AboutStore"]
+                            عن المتجر
                         </h4>
                         <p class="lead">@Model.StoreDescription</p>
                     </div>
@@ -65,7 +65,7 @@
                 <div class="mb-4">
                     <h4 class="text-primary mb-3">
                         <i class="fas fa-tags me-2"></i>
-                        @Localizer["Specializations"]
+                        التخصصات
                     </h4>
                     <div class="d-flex flex-wrap gap-2">
                         @foreach (var storeCategory in Model.StoreCategories)
@@ -87,14 +87,14 @@
                 <div class="mb-4">
                     <h4 class="text-primary mb-3">
                         <i class="fas fa-map-marker-alt me-2"></i>
-                        @Localizer["Location"]
+                        الموقع
                     </h4>
                     <div class="bg-light p-3 rounded">
-                        <p class="mb-1"><strong>@Localizer["City"]:</strong> @Model.City</p>
-                        <p class="mb-1"><strong>@Localizer["District"]:</strong> @Model.District</p>
+                        <p class="mb-1"><strong>المحافظة:</strong> @Model.City</p>
+                        <p class="mb-1"><strong>المنطقة:</strong> @Model.District</p>
                         @if (!string.IsNullOrEmpty(Model.Location))
                         {
-                            <p class="mb-0"><strong>@Localizer["Address"]:</strong> @Model.Location</p>
+                            <p class="mb-0"><strong>العنوان:</strong> @Model.Location</p>
                         }
                     </div>
                 </div>
@@ -105,28 +105,28 @@
                     <div class="mb-4">
                         <h4 class="text-primary mb-3">
                             <i class="fas fa-link me-2"></i>
-                            @Localizer["Links"]
+                            الروابط
                         </h4>
                         <div class="d-flex flex-wrap gap-2">
                             @if (!string.IsNullOrEmpty(Model.WebsiteUrl1))
                             {
                                 <a href="@Model.WebsiteUrl1" target="_blank" class="btn btn-outline-primary btn-sm">
                                     <i class="fas fa-external-link-alt me-1"></i>
-                                    @Localizer["Website1"]
+                                    الموقع الأول
                                 </a>
                             }
                             @if (!string.IsNullOrEmpty(Model.WebsiteUrl2))
                             {
                                 <a href="@Model.WebsiteUrl2" target="_blank" class="btn btn-outline-primary btn-sm">
                                     <i class="fas fa-external-link-alt me-1"></i>
-                                    @Localizer["Website2"]
+                                    الموقع الثاني
                                 </a>
                             }
                             @if (!string.IsNullOrEmpty(Model.WebsiteUrl3))
                             {
                                 <a href="@Model.WebsiteUrl3" target="_blank" class="btn btn-outline-primary btn-sm">
                                     <i class="fas fa-external-link-alt me-1"></i>
-                                    @Localizer["Website3"]
+                                    الموقع الثالث
                                 </a>
                             }
                         </div>
@@ -145,16 +145,16 @@
             <div class="card-custom mb-4">
                 <h5 class="text-primary mb-3">
                     <i class="fas fa-lightning-bolt me-2"></i>
-                    @Localizer["QuickActions"]
+                    إجراءات سريعة
                 </h5>
                 <div class="d-grid gap-2">
                     <a href="/Requests/Create" class="btn btn-custom">
                         <i class="fas fa-plus me-2"></i>
-                        @Localizer["AddRequest"]
+                        أضف طلب جديد
                     </a>
                     <a href="/Requests?categoryId=@Model.StoreCategories.FirstOrDefault()?.CategoryId" class="btn btn-outline-secondary">
                         <i class="fas fa-list me-2"></i>
-                        @Localizer["RequestsInSameSpecialization"]
+                        طلبات في نفس التخصص
                     </a>
                 </div>
             </div>
@@ -163,17 +163,17 @@
             <div class="card-custom">
                 <h5 class="text-primary mb-3">
                     <i class="fas fa-store me-2"></i>
-                    @Localizer["SimilarStores"]
+                    متاجر مشابهة
                 </h5>
                 <div class="d-grid gap-2">
                     @if (Model.StoreCategories.Any())
                     {
                         <a href="/Stores?categoryId=@Model.StoreCategories.First().CategoryId" class="btn btn-outline-secondary btn-sm">
-                            @Localizer["Stores"] @Model.StoreCategories.First().Category.Name
+                            متاجر @Model.StoreCategories.First().Category.Name
                         </a>
                     }
                     <a href="/Stores?search=@Model.City" class="btn btn-outline-secondary btn-sm">
-                        @Localizer["StoresIn"] @Model.City
+                        متاجر في @Model.City
                     </a>
                 </div>
             </div>
@@ -184,7 +184,7 @@
     <div class="text-center mt-4">
         <a href="/Stores" class="btn btn-outline-primary">
             <i class="fas fa-arrow-right me-2"></i>
-            @Localizer["BackToStores"]
+            العودة إلى المتاجر
         </a>
     </div>
 </div>
