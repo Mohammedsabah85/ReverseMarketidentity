@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Identity;
+Ôªøusing Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
@@ -25,20 +25,42 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 // ====================================
 builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
 {
-    // ≈⁄œ«œ«   ”ÃÌ· «·œŒÊ·
+    // √Ö√ö√è√á√è√á√ä √ä√ì√å√≠√° √á√°√è√é√¶√°
     options.SignIn.RequireConfirmedAccount = false;
     options.SignIn.RequireConfirmedEmail = false;
     options.SignIn.RequireConfirmedPhoneNumber = false;
 
-    // ≈⁄œ«œ«  ﬂ·„… «·„—Ê— („»”ÿ… ·· ÿÊÌ—)
-    options.Password.RequireDigit = false;
-    options.Password.RequiredLength = 4;
-    options.Password.RequireNonAlphanumeric = false;
-    options.Password.RequireUppercase = false;
-    options.Password.RequireLowercase = false;
+    // Password settings
+    options.Password.RequireDigit = true;
+    options.Password.RequireLowercase = true;
+    options.Password.RequireUppercase = true;
+    options.Password.RequireNonAlphanumeric = true;
+    options.Password.RequiredLength = 8;
+    // Lockout settings
+    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15);
+    options.Lockout.MaxFailedAccessAttempts = 5;
+    options.Lockout.AllowedForNewUsers = true;
+
+    // User settings
+    options.User.RequireUniqueEmail = false;
+    options.SignIn.RequireConfirmedPhoneNumber = false;
 })
 .AddEntityFrameworkStores<ApplicationDbContext>()
 .AddDefaultTokenProviders();
+
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.Cookie.Name = "ReverseMarket.Auth";
+    options.Cookie.HttpOnly = true;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+    options.Cookie.SameSite = SameSiteMode.Lax;
+    options.ExpireTimeSpan = TimeSpan.FromDays(30); // ÿßŸÑÿ¨ŸÑÿ≥ÿ© ÿ™ÿ≥ÿ™ŸÖÿ± 30 ŸäŸàŸÖ
+    options.SlidingExpiration = true; // ÿ™ÿ¨ÿØŸäÿØ ÿ™ŸÑŸÇÿßÿ¶Ÿä ŸÑŸÑÿ¨ŸÑÿ≥ÿ©
+    options.LoginPath = "/Account/Login";
+    options.LogoutPath = "/Account/Logout";
+    options.AccessDeniedPath = "/Account/AccessDenied";
+});
+
 builder.Services.AddScoped<IEmailService, EmailService>();
 // ====================================
 // 3. Localization Configuration
@@ -58,7 +80,7 @@ builder.Services.AddScoped<IEmailService, EmailService>();
 ////    options.SupportedCultures = supportedCultures;
 ////    options.SupportedUICultures = supportedCultures;
 
-////    //  — Ì» Providers „Â„ Ãœ« - Cookie √Ê·«
+////    // √ä√ë√ä√≠√à Providers √£√•√£ √å√è√á√∞ - Cookie √É√¶√°√á√∞
 ////    options.RequestCultureProviders = new List<IRequestCultureProvider>
 ////    {
 ////        new CookieRequestCultureProvider
@@ -88,7 +110,7 @@ builder.Services.Configure<RequestLocalizationOptions>(options =>
     options.SupportedCultures = supportedCultures;
     options.SupportedUICultures = supportedCultures;
 
-    // ? „Â„:  — Ì» Providers
+    // ? √£√•√£: √ä√ë√ä√≠√à Providers
     options.RequestCultureProviders = new List<Microsoft.AspNetCore.Localization.IRequestCultureProvider>
     {
         new Microsoft.AspNetCore.Localization.CookieRequestCultureProvider
@@ -118,6 +140,9 @@ builder.Services.AddSession(options =>
     options.IdleTimeout = TimeSpan.FromMinutes(30);
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
+ 
+    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+    options.Cookie.SameSite = SameSiteMode.Lax;
 });
 
 // ====================================
@@ -159,7 +184,7 @@ var app = builder.Build();
 // 10. Request Pipeline Configuration
 // ====================================
 
-// Localization (ÌÃ» √‰ ÌﬂÊ‰ Ê«Õœ ›ﬁÿ)
+// Localization (√≠√å√à √É√§ √≠√ü√¶√§ √¶√á√ç√è √ù√û√ò)
 var localizationOptions = app.Services.GetRequiredService<IOptions<RequestLocalizationOptions>>().Value;
 app.UseRequestLocalization(localizationOptions);
 
@@ -219,7 +244,7 @@ using (var scope = app.Services.CreateScope())
     catch (Exception ex)
     {
         var logger = services.GetRequiredService<ILogger<Program>>();
-        logger.LogError(ex, "ÕœÀ Œÿ√ √À‰«¡  ÂÌ∆… «·»Ì«‰«  «·√”«”Ì…");
+        logger.LogError(ex, "√ç√è√ã √é√ò√É √É√ã√§√á√Å √ä√•√≠√Ü√â √á√°√à√≠√á√§√á√ä √á√°√É√ì√á√ì√≠√â");
     }
 }
 
@@ -233,9 +258,9 @@ static async Task SeedRolesAsync(RoleManager<ApplicationRole> roleManager)
 {
     var roles = new[]
     {
-        new { Name = "Admin", Description = "„œÌ— «·‰Ÿ«„" },
-        new { Name = "Seller", Description = "»«∆⁄/’«Õ» „ Ã—" },
-        new { Name = "Buyer", Description = "„‘ —Ì/⁄„Ì·" }
+        new { Name = "Admin", Description = "√£√è√≠√ë √á√°√§√ô√á√£" },
+        new { Name = "Seller", Description = "√à√á√Ü√ö/√ï√á√ç√à √£√ä√å√ë" },
+        new { Name = "Buyer", Description = "√£√î√ä√ë√≠/√ö√£√≠√°" }
     };
 
     foreach (var roleInfo in roles)
@@ -252,7 +277,7 @@ static async Task SeedRolesAsync(RoleManager<ApplicationRole> roleManager)
             var result = await roleManager.CreateAsync(role);
             if (!result.Succeeded)
             {
-                throw new Exception($"›‘· ›Ì ≈‰‘«¡ œÊ— {roleInfo.Name}: {string.Join(", ", result.Errors.Select(e => e.Description))}");
+                throw new Exception($"√ù√î√° √ù√≠ √Ö√§√î√á√Å √è√¶√ë {roleInfo.Name}: {string.Join(", ", result.Errors.Select(e => e.Description))}");
             }
         }
     }
@@ -272,12 +297,12 @@ static async Task SeedAdminUserAsync(UserManager<ApplicationUser> userManager, R
             Email = "admin@reversemarket.iq",
             EmailConfirmed = true,
             PhoneNumberConfirmed = true,
-            FirstName = "„œÌ—",
-            LastName = "«·‰Ÿ«„",
+            FirstName = "√£√è√≠√ë",
+            LastName = "√á√°√§√ô√á√£",
             DateOfBirth = new DateTime(1990, 1, 1),
-            Gender = "–ﬂ—",
-            City = "»€œ«œ",
-            District = "«·ﬂ—«œ…",
+            Gender = "√ê√ü√ë",
+            City = "√à√õ√è√á√è",
+            District = "√á√°√ü√ë√á√è√â",
             UserType = UserType.Buyer,
             IsPhoneVerified = true,
             IsEmailVerified = true,
@@ -292,12 +317,12 @@ static async Task SeedAdminUserAsync(UserManager<ApplicationUser> userManager, R
         }
         else
         {
-            throw new Exception($"›‘· ›Ì ≈‰‘«¡ «·„œÌ—: {string.Join(", ", result.Errors.Select(e => e.Description))}");
+            throw new Exception($"√ù√î√° √ù√≠ √Ö√§√î√á√Å √á√°√£√è√≠√ë: {string.Join(", ", result.Errors.Select(e => e.Description))}");
         }
     }
     else
     {
-        // «· √ﬂœ „‰ √‰ «·„œÌ— ·œÌÂ œÊ— Admin
+        // √á√°√ä√É√ü√è √£√§ √É√§ √á√°√£√è√≠√ë √°√è√≠√• √è√¶√ë Admin
         if (!await userManager.IsInRoleAsync(adminUser, "Admin"))
         {
             await userManager.AddToRoleAsync(adminUser, "Admin");
