@@ -47,7 +47,7 @@ namespace ReverseMarket.Controllers
 
             var model = new StoresViewModel
             {
-                Stores = stores.Cast<User>().ToList(), // تحويل مؤقت
+                Stores = stores, // إزالة Cast<User>()
                 Categories = await _context.Categories.Where(c => c.IsActive).ToListAsync(),
                 CurrentPage = page,
                 TotalPages = (int)Math.Ceiling((double)totalStores / pageSize),

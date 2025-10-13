@@ -124,6 +124,8 @@ builder.Services.AddSession(options =>
 // 6. Application Services
 // ====================================
 builder.Services.AddHttpContextAccessor();
+
+builder.Services.AddScoped<ReverseMarket.Services.IWhatsAppService, ReverseMarket.Services.WhatsAppService>();
 builder.Services.AddScoped<ILanguageService, LanguageService>();
 builder.Services.AddApplicationServices(builder.Configuration);
 
