@@ -6,7 +6,7 @@ using ReverseMarket.Data;
 using ReverseMarket.Models;
 using ReverseMarket.Models.Identity;
 using ReverseMarket.Areas.Admin.Models;
-using ReverseMarket.Extensions; // إضافة هذا
+using ReverseMarket.Extensions;
 
 namespace ReverseMarket.Areas.Admin.Controllers
 {
@@ -66,7 +66,7 @@ namespace ReverseMarket.Areas.Admin.Controllers
 
             var model = new AdminUsersViewModel
             {
-                Users = User.FromApplicationUsers(users), // استخدام الطريقة الجديدة
+                Users = User.FromApplicationUsers(users),
                 CurrentPage = page,
                 TotalPages = (int)Math.Ceiling((double)totalUsers / pageSize),
                 Search = search,
@@ -84,6 +84,11 @@ namespace ReverseMarket.Areas.Admin.Controllers
 
         public async Task<IActionResult> Details(string id)
         {
+            if (string.IsNullOrEmpty(id))
+            {
+                return NotFound();
+            }
+
             var user = await _userManager.Users
                 .Include(u => u.StoreCategories)
                 .ThenInclude(sc => sc.Category)
@@ -110,15 +115,22 @@ namespace ReverseMarket.Areas.Admin.Controllers
             };
 
             ViewBag.UserStats = userStats;
-            return View(User.FromApplicationUser(user)); // تحويل إلى User DTO
+            return View(User.FromApplicationUser(user));
         }
 
+        // تحديث ميثود ToggleStatus لاستقبال id من الفورم
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ToggleStatus(string id)
         {
             try
             {
+                if (string.IsNullOrEmpty(id))
+                {
+                    TempData["ErrorMessage"] = "معرف المستخدم غير صحيح";
+                    return RedirectToAction("Index");
+                }
+
                 var user = await _userManager.FindByIdAsync(id);
                 if (user == null)
                 {
@@ -159,12 +171,19 @@ namespace ReverseMarket.Areas.Admin.Controllers
             }
         }
 
+        // تحديث ميثود Delete لاستقبال id من الفورم
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(string id)
         {
             try
             {
+                if (string.IsNullOrEmpty(id))
+                {
+                    TempData["ErrorMessage"] = "معرف المستخدم غير صحيح";
+                    return RedirectToAction("Index");
+                }
+
                 var user = await _userManager.FindByIdAsync(id);
                 if (user == null)
                 {
@@ -177,15 +196,27 @@ namespace ReverseMarket.Areas.Admin.Controllers
                 if (user.PhoneNumber == adminPhone)
                 {
                     TempData["ErrorMessage"] = "لا يمكن حذف حساب الأدمن";
-                    return RedirectToAction("Details", new { id });
+                    return RedirectToAction("Index");
                 }
 
                 // التحقق من وجود طلبات مرتبطة
                 var hasRequests = await _context.Requests.AnyAsync(r => r.UserId == id);
                 if (hasRequests)
                 {
-                    TempData["ErrorMessage"] = "لا يمكن حذف هذا المستخدم لأنه يملك طلبات مرتبطة";
-                    return RedirectToAction("Details", new { id });
+                    // بدلاً من منع الحذف، نقوم بحذف الطلبات المرتبطة
+                    var userRequests = await _context.Requests
+                        .Include(r => r.Images)
+                        .Where(r => r.UserId == id)
+                        .ToListAsync();
+
+                    foreach (var request in userRequests)
+                    {
+                        if (request.Images != null && request.Images.Any())
+                        {
+                            _context.RequestImages.RemoveRange(request.Images);
+                        }
+                    }
+                    _context.Requests.RemoveRange(userRequests);
                 }
 
                 // حذف فئات المتجر المرتبطة
@@ -196,8 +227,10 @@ namespace ReverseMarket.Areas.Admin.Controllers
                 if (storeCategories.Any())
                 {
                     _context.StoreCategories.RemoveRange(storeCategories);
-                    await _context.SaveChangesAsync();
                 }
+
+                // حفظ التغييرات على قاعدة البيانات أولاً
+                await _context.SaveChangesAsync();
 
                 // حذف المستخدم
                 var result = await _userManager.DeleteAsync(user);
@@ -208,7 +241,7 @@ namespace ReverseMarket.Areas.Admin.Controllers
                 }
                 else
                 {
-                    TempData["ErrorMessage"] = "حدث خطأ أثناء حذف المستخدم";
+                    TempData["ErrorMessage"] = "حدث خطأ أثناء حذف المستخدم: " + string.Join(", ", result.Errors.Select(e => e.Description));
                 }
 
                 return RedirectToAction("Index");
@@ -216,7 +249,7 @@ namespace ReverseMarket.Areas.Admin.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "خطأ في حذف المستخدم: {UserId}", id);
-                TempData["ErrorMessage"] = "حدث خطأ أثناء حذف المستخدم";
+                TempData["ErrorMessage"] = "حدث خطأ أثناء حذف المستخدم: " + ex.Message;
                 return RedirectToAction("Index");
             }
         }
@@ -224,6 +257,11 @@ namespace ReverseMarket.Areas.Admin.Controllers
         [HttpGet]
         public async Task<IActionResult> Edit(string id)
         {
+            if (string.IsNullOrEmpty(id))
+            {
+                return NotFound();
+            }
+
             var user = await _userManager.Users
                 .Include(u => u.StoreCategories)
                 .FirstOrDefaultAsync(u => u.Id == id);
@@ -233,9 +271,39 @@ namespace ReverseMarket.Areas.Admin.Controllers
                 return NotFound();
             }
 
+            // جلب جميع الفئات مع الفرعية
+            var categories = await _context.Categories
+                .Include(c => c.SubCategories1)
+                .ThenInclude(sc => sc.SubCategories2)
+                .Where(c => c.IsActive)
+                .ToListAsync();
+
+            ViewBag.Categories = categories;
+
+            // تحضير قائمة بجميع الفئات الفرعية الثانية
+            var allSubCategories2 = new List<dynamic>();
+            foreach (var category in categories)
+            {
+                foreach (var sub1 in category.SubCategories1)
+                {
+                    foreach (var sub2 in sub1.SubCategories2)
+                    {
+                        allSubCategories2.Add(new
+                        {
+                            Id = sub2.Id,
+                            Name = $"{category.Name} > {sub1.Name} > {sub2.Name}",
+                            CategoryId = category.Id,
+                            SubCategory1Id = sub1.Id,
+                            SubCategory2Id = sub2.Id
+                        });
+                    }
+                }
+            }
+            ViewBag.SubCategories2 = allSubCategories2;
+
             var model = new EditUserViewModel
             {
-                Id = user.Id, // الاحتفاظ كـ string
+                Id = user.Id,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 Email = user.Email,
@@ -253,10 +321,9 @@ namespace ReverseMarket.Areas.Admin.Controllers
                 WebsiteUrl3 = user.WebsiteUrl3,
                 IsActive = user.IsActive,
                 IsPhoneVerified = user.IsPhoneVerified,
-                CurrentStoreCategories = user.StoreCategories.Select(sc => sc.CategoryId).ToList()
+                CurrentStoreCategories = user.StoreCategories.Select(sc => sc.SubCategory2Id ?? sc.SubCategory1Id ?? sc.CategoryId).ToList()
             };
 
-            ViewBag.Categories = await _context.Categories.Where(c => c.IsActive).ToListAsync();
             return View(model);
         }
 
@@ -302,14 +369,25 @@ namespace ReverseMarket.Areas.Admin.Controllers
                         // حذف الفئات الحالية
                         _context.StoreCategories.RemoveRange(user.StoreCategories);
 
-                        // إضافة الفئات الجديدة
-                        foreach (var categoryId in model.StoreCategories)
+                        // إضافة الفئات الجديدة (يجب أن تكون من الفئات الفرعية الثانية)
+                        foreach (var selectedId in model.StoreCategories)
                         {
-                            user.StoreCategories.Add(new StoreCategory
+                            // البحث عن الفئة الفرعية الثانية
+                            var sub2 = await _context.SubCategories2
+                                .Include(s => s.SubCategory1)
+                                .FirstOrDefaultAsync(s => s.Id == selectedId);
+
+                            if (sub2 != null)
                             {
-                                CategoryId = categoryId,
-                                CreatedAt = DateTime.Now
-                            });
+                                user.StoreCategories.Add(new StoreCategory
+                                {
+                                    UserId = user.Id,
+                                    CategoryId = sub2.SubCategory1.CategoryId,
+                                    SubCategory1Id = sub2.SubCategory1Id,
+                                    SubCategory2Id = sub2.Id,
+                                    CreatedAt = DateTime.Now
+                                });
+                            }
                         }
                     }
 
@@ -336,7 +414,35 @@ namespace ReverseMarket.Areas.Admin.Controllers
                 }
             }
 
-            ViewBag.Categories = await _context.Categories.Where(c => c.IsActive).ToListAsync();
+            // إعادة تحميل البيانات في حالة فشل الحفظ
+            var categories = await _context.Categories
+                .Include(c => c.SubCategories1)
+                .ThenInclude(sc => sc.SubCategories2)
+                .Where(c => c.IsActive)
+                .ToListAsync();
+
+            ViewBag.Categories = categories;
+
+            var allSubCategories2 = new List<dynamic>();
+            foreach (var category in categories)
+            {
+                foreach (var sub1 in category.SubCategories1)
+                {
+                    foreach (var sub2 in sub1.SubCategories2)
+                    {
+                        allSubCategories2.Add(new
+                        {
+                            Id = sub2.Id,
+                            Name = $"{category.Name} > {sub1.Name} > {sub2.Name}",
+                            CategoryId = category.Id,
+                            SubCategory1Id = sub1.Id,
+                            SubCategory2Id = sub2.Id
+                        });
+                    }
+                }
+            }
+            ViewBag.SubCategories2 = allSubCategories2;
+
             return View(model);
         }
 
