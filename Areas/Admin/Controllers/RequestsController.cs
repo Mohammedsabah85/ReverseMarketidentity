@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using ReverseMarket.Data;
 using ReverseMarket.Models;
-using ReverseMarket.Models.Identity; // إضافة هذا
+using ReverseMarket.Models.Identity;
 using ReverseMarket.Areas.Admin.Models;
 
 namespace ReverseMarket.Areas.Admin.Controllers
@@ -11,15 +11,13 @@ namespace ReverseMarket.Areas.Admin.Controllers
     public class RequestsController : Controller
     {
         private readonly ApplicationDbContext _dbContext;
-        private readonly ILogger<RequestsController> _logger; // إضافة Logger
+        private readonly ILogger<RequestsController> _logger;
 
         public RequestsController(ApplicationDbContext context, ILogger<RequestsController> logger)
         {
             _dbContext = context;
-            _logger = logger; // تهيئة Logger
+            _logger = logger;
         }
-
-        // باقي الكود كما هو...
 
         public async Task<IActionResult> Index(RequestStatus? status = null, int page = 1)
         {
@@ -86,7 +84,6 @@ namespace ReverseMarket.Areas.Admin.Controllers
                     return RedirectToAction("Index");
                 }
 
-                // التحقق من صحة الحالة
                 if (!Enum.IsDefined(typeof(RequestStatus), status))
                 {
                     TempData["ErrorMessage"] = "حالة الطلب غير صحيحة";
@@ -100,17 +97,12 @@ namespace ReverseMarket.Areas.Admin.Controllers
                 if (requestStatus == RequestStatus.Approved)
                 {
                     request.ApprovedAt = DateTime.Now;
-
-                    // إشعار المستخدم بالموافقة
                     await NotifyUserAboutApprovalAsync(request);
-
-                    // إشعار المتاجر ذات الصلة
                     await NotifyStoresAboutNewRequestAsync(request);
                 }
 
                 await _dbContext.SaveChangesAsync();
 
-                // رسالة نجاح
                 var statusText = requestStatus switch
                 {
                     RequestStatus.Approved => "تم اعتماد",
@@ -125,10 +117,141 @@ namespace ReverseMarket.Areas.Admin.Controllers
             }
             catch (Exception ex)
             {
-                // تسجيل الخطأ
                 _logger.LogError(ex, "خطأ في تحديث حالة الطلب: {RequestId}", id);
                 TempData["ErrorMessage"] = "حدث خطأ أثناء تحديث حالة الطلب";
 
+                return RedirectToAction("Details", new { id });
+            }
+        }
+
+        // إضافة ميثود تعديل الطلب
+        [HttpGet]
+        public async Task<IActionResult> Edit(int id)
+        {
+            var request = await _dbContext.Requests
+                .Include(r => r.Category)
+                .Include(r => r.SubCategory1)
+                .Include(r => r.SubCategory2)
+                .FirstOrDefaultAsync(r => r.Id == id);
+
+            if (request == null)
+            {
+                return NotFound();
+            }
+
+            ViewBag.Categories = await _dbContext.Categories.Where(c => c.IsActive).ToListAsync();
+            return View(request);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(Request model)
+        {
+            try
+            {
+                var request = await _dbContext.Requests.FindAsync(model.Id);
+                if (request == null)
+                {
+                    return NotFound();
+                }
+
+                request.Title = model.Title;
+                request.Description = model.Description;
+                request.CategoryId = model.CategoryId;
+                request.SubCategory1Id = model.SubCategory1Id;
+                request.SubCategory2Id = model.SubCategory2Id;
+                request.City = model.City;
+                request.District = model.District;
+                request.Location = model.Location;
+                request.AdminNotes = model.AdminNotes;
+
+                _dbContext.Update(request);
+                await _dbContext.SaveChangesAsync();
+
+                TempData["SuccessMessage"] = "تم تحديث الطلب بنجاح";
+                return RedirectToAction("Details", new { id = model.Id });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "خطأ في تحديث الطلب: {RequestId}", model.Id);
+                TempData["ErrorMessage"] = "حدث خطأ أثناء تحديث الطلب";
+
+                ViewBag.Categories = await _dbContext.Categories.Where(c => c.IsActive).ToListAsync();
+                return View(model);
+            }
+        }
+
+        // إضافة ميثود حذف الطلب
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Delete(int id)
+        {
+            try
+            {
+                var request = await _dbContext.Requests
+                    .Include(r => r.Images)
+                    .FirstOrDefaultAsync(r => r.Id == id);
+
+                if (request == null)
+                {
+                    TempData["ErrorMessage"] = "الطلب غير موجود";
+                    return RedirectToAction("Index");
+                }
+
+                // حذف الصور المرتبطة
+                if (request.Images != null && request.Images.Any())
+                {
+                    _dbContext.RequestImages.RemoveRange(request.Images);
+                }
+
+                _dbContext.Requests.Remove(request);
+                await _dbContext.SaveChangesAsync();
+
+                TempData["SuccessMessage"] = "تم حذف الطلب بنجاح";
+                return RedirectToAction("Index");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "خطأ في حذف الطلب: {RequestId}", id);
+                TempData["ErrorMessage"] = "حدث خطأ أثناء حذف الطلب";
+                return RedirectToAction("Details", new { id });
+            }
+        }
+
+        // إضافة ميثود إيقاف/تفعيل الطلب
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ToggleRequestStatus(int id)
+        {
+            try
+            {
+                var request = await _dbContext.Requests.FindAsync(id);
+                if (request == null)
+                {
+                    TempData["ErrorMessage"] = "الطلب غير موجود";
+                    return RedirectToAction("Index");
+                }
+
+                // التبديل بين حالة معتمد ومؤجل
+                if (request.Status == RequestStatus.Approved)
+                {
+                    request.Status = RequestStatus.Postponed;
+                    TempData["SuccessMessage"] = "تم إيقاف الطلب";
+                }
+                else if (request.Status == RequestStatus.Postponed)
+                {
+                    request.Status = RequestStatus.Approved;
+                    request.ApprovedAt = DateTime.Now;
+                    TempData["SuccessMessage"] = "تم تفعيل الطلب";
+                }
+
+                await _dbContext.SaveChangesAsync();
+                return RedirectToAction("Details", new { id });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "خطأ في تبديل حالة الطلب: {RequestId}", id);
+                TempData["ErrorMessage"] = "حدث خطأ أثناء تبديل حالة الطلب";
                 return RedirectToAction("Details", new { id });
             }
         }
@@ -145,7 +268,6 @@ namespace ReverseMarket.Areas.Admin.Controllers
                                  $"سيتم إشعار المتاجر المتخصصة وستبدأ بتلقي العروض قريباً.\n\n" +
                                  $"شكراً لاستخدامك السوق العكسي";
 
-                    // إرسال إشعار واتساب
                     _logger.LogInformation("WhatsApp إلى {PhoneNumber}: {Message}", user.PhoneNumber, message);
                 }
             }
@@ -179,7 +301,6 @@ namespace ReverseMarket.Areas.Admin.Controllers
                                      $"للمشاهدة والتواصل مع العميل، تفضل بزيارة موقعنا\n\n" +
                                      $"السوق العكسي";
 
-                        // إرسال إشعار واتساب
                         _logger.LogInformation("WhatsApp إلى {PhoneNumber}: {Message}", store.PhoneNumber, message);
                     }
                 }

@@ -4,7 +4,6 @@ using Microsoft.EntityFrameworkCore;
 using ReverseMarket.Data;
 using ReverseMarket.Models;
 
-
 namespace ReverseMarket.Areas.Admin.Controllers
 {
     [Area("Admin")]
@@ -30,57 +29,6 @@ namespace ReverseMarket.Areas.Admin.Controllers
             return View(categories);
         }
 
-        //[HttpGet]
-        //public IActionResult Create()
-        //{
-        //    return View();
-        //}
-
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> Create(Category category)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-        //        _context.Categories.Add(category);
-        //        await _context.SaveChangesAsync();
-
-        //        TempData["SuccessMessage"] = "تم إضافة الفئة بنجاح";
-        //        return RedirectToAction("Index");
-        //    }
-
-        //    return View(category);
-        //}
-
-        //[HttpGet]
-        //public async Task<IActionResult> Edit(int id)
-        //{
-        //    var category = await _context.Categories.FindAsync(id);
-        //    if (category == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    return View(category);
-        //}
-
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> Edit(Category category)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-        //        _context.Update(category);
-        //        await _context.SaveChangesAsync();
-
-        //        TempData["SuccessMessage"] = "تم تحديث الفئة بنجاح";
-        //        return RedirectToAction("Index");
-        //    }
-
-        //    return View(category);
-        //}
-
-
         [HttpGet]
         public IActionResult Create()
         {
@@ -103,7 +51,6 @@ namespace ReverseMarket.Areas.Admin.Controllers
                         CreatedAt = DateTime.Now
                     };
 
-                    // معالجة رفع الصورة
                     if (model.Image != null)
                     {
                         var imagePath = await SaveCategoryImageAsync(model.Image);
@@ -169,22 +116,18 @@ namespace ReverseMarket.Areas.Admin.Controllers
                     category.Description = model.Description;
                     category.IsActive = model.IsActive;
 
-                    // معالجة الصورة
                     if (model.RemoveImage && !string.IsNullOrEmpty(category.ImagePath))
                     {
-                        // حذف الصورة الحالية
                         DeleteCategoryImage(category.ImagePath);
                         category.ImagePath = null;
                     }
                     else if (model.NewImage != null)
                     {
-                        // حذف الصورة القديمة إذا وجدت
                         if (!string.IsNullOrEmpty(category.ImagePath))
                         {
                             DeleteCategoryImage(category.ImagePath);
                         }
 
-                        // رفع الصورة الجديدة
                         var imagePath = await SaveCategoryImageAsync(model.NewImage);
                         if (imagePath != null)
                         {
@@ -208,12 +151,17 @@ namespace ReverseMarket.Areas.Admin.Controllers
             return View(model);
         }
 
+        // إصلاح حذف الفئة الأساسية
         [HttpPost]
         public async Task<IActionResult> Delete(int id)
         {
             try
             {
-                var category = await _context.Categories.FindAsync(id);
+                var category = await _context.Categories
+                    .Include(c => c.SubCategories1)
+                    .ThenInclude(sc => sc.SubCategories2)
+                    .FirstOrDefaultAsync(c => c.Id == id);
+
                 if (category != null)
                 {
                     // حذف الصورة المرتبطة
@@ -245,7 +193,6 @@ namespace ReverseMarket.Areas.Admin.Controllers
                 if (image == null || image.Length == 0)
                     return null;
 
-                // التحقق من نوع الملف
                 var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif", ".webp" };
                 var extension = Path.GetExtension(image.FileName).ToLowerInvariant();
 
@@ -254,7 +201,6 @@ namespace ReverseMarket.Areas.Admin.Controllers
                     return null;
                 }
 
-                // التحقق من حجم الملف (2MB للفئات)
                 if (image.Length > 2 * 1024 * 1024)
                 {
                     return null;
@@ -289,17 +235,10 @@ namespace ReverseMarket.Areas.Admin.Controllers
 
                 var fullPath = Path.Combine(_webHostEnvironment.WebRootPath, imagePath.TrimStart('/'));
 
-                // Replace this line in DeleteCategoryImage method:
-                // if (File.Exists(fullPath))
-
                 if (System.IO.File.Exists(fullPath))
                 {
                     System.IO.File.Delete(fullPath);
                 }
-                //if (File.Exists(fullPath))
-                //{
-                //    File.Delete(fullPath);
-                //}
             }
             catch (Exception ex)
             {
@@ -321,25 +260,6 @@ namespace ReverseMarket.Areas.Admin.Controllers
             return View(model);
         }
 
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> CreateSubCategory1(SubCategory1 subCategory)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-        //        subCategory.CreatedAt = DateTime.Now;
-        //        _context.SubCategories1.Add(subCategory);
-        //        await _context.SaveChangesAsync();
-
-        //        TempData["SuccessMessage"] = "تم إضافة الفئة الفرعية الأولى بنجاح";
-        //        return RedirectToAction("Index");
-        //    }
-
-        //    var category = await _context.Categories.FindAsync(subCategory.CategoryId);
-        //    ViewBag.Category = category;
-        //    return View(subCategory);
-        //}
-
         [HttpGet]
         public async Task<IActionResult> CreateSubCategory2(int subCategory1Id)
         {
@@ -356,28 +276,6 @@ namespace ReverseMarket.Areas.Admin.Controllers
             var model = new SubCategory2 { SubCategory1Id = subCategory1Id };
             return View(model);
         }
-
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> CreateSubCategory2(SubCategory2 subCategory)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-        //        subCategory.CreatedAt = DateTime.Now;
-        //        _context.SubCategories2.Add(subCategory);
-        //        await _context.SaveChangesAsync();
-
-        //        TempData["SuccessMessage"] = "تم إضافة الفئة الفرعية الثانية بنجاح";
-        //        return RedirectToAction("Index");
-        //    }
-
-        //    var subCategory1 = await _context.SubCategories1
-        //        .Include(sc => sc.Category)
-        //        .FirstOrDefaultAsync(sc => sc.Id == subCategory.SubCategory1Id);
-
-        //    ViewBag.SubCategory1 = subCategory1;
-        //    return View(subCategory);
-        //}
 
         [HttpGet]
         public async Task<IActionResult> EditSubCategory1(int id)
@@ -452,20 +350,6 @@ namespace ReverseMarket.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        //public async Task<IActionResult> Delete(int id)
-        //{
-        //    var category = await _context.Categories.FindAsync(id);
-        //    if (category != null)
-        //    {
-        //        _context.Categories.Remove(category);
-        //        await _context.SaveChangesAsync();
-        //        TempData["SuccessMessage"] = "تم حذف الفئة بنجاح";
-        //    }
-
-        //    return RedirectToAction("Index");
-        //}
-
-        [HttpPost]
         public async Task<IActionResult> DeleteSubCategory1(int id)
         {
             var subCategory1 = await _context.SubCategories1.FindAsync(id);
@@ -493,21 +377,16 @@ namespace ReverseMarket.Areas.Admin.Controllers
             return RedirectToAction("Index");
         }
 
-
-        // Areas/Admin/Controllers/CategoriesController.cs - إصلاح إضافة التصنيفات الفرعية
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateSubCategory1(SubCategory1 subCategory)
         {
             try
             {
-                // إزالة التحقق من الحقول غير المرغوب فيها
                 ModelState.Remove("Category");
 
                 if (ModelState.IsValid)
                 {
-                    // التحقق من وجود الفئة الرئيسية
                     var parentCategory = await _context.Categories.FindAsync(subCategory.CategoryId);
                     if (parentCategory == null)
                     {
@@ -515,7 +394,6 @@ namespace ReverseMarket.Areas.Admin.Controllers
                         return RedirectToAction("Index");
                     }
 
-                    // التحقق من عدم تكرار الاسم في نفس الفئة
                     var existingSubCategory = await _context.SubCategories1
                         .FirstOrDefaultAsync(sc => sc.Name == subCategory.Name && sc.CategoryId == subCategory.CategoryId);
 
@@ -527,7 +405,7 @@ namespace ReverseMarket.Areas.Admin.Controllers
                     }
 
                     subCategory.CreatedAt = DateTime.Now;
-                    subCategory.IsActive = true; // تأكد من تفعيل الفئة
+                    subCategory.IsActive = true;
 
                     _context.SubCategories1.Add(subCategory);
                     await _context.SaveChangesAsync();
@@ -536,11 +414,9 @@ namespace ReverseMarket.Areas.Admin.Controllers
                     return RedirectToAction("Index");
                 }
 
-                // في حالة وجود خطأ في النموذج
                 var category = await _context.Categories.FindAsync(subCategory.CategoryId);
                 ViewBag.Category = category;
 
-                // إضافة تفاصيل الأخطاء للتشخيص
                 foreach (var error in ModelState.Values.SelectMany(v => v.Errors))
                 {
                     Console.WriteLine($"ModelState Error: {error.ErrorMessage}");
@@ -565,12 +441,10 @@ namespace ReverseMarket.Areas.Admin.Controllers
         {
             try
             {
-                // إزالة التحقق من الحقول غير المرغوب فيها
                 ModelState.Remove("SubCategory1");
 
                 if (ModelState.IsValid)
                 {
-                    // التحقق من وجود الفئة الفرعية الأولى
                     var parentSubCategory = await _context.SubCategories1
                         .Include(sc => sc.Category)
                         .FirstOrDefaultAsync(sc => sc.Id == subCategory.SubCategory1Id);
@@ -581,7 +455,6 @@ namespace ReverseMarket.Areas.Admin.Controllers
                         return RedirectToAction("Index");
                     }
 
-                    // التحقق من عدم تكرار الاسم في نفس الفئة الفرعية الأولى
                     var existingSubCategory = await _context.SubCategories2
                         .FirstOrDefaultAsync(sc => sc.Name == subCategory.Name && sc.SubCategory1Id == subCategory.SubCategory1Id);
 
@@ -593,7 +466,7 @@ namespace ReverseMarket.Areas.Admin.Controllers
                     }
 
                     subCategory.CreatedAt = DateTime.Now;
-                    subCategory.IsActive = true; // تأكد من تفعيل الفئة
+                    subCategory.IsActive = true;
 
                     _context.SubCategories2.Add(subCategory);
                     await _context.SaveChangesAsync();
@@ -602,14 +475,12 @@ namespace ReverseMarket.Areas.Admin.Controllers
                     return RedirectToAction("Index");
                 }
 
-                // في حالة وجود خطأ في النموذج
                 var subCategory1 = await _context.SubCategories1
                     .Include(sc => sc.Category)
                     .FirstOrDefaultAsync(sc => sc.Id == subCategory.SubCategory1Id);
 
                 ViewBag.SubCategory1 = subCategory1;
 
-                // إضافة تفاصيل الأخطاء للتشخيص
                 foreach (var error in ModelState.Values.SelectMany(v => v.Errors))
                 {
                     Console.WriteLine($"ModelState Error: {error.ErrorMessage}");
