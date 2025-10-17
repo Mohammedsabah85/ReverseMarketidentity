@@ -2,11 +2,11 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using ReverseMarket.Data;
-using ReverseMarket.Models;
 using ReverseMarket.Models.Identity;
-using ReverseMarket.Areas.Admin.Models;
-using ReverseMarket.Extensions;
+using ReverseMarket.Models;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace ReverseMarket.Areas.Admin.Controllers
 {
@@ -14,72 +14,27 @@ namespace ReverseMarket.Areas.Admin.Controllers
     [Authorize(Roles = "Admin")]
     public class UsersController : Controller
     {
-        private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly ILogger<UsersController> _logger;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
-        public UsersController(
-            ApplicationDbContext context,
-            UserManager<ApplicationUser> userManager,
-            ILogger<UsersController> logger)
+        public UsersController(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
         {
-            _context = context;
             _userManager = userManager;
-            _logger = logger;
+            _roleManager = roleManager;
         }
 
-        public async Task<IActionResult> Index(string search, UserType? userType, bool? isActive, int page = 1)
+        public async Task<IActionResult> Index()
         {
-            var pageSize = 20;
+            var users = await _userManager.Users.ToListAsync();
+            var userRoles = new Dictionary<string, IList<string>>();
 
-            var query = _userManager.Users.AsQueryable();
-
-            // تطبيق الفلاتر
-            if (!string.IsNullOrEmpty(search))
+            foreach (var user in users)
             {
-                query = query.Where(u => u.FirstName.Contains(search) ||
-                                       u.LastName.Contains(search) ||
-                                       u.PhoneNumber.Contains(search) ||
-                                       (u.Email != null && u.Email.Contains(search)) ||
-                                       (u.StoreName != null && u.StoreName.Contains(search)));
+                userRoles[user.Id] = await _userManager.GetRolesAsync(user);
             }
 
-            if (userType.HasValue)
-            {
-                query = query.Where(u => u.UserType == userType.Value);
-            }
-
-            if (isActive.HasValue)
-            {
-                query = query.Where(u => u.IsActive == isActive.Value);
-            }
-
-            var totalUsers = await query.CountAsync();
-
-            var users = await query
-                 .Include(u => u.StoreCategories)
-                 .ThenInclude(sc => sc.Category)
-                 .OrderByDescending(u => u.CreatedAt)
-                 .Skip((page - 1) * pageSize)
-                 .Take(pageSize)
-                 .ToListAsync();
-
-            var model = new AdminUsersViewModel
-            {
-                Users = users,
-                CurrentPage = page,
-                TotalPages = (int)Math.Ceiling((double)totalUsers / pageSize),
-                Search = search,
-                UserTypeFilter = userType,
-                IsActiveFilter = isActive,
-                TotalUsers = totalUsers,
-                ActiveUsers = await _userManager.Users.CountAsync(u => u.IsActive),
-                InactiveUsers = await _userManager.Users.CountAsync(u => !u.IsActive),
-                BuyersCount = await _userManager.Users.CountAsync(u => u.UserType == UserType.Buyer),
-                SellersCount = await _userManager.Users.CountAsync(u => u.UserType == UserType.Seller)
-            };
-
-            return View(model);
+            var userViewModels = UserViewModel.FromApplicationUsers(users, userRoles);
+            return View(userViewModels);
         }
 
         public async Task<IActionResult> Details(string id)
@@ -91,11 +46,6 @@ namespace ReverseMarket.Areas.Admin.Controllers
 
             var user = await _userManager.Users
                 .Include(u => u.StoreCategories)
-                .ThenInclude(sc => sc.Category)
-                .Include(u => u.StoreCategories)
-                .ThenInclude(sc => sc.SubCategory1)
-                .Include(u => u.StoreCategories)
-                .ThenInclude(sc => sc.SubCategory2)
                 .FirstOrDefaultAsync(u => u.Id == id);
 
             if (user == null)
@@ -103,158 +53,13 @@ namespace ReverseMarket.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            // إحصائيات المستخدم
-            var userStats = new UserStatistics
-            {
-                TotalRequests = await _context.Requests.CountAsync(r => r.UserId == id),
-                ApprovedRequests = await _context.Requests.CountAsync(r => r.UserId == id && r.Status == RequestStatus.Approved),
-                PendingRequests = await _context.Requests.CountAsync(r => r.UserId == id && r.Status == RequestStatus.Pending),
-                RejectedRequests = await _context.Requests.CountAsync(r => r.UserId == id && r.Status == RequestStatus.Rejected),
-                LastActivity = user.UpdatedAt ?? user.CreatedAt,
-                DaysSinceRegistration = (DateTime.Now - user.CreatedAt).Days
-            };
+            var roles = await _userManager.GetRolesAsync(user);
+            var storeCategories = user.StoreCategories?.Select(sc => sc.Category?.Name ?? "").ToList();
+            var userViewModel = UserViewModel.FromApplicationUser(user, roles, storeCategories);
 
-            ViewBag.UserStats = userStats;
-            return View(User.FromApplicationUser(user));
+            return View(userViewModel);
         }
 
-        // تحديث ميثود ToggleStatus لاستقبال id من الفورم
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ToggleStatus(string id)
-        {
-            try
-            {
-                if (string.IsNullOrEmpty(id))
-                {
-                    TempData["ErrorMessage"] = "معرف المستخدم غير صحيح";
-                    return RedirectToAction("Index");
-                }
-
-                var user = await _userManager.FindByIdAsync(id);
-                if (user == null)
-                {
-                    TempData["ErrorMessage"] = "المستخدم غير موجود";
-                    return RedirectToAction("Index");
-                }
-
-                // منع إيقاف الأدمن
-                var adminPhone = "+9647700227210";
-                if (user.PhoneNumber == adminPhone)
-                {
-                    TempData["ErrorMessage"] = "لا يمكن إيقاف حساب الأدمن";
-                    return RedirectToAction("Details", new { id });
-                }
-
-                user.IsActive = !user.IsActive;
-                user.UpdatedAt = DateTime.Now;
-
-                var result = await _userManager.UpdateAsync(user);
-
-                if (result.Succeeded)
-                {
-                    var statusText = user.IsActive ? "تفعيل" : "إيقاف";
-                    TempData["SuccessMessage"] = $"تم {statusText} المستخدم بنجاح";
-                }
-                else
-                {
-                    TempData["ErrorMessage"] = "حدث خطأ أثناء تحديث حالة المستخدم";
-                }
-
-                return RedirectToAction("Details", new { id });
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "خطأ في تغيير حالة المستخدم: {UserId}", id);
-                TempData["ErrorMessage"] = "حدث خطأ أثناء تحديث حالة المستخدم";
-                return RedirectToAction("Index");
-            }
-        }
-
-        // تحديث ميثود Delete لاستقبال id من الفورم
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Delete(string id)
-        {
-            try
-            {
-                if (string.IsNullOrEmpty(id))
-                {
-                    TempData["ErrorMessage"] = "معرف المستخدم غير صحيح";
-                    return RedirectToAction("Index");
-                }
-
-                var user = await _userManager.FindByIdAsync(id);
-                if (user == null)
-                {
-                    TempData["ErrorMessage"] = "المستخدم غير موجود";
-                    return RedirectToAction("Index");
-                }
-
-                // منع حذف الأدمن
-                var adminPhone = "+9647700227210";
-                if (user.PhoneNumber == adminPhone)
-                {
-                    TempData["ErrorMessage"] = "لا يمكن حذف حساب الأدمن";
-                    return RedirectToAction("Index");
-                }
-
-                // التحقق من وجود طلبات مرتبطة
-                var hasRequests = await _context.Requests.AnyAsync(r => r.UserId == id);
-                if (hasRequests)
-                {
-                    // بدلاً من منع الحذف، نقوم بحذف الطلبات المرتبطة
-                    var userRequests = await _context.Requests
-                        .Include(r => r.Images)
-                        .Where(r => r.UserId == id)
-                        .ToListAsync();
-
-                    foreach (var request in userRequests)
-                    {
-                        if (request.Images != null && request.Images.Any())
-                        {
-                            _context.RequestImages.RemoveRange(request.Images);
-                        }
-                    }
-                    _context.Requests.RemoveRange(userRequests);
-                }
-
-                // حذف فئات المتجر المرتبطة
-                var storeCategories = await _context.StoreCategories
-                    .Where(sc => sc.UserId == id)
-                    .ToListAsync();
-
-                if (storeCategories.Any())
-                {
-                    _context.StoreCategories.RemoveRange(storeCategories);
-                }
-
-                // حفظ التغييرات على قاعدة البيانات أولاً
-                await _context.SaveChangesAsync();
-
-                // حذف المستخدم
-                var result = await _userManager.DeleteAsync(user);
-
-                if (result.Succeeded)
-                {
-                    TempData["SuccessMessage"] = "تم حذف المستخدم بنجاح";
-                }
-                else
-                {
-                    TempData["ErrorMessage"] = "حدث خطأ أثناء حذف المستخدم: " + string.Join(", ", result.Errors.Select(e => e.Description));
-                }
-
-                return RedirectToAction("Index");
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "خطأ في حذف المستخدم: {UserId}", id);
-                TempData["ErrorMessage"] = "حدث خطأ أثناء حذف المستخدم: " + ex.Message;
-                return RedirectToAction("Index");
-            }
-        }
-
-        [HttpGet]
         public async Task<IActionResult> Edit(string id)
         {
             if (string.IsNullOrEmpty(id))
@@ -271,57 +76,36 @@ namespace ReverseMarket.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            // جلب جميع الفئات مع الفرعية
-            var categories = await _context.Categories
-                .Include(c => c.SubCategories1)
-                .ThenInclude(sc => sc.SubCategories2)
-                .Where(c => c.IsActive)
-                .ToListAsync();
-
-            ViewBag.Categories = categories;
-
-            // تحضير قائمة بجميع الفئات الفرعية الثانية
-            var allSubCategories2 = new List<dynamic>();
-            foreach (var category in categories)
-            {
-                foreach (var sub1 in category.SubCategories1)
-                {
-                    foreach (var sub2 in sub1.SubCategories2)
-                    {
-                        allSubCategories2.Add(new
-                        {
-                            Id = sub2.Id,
-                            Name = $"{category.Name} > {sub1.Name} > {sub2.Name}",
-                            CategoryId = category.Id,
-                            SubCategory1Id = sub1.Id,
-                            SubCategory2Id = sub2.Id
-                        });
-                    }
-                }
-            }
-            ViewBag.SubCategories2 = allSubCategories2;
+            var roles = await _userManager.GetRolesAsync(user);
+            var allRoles = await _roleManager.Roles.Select(r => r.Name).ToListAsync();
+            var storeCategories = user.StoreCategories?.Select(sc => sc.Category?.Name ?? "").ToList();
 
             var model = new EditUserViewModel
             {
                 Id = user.Id,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
+                UserName = user.UserName,
                 Email = user.Email,
-                PhoneNumber = user.PhoneNumber ?? "",
+                PhoneNumber = user.PhoneNumber,
+                IsActive = user.IsActive,
+                UserType = user.UserType,
                 City = user.City,
                 District = user.District,
                 Location = user.Location,
                 DateOfBirth = user.DateOfBirth,
                 Gender = user.Gender,
-                UserType = user.UserType,
                 StoreName = user.StoreName,
                 StoreDescription = user.StoreDescription,
                 WebsiteUrl1 = user.WebsiteUrl1,
                 WebsiteUrl2 = user.WebsiteUrl2,
                 WebsiteUrl3 = user.WebsiteUrl3,
-                IsActive = user.IsActive,
                 IsPhoneVerified = user.IsPhoneVerified,
-                CurrentStoreCategories = user.StoreCategories.Select(sc => sc.SubCategory2Id ?? sc.SubCategory1Id ?? sc.CategoryId).ToList()
+                IsEmailVerified = user.IsEmailVerified,
+                IsStoreApproved = user.IsStoreApproved,
+                CurrentStoreCategories = storeCategories,
+                SelectedRoles = roles.ToList(),
+                AvailableRoles = allRoles
             };
 
             return View(model);
@@ -331,148 +115,120 @@ namespace ReverseMarket.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(EditUserViewModel model)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                try
-                {
-                    var user = await _userManager.Users
-                        .Include(u => u.StoreCategories)
-                        .FirstOrDefaultAsync(u => u.Id == model.Id);
-
-                    if (user == null)
-                    {
-                        return NotFound();
-                    }
-
-                    // تحديث البيانات الأساسية
-                    user.FirstName = model.FirstName;
-                    user.LastName = model.LastName;
-                    user.Email = model.Email;
-                    user.City = model.City;
-                    user.District = model.District;
-                    user.Location = model.Location;
-                    user.DateOfBirth = model.DateOfBirth;
-                    user.Gender = model.Gender;
-                    user.StoreName = model.StoreName;
-                    user.StoreDescription = model.StoreDescription;
-                    user.WebsiteUrl1 = model.WebsiteUrl1;
-                    user.WebsiteUrl2 = model.WebsiteUrl2;
-                    user.WebsiteUrl3 = model.WebsiteUrl3;
-                    user.IsActive = model.IsActive;
-                    user.IsPhoneVerified = model.IsPhoneVerified;
-                    user.PhoneNumberConfirmed = model.IsPhoneVerified;
-                    user.UpdatedAt = DateTime.Now;
-
-                    // تحديث فئات المتجر للبائعين
-                    if (user.UserType == UserType.Seller && model.StoreCategories?.Any() == true)
-                    {
-                        // حذف الفئات الحالية
-                        _context.StoreCategories.RemoveRange(user.StoreCategories);
-
-                        // إضافة الفئات الجديدة (يجب أن تكون من الفئات الفرعية الثانية)
-                        foreach (var selectedId in model.StoreCategories)
-                        {
-                            // البحث عن الفئة الفرعية الثانية
-                            var sub2 = await _context.SubCategories2
-                                .Include(s => s.SubCategory1)
-                                .FirstOrDefaultAsync(s => s.Id == selectedId);
-
-                            if (sub2 != null)
-                            {
-                                user.StoreCategories.Add(new StoreCategory
-                                {
-                                    UserId = user.Id,
-                                    CategoryId = sub2.SubCategory1.CategoryId,
-                                    SubCategory1Id = sub2.SubCategory1Id,
-                                    SubCategory2Id = sub2.Id,
-                                    CreatedAt = DateTime.Now
-                                });
-                            }
-                        }
-                    }
-
-                    var result = await _userManager.UpdateAsync(user);
-
-                    if (result.Succeeded)
-                    {
-                        await _context.SaveChangesAsync();
-                        TempData["SuccessMessage"] = "تم تحديث بيانات المستخدم بنجاح";
-                        return RedirectToAction("Details", new { id = model.Id });
-                    }
-                    else
-                    {
-                        foreach (var error in result.Errors)
-                        {
-                            ModelState.AddModelError("", error.Description);
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex, "خطأ في تحديث المستخدم: {UserId}", model.Id);
-                    TempData["ErrorMessage"] = "حدث خطأ أثناء تحديث البيانات";
-                }
+                model.AvailableRoles = await _roleManager.Roles.Select(r => r.Name).ToListAsync();
+                return View(model);
             }
 
-            // إعادة تحميل البيانات في حالة فشل الحفظ
-            var categories = await _context.Categories
-                .Include(c => c.SubCategories1)
-                .ThenInclude(sc => sc.SubCategories2)
-                .Where(c => c.IsActive)
-                .ToListAsync();
-
-            ViewBag.Categories = categories;
-
-            var allSubCategories2 = new List<dynamic>();
-            foreach (var category in categories)
+            var user = await _userManager.FindByIdAsync(model.Id);
+            if (user == null)
             {
-                foreach (var sub1 in category.SubCategories1)
-                {
-                    foreach (var sub2 in sub1.SubCategories2)
-                    {
-                        allSubCategories2.Add(new
-                        {
-                            Id = sub2.Id,
-                            Name = $"{category.Name} > {sub1.Name} > {sub2.Name}",
-                            CategoryId = category.Id,
-                            SubCategory1Id = sub1.Id,
-                            SubCategory2Id = sub2.Id
-                        });
-                    }
-                }
+                return NotFound();
             }
-            ViewBag.SubCategories2 = allSubCategories2;
 
-            return View(model);
+            // Update basic info
+            user.FirstName = model.FirstName;
+            user.LastName = model.LastName;
+            user.UserName = model.UserName;
+            user.Email = model.Email;
+            user.PhoneNumber = model.PhoneNumber;
+            user.IsActive = model.IsActive;
+            user.UserType = model.UserType;
+            user.City = model.City;
+            user.District = model.District;
+            user.Location = model.Location;
+            user.DateOfBirth = model.DateOfBirth;
+            user.Gender = model.Gender;
+            user.StoreName = model.StoreName;
+            user.StoreDescription = model.StoreDescription;
+            user.WebsiteUrl1 = model.WebsiteUrl1;
+            user.WebsiteUrl2 = model.WebsiteUrl2;
+            user.WebsiteUrl3 = model.WebsiteUrl3;
+            user.IsPhoneVerified = model.IsPhoneVerified;
+            user.IsEmailVerified = model.IsEmailVerified;
+            user.IsStoreApproved = model.IsStoreApproved;
+            user.UpdatedAt = System.DateTime.Now;
+
+            var result = await _userManager.UpdateAsync(user);
+            if (!result.Succeeded)
+            {
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError(string.Empty, error.Description);
+                }
+                model.AvailableRoles = await _roleManager.Roles.Select(r => r.Name).ToListAsync();
+                return View(model);
+            }
+
+            // Update roles
+            var currentRoles = await _userManager.GetRolesAsync(user);
+            var rolesToRemove = currentRoles.Except(model.SelectedRoles ?? new List<string>()).ToList();
+            var rolesToAdd = (model.SelectedRoles ?? new List<string>()).Except(currentRoles).ToList();
+
+            if (rolesToRemove.Any())
+            {
+                await _userManager.RemoveFromRolesAsync(user, rolesToRemove);
+            }
+
+            if (rolesToAdd.Any())
+            {
+                await _userManager.AddToRolesAsync(user, rolesToAdd);
+            }
+
+            TempData["Success"] = "تم تحديث المستخدم بنجاح";
+            return RedirectToAction(nameof(Index));
         }
 
-        // API للإحصائيات
-        [HttpGet]
-        public async Task<IActionResult> GetUserStats()
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ToggleStatus(string id)
         {
-            try
+            if (string.IsNullOrEmpty(id))
             {
-                var stats = new
-                {
-                    TotalUsers = await _userManager.Users.CountAsync(),
-                    ActiveUsers = await _userManager.Users.CountAsync(u => u.IsActive),
-                    InactiveUsers = await _userManager.Users.CountAsync(u => !u.IsActive),
-                    BuyersCount = await _userManager.Users.CountAsync(u => u.UserType == UserType.Buyer),
-                    SellersCount = await _userManager.Users.CountAsync(u => u.UserType == UserType.Seller),
-                    VerifiedUsers = await _userManager.Users.CountAsync(u => u.IsPhoneVerified),
-                    UnverifiedUsers = await _userManager.Users.CountAsync(u => !u.IsPhoneVerified),
-                    NewUsersThisMonth = await _userManager.Users.CountAsync(u =>
-                        u.CreatedAt.Month == DateTime.Now.Month &&
-                        u.CreatedAt.Year == DateTime.Now.Year)
-                };
+                return Json(new { success = false, message = "معرف المستخدم غير صحيح" });
+            }
 
-                return Json(stats);
-            }
-            catch (Exception ex)
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null)
             {
-                _logger.LogError(ex, "خطأ في جلب الإحصائيات");
-                return BadRequest("حدث خطأ في جلب الإحصائيات");
+                return Json(new { success = false, message = "المستخدم غير موجود" });
             }
+
+            user.IsActive = !user.IsActive;
+            user.UpdatedAt = System.DateTime.Now;
+            var result = await _userManager.UpdateAsync(user);
+
+            if (result.Succeeded)
+            {
+                return Json(new { success = true, isActive = user.IsActive });
+            }
+
+            return Json(new { success = false, message = "فشل تحديث حالة المستخدم" });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Delete(string id)
+        {
+            if (string.IsNullOrEmpty(id))
+            {
+                return Json(new { success = false, message = "معرف المستخدم غير صحيح" });
+            }
+
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null)
+            {
+                return Json(new { success = false, message = "المستخدم غير موجود" });
+            }
+
+            var result = await _userManager.DeleteAsync(user);
+            if (result.Succeeded)
+            {
+                return Json(new { success = true, message = "تم حذف المستخدم بنجاح" });
+            }
+
+            return Json(new { success = false, message = "فشل حذف المستخدم" });
         }
     }
 }
