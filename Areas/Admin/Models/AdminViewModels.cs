@@ -55,7 +55,7 @@ namespace ReverseMarket.Areas.Admin.Models
 
     public class AdminUsersViewModel
     {
-        public List<ApplicationUser> Users { get; set; } = new(); // تغيير من User إلى ApplicationUser
+        public List<UserViewModel> Users { get; set; } = new(); // تغيير من User إلى ApplicationUser
 
 
         public int CurrentPage { get; set; }

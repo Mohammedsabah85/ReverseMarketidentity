@@ -2,8 +2,11 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using ReverseMarket.Models.Identity;
+using ReverseMarket.Areas.Admin.Models;
+using ReverseMarket.Extensions;
 using ReverseMarket.Models;
+using ReverseMarket.Models.Identity;
+
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -15,9 +18,9 @@ namespace ReverseMarket.Areas.Admin.Controllers
     public class UsersController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly RoleManager<ApplicationRole> _roleManager;
 
-        public UsersController(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
+        public UsersController(UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager)
         {
             _userManager = userManager;
             _roleManager = roleManager;
@@ -26,15 +29,26 @@ namespace ReverseMarket.Areas.Admin.Controllers
         public async Task<IActionResult> Index()
         {
             var users = await _userManager.Users.ToListAsync();
-            var userRoles = new Dictionary<string, IList<string>>();
+            var userViewModels = new List<UserViewModel>();
 
             foreach (var user in users)
             {
-                userRoles[user.Id] = await _userManager.GetRolesAsync(user);
+                var roles = await _userManager.GetRolesAsync(user);
+                userViewModels.Add(new UserViewModel
+                {
+                    Id = user.Id,
+                    UserName = user.UserName,
+                    Email = user.Email,
+                    Roles = roles.ToList()
+                });
             }
 
-            var userViewModels = UserViewModel.FromApplicationUsers(users, userRoles);
-            return View(userViewModels);
+            var viewModel = new AdminUsersViewModel
+            {
+                Users = userViewModels
+            };
+
+            return View(viewModel); // ✅ الآن صحيح
         }
 
         public async Task<IActionResult> Details(string id)
@@ -53,11 +67,14 @@ namespace ReverseMarket.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var roles = await _userManager.GetRolesAsync(user);
-            var storeCategories = user.StoreCategories?.Select(sc => sc.Category?.Name ?? "").ToList();
-            var userViewModel = UserViewModel.FromApplicationUser(user, roles, storeCategories);
+            //var roles = await _userManager.GetRolesAsync(user);
+            //var storeCategories = user.StoreCategories?.Select(sc => sc.Category?.Name ?? "").ToList();
+            //var userViewModel = UserViewModel.FromApplicationUser(user, roles, storeCategories);
 
-            return View(userViewModel);
+            //return View(userViewModel);
+            var userModel = User.FromApplicationUser(user);
+
+            return View(userModel);
         }
 
         public async Task<IActionResult> Edit(string id)

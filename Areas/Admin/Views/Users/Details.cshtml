@@ -392,56 +392,63 @@
 
         // Fallback methods from user-management.js
         function toggleUserStatus(userId, isCurrentlyActive) {
-            const form = document.createElement('form');
-            form.method = 'POST';
-            form.action = '/Admin/Users/ToggleStatus';
+             const action = isCurrentlyActive ? 'إيقاف' : 'تفعيل';
+             const confirmMessage = `هل أنت متأكد من ${action} هذا المستخدم؟`;
 
-            // Add userId as input
-            const idInput = document.createElement('input');
-            idInput.type = 'hidden';
-            idInput.name = 'id';
-            idInput.value = userId;
-            form.appendChild(idInput);
+             if (confirm(confirmMessage)) {
+                 const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
 
-            // Add anti-forgery token
-            const token = document.querySelector('input[name="__RequestVerificationToken"]');
-            if (token) {
-                const tokenInput = document.createElement('input');
-                tokenInput.type = 'hidden';
-                tokenInput.name = '__RequestVerificationToken';
-                tokenInput.value = token.value;
-                form.appendChild(tokenInput);
-            }
+                 fetch('/Admin/Users/ToggleStatus', {
+                     method: 'POST',
+                     headers: {
+                         'Content-Type': 'application/x-www-form-urlencoded',
+                     },
+                     body: `id=${userId}&__RequestVerificationToken=${encodeURIComponent(token)}`
+                 })
+                 .then(response => response.json())
+                 .then(data => {
+                     if (data.success) {
+                         location.reload(); // إعادة تحميل الصفحة
+                     } else {
+                         alert('خطأ: ' + data.message);
+                     }
+                 })
+                 .catch(error => {
+                     alert('حدث خطأ أثناء تغيير الحالة');
+                     console.error('Error:', error);
+                 });
+             }
+         }
 
-            document.body.appendChild(form);
-            form.submit();
-        }
+         function deleteUser(userId, userName) {
+             const confirmMessage = `هل أنت متأكد من حذف المستخدم "${userName}"؟\n\nتحذير: هذا الإجراء لا يمكن التراجع عنه!`;
 
-        function deleteUser(userId, userName) {
-            const form = document.createElement('form');
-            form.method = 'POST';
-            form.action = '/Admin/Users/Delete';
+             if (confirm(confirmMessage)) {
+                 const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
 
-            // Add userId as input
-            const idInput = document.createElement('input');
-            idInput.type = 'hidden';
-            idInput.name = 'id';
-            idInput.value = userId;
-            form.appendChild(idInput);
+                 fetch('/Admin/Users/Delete', {
+                     method: 'POST',
+                     headers: {
+                         'Content-Type': 'application/x-www-form-urlencoded',
+                     },
+                     body: `id=${userId}&__RequestVerificationToken=${encodeURIComponent(token)}`
+                 })
+                 .then(response => response.json())
+                 .then(data => {
+                     if (data.success) {
+                         alert(data.message); // "تم حذف المستخدم بنجاح"
+                         location.reload(); // إعادة تحميل الصفحة
+                     } else {
+                         alert('خطأ: ' + data.message);
+                     }
+                 })
+                 .catch(error => {
+                     alert('حدث خطأ أثناء الحذف');
+                     console.error('Error:', error);
+                 });
+             }
+         }
 
-            // Add anti-forgery token
-            const token = document.querySelector('input[name="__RequestVerificationToken"]');
-            if (token) {
-                const tokenInput = document.createElement('input');
-                tokenInput.type = 'hidden';
-                tokenInput.name = '__RequestVerificationToken';
-                tokenInput.value = token.value;
-                form.appendChild(tokenInput);
-            }
-
-            document.body.appendChild(form);
-            form.submit();
-        }
 
         // Debug: Log the User ID when page loads
         console.log('Current User ID:', '@Model.Id');

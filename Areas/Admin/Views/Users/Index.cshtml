@@ -306,34 +306,32 @@
 
 @section Scripts {
     <script>
-        function toggleUserStatus(userId, isCurrentlyActive) {
+             function toggleUserStatus(userId, isCurrentlyActive) {
             const action = isCurrentlyActive ? 'إيقاف' : 'تفعيل';
             const confirmMessage = `هل أنت متأكد من ${action} هذا المستخدم؟`;
 
             if (confirm(confirmMessage)) {
-                const form = document.createElement('form');
-                form.method = 'POST';
-                form.action = '/Admin/Users/ToggleStatus';
+                const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
 
-                // Add userId as input
-                const idInput = document.createElement('input');
-                idInput.type = 'hidden';
-                idInput.name = 'id';
-                idInput.value = userId;
-                form.appendChild(idInput);
-
-                // Add anti-forgery token
-                const token = document.querySelector('input[name="__RequestVerificationToken"]');
-                if (token) {
-                    const tokenInput = document.createElement('input');
-                    tokenInput.type = 'hidden';
-                    tokenInput.name = '__RequestVerificationToken';
-                    tokenInput.value = token.value;
-                    form.appendChild(tokenInput);
-                }
-
-                document.body.appendChild(form);
-                form.submit();
+                fetch('/Admin/Users/ToggleStatus', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: `id=${userId}&__RequestVerificationToken=${encodeURIComponent(token)}`
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        location.reload(); // إعادة تحميل الصفحة
+                    } else {
+                        alert('خطأ: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    alert('حدث خطأ أثناء تغيير الحالة');
+                    console.error('Error:', error);
+                });
             }
         }
 
@@ -341,29 +339,28 @@
             const confirmMessage = `هل أنت متأكد من حذف المستخدم "${userName}"؟\n\nتحذير: هذا الإجراء لا يمكن التراجع عنه!`;
 
             if (confirm(confirmMessage)) {
-                const form = document.createElement('form');
-                form.method = 'POST';
-                form.action = '/Admin/Users/Delete';
+                const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
 
-                // Add userId as input
-                const idInput = document.createElement('input');
-                idInput.type = 'hidden';
-                idInput.name = 'id';
-                idInput.value = userId;
-                form.appendChild(idInput);
-
-                // Add anti-forgery token
-                const token = document.querySelector('input[name="__RequestVerificationToken"]');
-                if (token) {
-                    const tokenInput = document.createElement('input');
-                    tokenInput.type = 'hidden';
-                    tokenInput.name = '__RequestVerificationToken';
-                    tokenInput.value = token.value;
-                    form.appendChild(tokenInput);
-                }
-
-                document.body.appendChild(form);
-                form.submit();
+                fetch('/Admin/Users/Delete', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: `id=${userId}&__RequestVerificationToken=${encodeURIComponent(token)}`
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert(data.message); // "تم حذف المستخدم بنجاح"
+                        location.reload(); // إعادة تحميل الصفحة
+                    } else {
+                        alert('خطأ: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    alert('حدث خطأ أثناء الحذف');
+                    console.error('Error:', error);
+                });
             }
         }
 
