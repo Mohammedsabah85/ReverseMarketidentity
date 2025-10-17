@@ -1,4 +1,4 @@
-﻿@model ReverseMarket.Models.EditUserViewModel
+﻿@model EditUserViewModel
 
 @{
     ViewData["Title"] = "تعديل المستخدم";
@@ -16,6 +16,22 @@
             <form asp-action="Edit" method="post">
                 @Html.AntiForgeryToken()
                 <input type="hidden" asp-for="Id" />
+
+                @* Hidden fields للحقول التي ليست في الفورم *@
+                <input type="hidden" asp-for="City" />
+                <input type="hidden" asp-for="District" />
+                <input type="hidden" asp-for="Location" />
+                <input type="hidden" asp-for="DateOfBirth" />
+                <input type="hidden" asp-for="Gender" />
+                <input type="hidden" asp-for="StoreName" />
+                <input type="hidden" asp-for="StoreDescription" />
+                <input type="hidden" asp-for="WebsiteUrl1" />
+                <input type="hidden" asp-for="WebsiteUrl2" />
+                <input type="hidden" asp-for="WebsiteUrl3" />
+                <input type="hidden" asp-for="IsPhoneVerified" />
+                <input type="hidden" asp-for="IsEmailVerified" />
+                <input type="hidden" asp-for="IsStoreApproved" />
+                <input type="hidden" asp-for="UserType" />
 
                 <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
 

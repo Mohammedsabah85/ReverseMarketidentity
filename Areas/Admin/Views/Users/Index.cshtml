@@ -1,6 +1,20 @@
 ﻿@model AdminUsersViewModel
+
 @{
     ViewData["Title"] = "إدارة المستخدمين";
+}
+
+@* Anti-forgery Token *@
+@Html.AntiForgeryToken()
+
+@* رسالة النجاح *@
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="fas fa-check-circle me-2"></i>
+        @TempData["Success"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
 }
 
 <!-- Statistics Cards -->
@@ -35,6 +49,7 @@
     </div>
 </div>
 
+<!-- Filters -->
 <!-- Filters -->
 <div class="card-admin mb-4">
     <div class="card-body">
@@ -115,14 +130,14 @@
                 <i class="fas fa-download me-1"></i>
                 تصدير
             </button>
-            <button type="button" class="btn btn-outline-info btn-sm" onclick="refreshStats()">
+            <button type="button" class="btn btn-outline-info btn-sm" onclick="location.reload()">
                 <i class="fas fa-sync me-1"></i>
-                تحديث الإحصائيات
+                تحديث
             </button>
         </div>
     </div>
     <div class="card-body">
-        @if (Model.Users.Any())
+        @if (Model.Users != null && Model.Users.Any())
         {
             <div class="table-responsive">
                 <table class="table table-admin">
@@ -167,7 +182,7 @@
                                 </td>
                                 <td>
                                     <div class="small">
-                                        <div><i class="fas fa-phone me-1"></i> @user.PhoneNumber</div>
+                                        <div><i class="fas fa-phone me-1"></i> @(user.PhoneNumber ?? "غير محدد")</div>
                                         @if (!string.IsNullOrEmpty(user.Email))
                                         {
                                             <div><i class="fas fa-envelope me-1"></i> @user.Email</div>
@@ -183,16 +198,20 @@
                                     {
                                         <span class="badge bg-success">بائع</span>
                                     }
+                                    <br>
                                     @if (!user.IsPhoneVerified)
                                     {
-                                        <br>
                                         <span class="badge bg-warning mt-1">غير مؤكد</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-info mt-1">مؤكد</span>
                                     }
                                 </td>
                                 <td>
                                     <small>
-                                        @user.City<br>
-                                        @user.District
+                                        @(user.City ?? "غير محدد")<br>
+                                        @(user.District ?? "غير محدد")
                                     </small>
                                 </td>
                                 <td>
@@ -260,18 +279,9 @@
 
                         @for (int i = Math.Max(1, Model.CurrentPage - 2); i <= Math.Min(Model.TotalPages, Model.CurrentPage + 2); i++)
                         {
-                            if (i == Model.CurrentPage)
-                            {
-                                <li class="page-item active">
-                                    <a class="page-link" href="?page=@i&search=@Model.Search&userType=@((int?)Model.UserTypeFilter)&isActive=@Model.IsActiveFilter">@i</a>
-                                </li>
-                            }
-                            else
-                            {
-                                <li class="page-item">
-                                    <a class="page-link" href="?page=@i&search=@Model.Search&userType=@((int?)Model.UserTypeFilter)&isActive=@Model.IsActiveFilter">@i</a>
-                                </li>
-                            }
+                            <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+                                <a class="page-link" href="?page=@i&search=@Model.Search&userType=@((int?)Model.UserTypeFilter)&isActive=@Model.IsActiveFilter">@i</a>
+                            </li>
                         }
 
                         @if (Model.CurrentPage < Model.TotalPages)
@@ -306,7 +316,7 @@
 
 @section Scripts {
     <script>
-             function toggleUserStatus(userId, isCurrentlyActive) {
+        function toggleUserStatus(userId, isCurrentlyActive) {
             const action = isCurrentlyActive ? 'إيقاف' : 'تفعيل';
             const confirmMessage = `هل أنت متأكد من ${action} هذا المستخدم؟`;
 
@@ -323,7 +333,7 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        location.reload(); // إعادة تحميل الصفحة
+                        location.reload();
                     } else {
                         alert('خطأ: ' + data.message);
                     }
@@ -351,8 +361,8 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        alert(data.message); // "تم حذف المستخدم بنجاح"
-                        location.reload(); // إعادة تحميل الصفحة
+                        alert(data.message);
+                        location.reload();
                     } else {
                         alert('خطأ: ' + data.message);
                     }
@@ -365,82 +375,7 @@
         }
 
         function exportUsers() {
-            // يمكن تطوير هذه الوظيفة لاحقاً لتصدير البيانات
             alert('وظيفة التصدير قيد التطوير');
         }
-
-        function refreshStats() {
-            const refreshBtn = document.querySelector('[onclick="refreshStats()"]');
-            const originalText = refreshBtn.innerHTML;
-
-            refreshBtn.disabled = true;
-            refreshBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>جاري التحديث...';
-
-            fetch('/Admin/Users/GetUserStats')
-                .then(response => response.json())
-                .then(data => {
-                    // تحديث الإحصائيات في الصفحة
-                    setTimeout(() => {
-                        location.reload();
-                    }, 1000);
-                })
-                .catch(error => {
-                    console.error('خطأ في جلب الإحصائيات:', error);
-                    alert('حدث خطأ في تحديث الإحصائيات');
-                    refreshBtn.disabled = false;
-                    refreshBtn.innerHTML = originalText;
-                });
-        }
-
-        // Auto-refresh stats every 5 minutes
-        setInterval(refreshStats, 300000);
-
-        // تحسين تجربة البحث
-        document.addEventListener('DOMContentLoaded', function() {
-            const searchInput = document.getElementById('search');
-            const userTypeSelect = document.getElementById('userType');
-            const isActiveSelect = document.getElementById('isActive');
-
-            // حفظ البحث في localStorage
-            if (searchInput) {
-                searchInput.addEventListener('input', function() {
-                    localStorage.setItem('userSearch', this.value);
-                });
-
-                // استعادة البحث المحفوظ
-                const savedSearch = localStorage.getItem('userSearch');
-                if (savedSearch && !searchInput.value) {
-                    searchInput.value = savedSearch;
-                }
-            }
-
-            // تنبيه عند تغيير الفلاتر
-            [userTypeSelect, isActiveSelect].forEach(select => {
-                if (select) {
-                    select.addEventListener('change', function() {
-                        if (this.value) {
-                            this.style.borderColor = '#007bff';
-                        } else {
-                            this.style.borderColor = '';
-                        }
-                    });
-                }
-            });
-
-            // تمييز الفلاتر النشطة
-            if (userTypeSelect && userTypeSelect.value) userTypeSelect.style.borderColor = '#007bff';
-            if (isActiveSelect && isActiveSelect.value) isActiveSelect.style.borderColor = '#007bff';
-        });
-
-        // تحسين accessibility
-        document.querySelectorAll('.btn-group .btn').forEach(btn => {
-            btn.addEventListener('focus', function() {
-                this.style.boxShadow = '0 0 0 0.2rem rgba(0,123,255,.25)';
-            });
-
-            btn.addEventListener('blur', function() {
-                this.style.boxShadow = '';
-            });
-        });
     </script>
 }

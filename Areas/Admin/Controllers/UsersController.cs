@@ -130,6 +130,7 @@ namespace ReverseMarket.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+  
         public async Task<IActionResult> Edit(EditUserViewModel model)
         {
             if (!ModelState.IsValid)
@@ -144,19 +145,19 @@ namespace ReverseMarket.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            // Update basic info
-            user.FirstName = model.FirstName;
-            user.LastName = model.LastName;
-            user.UserName = model.UserName;
-            user.Email = model.Email;
-            user.PhoneNumber = model.PhoneNumber;
+            // ✅ Update basic info - مع التعامل مع null
+            user.FirstName = model.FirstName ?? user.FirstName;
+            user.LastName = model.LastName ?? user.LastName;
+            user.UserName = model.UserName ?? user.UserName;
+            user.Email = model.Email ?? user.Email;
+            user.PhoneNumber = model.PhoneNumber ?? user.PhoneNumber;
             user.IsActive = model.IsActive;
             user.UserType = model.UserType;
-            user.City = model.City;
-            user.District = model.District;
+            user.City = model.City ?? user.City;
+            user.District = model.District ?? user.District;
             user.Location = model.Location;
             user.DateOfBirth = model.DateOfBirth;
-            user.Gender = model.Gender;
+            user.Gender = model.Gender ?? user.Gender;
             user.StoreName = model.StoreName;
             user.StoreDescription = model.StoreDescription;
             user.WebsiteUrl1 = model.WebsiteUrl1;
@@ -165,7 +166,7 @@ namespace ReverseMarket.Areas.Admin.Controllers
             user.IsPhoneVerified = model.IsPhoneVerified;
             user.IsEmailVerified = model.IsEmailVerified;
             user.IsStoreApproved = model.IsStoreApproved;
-            user.UpdatedAt = System.DateTime.Now;
+            user.UpdatedAt = DateTime.Now;
 
             var result = await _userManager.UpdateAsync(user);
             if (!result.Succeeded)
@@ -178,7 +179,7 @@ namespace ReverseMarket.Areas.Admin.Controllers
                 return View(model);
             }
 
-            // Update roles
+            // ✅ Update roles
             var currentRoles = await _userManager.GetRolesAsync(user);
             var rolesToRemove = currentRoles.Except(model.SelectedRoles ?? new List<string>()).ToList();
             var rolesToAdd = (model.SelectedRoles ?? new List<string>()).Except(currentRoles).ToList();
