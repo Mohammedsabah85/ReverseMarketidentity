@@ -57,16 +57,16 @@ namespace ReverseMarket.Areas.Admin.Controllers
             var totalUsers = await query.CountAsync();
 
             var users = await query
-                .Include(u => u.StoreCategories)
-                .ThenInclude(sc => sc.Category)
-                .OrderByDescending(u => u.CreatedAt)
-                .Skip((page - 1) * pageSize)
-                .Take(pageSize)
-                .ToListAsync();
+                 .Include(u => u.StoreCategories)
+                 .ThenInclude(sc => sc.Category)
+                 .OrderByDescending(u => u.CreatedAt)
+                 .Skip((page - 1) * pageSize)
+                 .Take(pageSize)
+                 .ToListAsync();
 
             var model = new AdminUsersViewModel
             {
-                Users = User.FromApplicationUsers(users),
+                Users = users,
                 CurrentPage = page,
                 TotalPages = (int)Math.Ceiling((double)totalUsers / pageSize),
                 Search = search,

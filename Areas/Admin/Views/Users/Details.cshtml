@@ -4,6 +4,9 @@
     var userStats = ViewBag.UserStats as UserStatistics;
 }
 
+<!-- Add Anti-forgery Token to the page -->
+@Html.AntiForgeryToken()
+
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h3>تفاصيل المستخدم: @Model.FirstName @Model.LastName</h3>
     <div class="btn-group">
@@ -60,6 +63,7 @@
                             </div>
                         }
                         <h6>@Model.FirstName @Model.LastName</h6>
+                        <small class="text-muted">ID: @Model.Id</small>
                     </div>
 
                     <div class="col-md-9">
@@ -157,19 +161,22 @@
                             <p class="mb-2">@(string.IsNullOrEmpty(Model.StoreDescription) ? "غير محدد" : Model.StoreDescription)</p>
                         </div>
 
-                        @if (Model.StoreCategories.Any())
+                        @if (Model.StoreCategories != null && Model.StoreCategories.Any())
                         {
                             <div class="col-12">
                                 <strong>فئات المتجر:</strong>
                                 <div class="mt-2">
                                     @foreach (var storeCategory in Model.StoreCategories)
                                     {
-                                        <span class="badge bg-primary me-2 mb-2">@storeCategory.Category.Name</span>
-                                        @if (storeCategory.SubCategory1 != null)
+                                        if (storeCategory.Category != null)
+                                        {
+                                            <span class="badge bg-primary me-2 mb-2">@storeCategory.Category.Name</span>
+                                        }
+                                        if (storeCategory.SubCategory1 != null)
                                         {
                                             <span class="badge bg-secondary me-2 mb-2">@storeCategory.SubCategory1.Name</span>
                                         }
-                                        @if (storeCategory.SubCategory2 != null)
+                                        if (storeCategory.SubCategory2 != null)
                                         {
                                             <span class="badge bg-info me-2 mb-2">@storeCategory.SubCategory2.Name</span>
                                         }
@@ -274,14 +281,25 @@
 
                     @if (Model.PhoneNumber != "+9647700227210")
                     {
+                        <!-- Forms for Toggle Status and Delete -->
+                        <form asp-action="ToggleStatus" method="post" id="toggleForm-@Model.Id" style="display: none;">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="id" value="@Model.Id" />
+                        </form>
+
+                        <form asp-action="Delete" method="post" id="deleteForm-@Model.Id" style="display: none;">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="id" value="@Model.Id" />
+                        </form>
+
                         <button type="button" class="btn btn-outline-warning"
-                                onclick="toggleUserStatus('@Model.Id', @Model.IsActive.ToString().ToLower())">
+                                onclick="confirmToggleStatus('@Model.Id', @Model.IsActive.ToString().ToLower(), '@Model.FirstName @Model.LastName')">
                             <i class="fas fa-@(Model.IsActive ? "user-slash" : "user-check") me-2"></i>
                             @(Model.IsActive ? "إيقاف المستخدم" : "تفعيل المستخدم")
                         </button>
 
                         <button type="button" class="btn btn-outline-danger"
-                                onclick="deleteUser('@Model.Id', '@Model.FirstName @Model.LastName')">
+                                onclick="confirmDelete('@Model.Id', '@Model.FirstName @Model.LastName')">
                             <i class="fas fa-trash me-2"></i>
                             حذف المستخدم
                         </button>
@@ -318,7 +336,8 @@
 
                 <div class="small">
                     <div class="mb-2">
-                        <strong>معرف المستخدم:</strong> @Model.Id
+                        <strong>معرف المستخدم:</strong>
+                        <code>@Model.Id</code>
                     </div>
                     <div class="mb-2">
                         <strong>أيام العضوية:</strong> @((DateTime.Now - Model.CreatedAt).Days) يوم
@@ -342,65 +361,89 @@
 
 @section Scripts {
     <script>
-        function toggleUserStatus(userId, isCurrentlyActive) {
+        function confirmToggleStatus(userId, isCurrentlyActive, userName) {
             const action = isCurrentlyActive ? 'إيقاف' : 'تفعيل';
-            const confirmMessage = `هل أنت متأكد من ${action} هذا المستخدم؟`;
+            const confirmMessage = `هل أنت متأكد من ${action} المستخدم "${userName}"؟`;
 
             if (confirm(confirmMessage)) {
-                const form = document.createElement('form');
-                form.method = 'POST';
-                form.action = '/Admin/Users/ToggleStatus';
-
-                // Add userId as input
-                const idInput = document.createElement('input');
-                idInput.type = 'hidden';
-                idInput.name = 'id';
-                idInput.value = userId;
-                form.appendChild(idInput);
-
-                // Add anti-forgery token
-                const token = document.querySelector('input[name="__RequestVerificationToken"]');
-                if (token) {
-                    const tokenInput = document.createElement('input');
-                    tokenInput.type = 'hidden';
-                    tokenInput.name = '__RequestVerificationToken';
-                    tokenInput.value = token.value;
-                    form.appendChild(tokenInput);
+                const form = document.getElementById('toggleForm-' + userId);
+                if (form) {
+                    form.submit();
+                } else {
+                    // Fallback method
+                    toggleUserStatus(userId, isCurrentlyActive);
                 }
-
-                document.body.appendChild(form);
-                form.submit();
             }
         }
 
-        function deleteUser(userId, userName) {
+        function confirmDelete(userId, userName) {
             const confirmMessage = `هل أنت متأكد من حذف المستخدم "${userName}"؟\n\nتحذير: هذا الإجراء لا يمكن التراجع عنه!`;
 
             if (confirm(confirmMessage)) {
-                const form = document.createElement('form');
-                form.method = 'POST';
-                form.action = '/Admin/Users/Delete';
-
-                // Add userId as input
-                const idInput = document.createElement('input');
-                idInput.type = 'hidden';
-                idInput.name = 'id';
-                idInput.value = userId;
-                form.appendChild(idInput);
-
-                // Add anti-forgery token
-                const token = document.querySelector('input[name="__RequestVerificationToken"]');
-                if (token) {
-                    const tokenInput = document.createElement('input');
-                    tokenInput.type = 'hidden';
-                    tokenInput.name = '__RequestVerificationToken';
-                    tokenInput.value = token.value;
-                    form.appendChild(tokenInput);
+                const form = document.getElementById('deleteForm-' + userId);
+                if (form) {
+                    form.submit();
+                } else {
+                    // Fallback method
+                    deleteUser(userId, userName);
                 }
-
-                document.body.appendChild(form);
-                form.submit();
             }
         }
+
+        // Fallback methods from user-management.js
+        function toggleUserStatus(userId, isCurrentlyActive) {
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '/Admin/Users/ToggleStatus';
+
+            // Add userId as input
+            const idInput = document.createElement('input');
+            idInput.type = 'hidden';
+            idInput.name = 'id';
+            idInput.value = userId;
+            form.appendChild(idInput);
+
+            // Add anti-forgery token
+            const token = document.querySelector('input[name="__RequestVerificationToken"]');
+            if (token) {
+                const tokenInput = document.createElement('input');
+                tokenInput.type = 'hidden';
+                tokenInput.name = '__RequestVerificationToken';
+                tokenInput.value = token.value;
+                form.appendChild(tokenInput);
+            }
+
+            document.body.appendChild(form);
+            form.submit();
+        }
+
+        function deleteUser(userId, userName) {
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '/Admin/Users/Delete';
+
+            // Add userId as input
+            const idInput = document.createElement('input');
+            idInput.type = 'hidden';
+            idInput.name = 'id';
+            idInput.value = userId;
+            form.appendChild(idInput);
+
+            // Add anti-forgery token
+            const token = document.querySelector('input[name="__RequestVerificationToken"]');
+            if (token) {
+                const tokenInput = document.createElement('input');
+                tokenInput.type = 'hidden';
+                tokenInput.name = '__RequestVerificationToken';
+                tokenInput.value = token.value;
+                form.appendChild(tokenInput);
+            }
+
+            document.body.appendChild(form);
+            form.submit();
+        }
+
+        // Debug: Log the User ID when page loads
+        console.log('Current User ID:', '@Model.Id');
     </script>
 }
