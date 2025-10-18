@@ -416,6 +416,89 @@
                 transform: translateY(0);
             }
         }
+
+        /* أضف هذا الكود في قسم <style> في _Layout.cshtml */
+
+        /* تنسيق زر تسجيل الخروج في القائمة المنسدلة */
+        .dropdown-item.text-danger {
+            color: #dc3545 !important;
+            transition: var(--transition);
+        }
+
+            .dropdown-item.text-danger:hover {
+                background-color: rgba(220, 53, 69, 0.1);
+                color: #dc3545 !important;
+            }
+
+        /* تنسيق الأزرار داخل dropdown */
+        .dropdown-menu form {
+            margin: 0;
+            padding: 0;
+        }
+
+            .dropdown-menu form button {
+                width: 100%;
+                text-align: inherit;
+                border: none;
+                background: none;
+                cursor: pointer;
+                padding: 0.5rem 1rem;
+                font-size: inherit;
+                font-family: inherit;
+            }
+
+                .dropdown-menu form button:hover {
+                    background-color: rgba(0, 0, 0, 0.05);
+                }
+
+        /* تنسيق Avatar المستخدم */
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--secondary-color), var(--accent-color));
+            color: white;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+            margin-right: 8px;
+        }
+
+        /* تنسيق القائمة المنسدلة للمستخدم */
+        .user-dropdown {
+            display: flex !important;
+            align-items: center !important;
+        }
+
+        .dropdown-menu {
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-medium);
+            border: none;
+            padding: 0.5rem 0;
+        }
+
+        .dropdown-item {
+            padding: 0.75rem 1.25rem;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+        }
+
+            .dropdown-item:hover {
+                background-color: rgba(179, 150, 45, 0.1);
+                color: var(--primary-color);
+            }
+
+            .dropdown-item i {
+                width: 20px;
+            }
+
+        .dropdown-divider {
+            margin: 0.5rem 0;
+            opacity: 0.3;
+        }
     </style>
 </head>
 
@@ -522,6 +605,107 @@
                     </ul>
 
                     <ul class="navbar-nav">
+                        <!-- Language Selector -->
+                        <li class="nav-item dropdown language-selector">
+                            <a class="nav-link dropdown-toggle language-dropdown" href="#" id="languageMenu"
+                               role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <span class="flag">@currentLangInfo.Flag</span>
+                                <span class="d-none d-sm-inline">@currentLangInfo.NativeName</span>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end" id="languageDropdown">
+                                @foreach (var language in supportedLanguages)
+                                {
+                                    <li>
+                                        <form method="post" action="@Url.Action("SetLanguage", "Language")" class="language-form">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="culture" value="@language.Code" />
+                                            <input type="hidden" name="returnUrl" value="@(Context.Request.Path + Context.Request.QueryString)" />
+                                            <button type="submit"
+                                                    class="dropdown-item @(currentLanguage == language.Code ? "active" : "")"
+                                                    @(currentLanguage == language.Code ? "disabled" : "")>
+                                                <span class="flag">@language.Flag</span>
+                                                <span>@language.NativeName</span>
+                                                @if (currentLanguage == language.Code)
+                                                {
+                                                    <i class="fas fa-check ms-auto text-success"></i>
+                                                }
+                                            </button>
+                                        </form>
+                                    </li>
+                                }
+                            </ul>
+                        </li>
+
+                        <!-- User Menu -->
+                        @if (isLoggedIn)
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle user-dropdown" href="#" id="userMenu"
+                                   role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <div class="user-avatar">@(userName?.FirstOrDefault() ?? 'U')</div>
+                                    <span class="d-none d-md-inline">@userName</span>
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    @if (isAdmin)
+                                    {
+                                        <li>
+                                            <a class="dropdown-item" href="/Admin/Dashboard">
+                                                <i class="fas fa-tachometer-alt @(direction == "rtl" ? "ms-2" : "me-2")"></i>
+                                                @Localizer["AdminPanel"]
+                                            </a>
+                                        </li>
+                                    }
+                                    else
+                                    {
+                                        <li>
+                                            <a class="dropdown-item" href="/Profile">
+                                                <i class="fas fa-user @(direction == "rtl" ? "ms-2" : "me-2")"></i>
+                                                @Localizer["Profile"]
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="/Requests/Create">
+                                                <i class="fas fa-plus @(direction == "rtl" ? "ms-2" : "me-2")"></i>
+                                                @Localizer["AddRequest"]
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="/Profile/MyRequests">
+                                                <i class="fas fa-list-alt @(direction == "rtl" ? "ms-2" : "me-2")"></i>
+                                                @Localizer["MyRequests"]
+                                            </a>
+                                        </li>
+                                    }
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li>
+                                        <form asp-action="Logout" asp-controller="Account" method="post">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="dropdown-item text-danger">
+                                                <i class="fas fa-sign-out-alt @(direction == "rtl" ? "ms-2" : "me-2")"></i>
+                                                @Localizer["Logout"]
+                                            </button>
+                                        </form>
+                                    </li>
+                                </ul>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" href="/Requests/Create">
+                                    <i class="fas fa-plus @(direction == "rtl" ? "ms-1" : "me-1")"></i>
+                                    @Localizer["AddRequest"]
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="btn btn-outline-custom" href="/Account/Login">
+                                    <i class="fas fa-sign-in-alt"></i>
+                                    @Localizer["Login"]
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                @*     <ul class="navbar-nav">
                         <li class="nav-item dropdown language-selector">
                             <a class="nav-link dropdown-toggle language-dropdown" href="#" id="languageMenu"
                                role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -585,7 +769,7 @@
                                 </a>
                             </li>
                         }
-                    </ul>
+                    </ul> *@
                 </div>
             </div>
         </nav>

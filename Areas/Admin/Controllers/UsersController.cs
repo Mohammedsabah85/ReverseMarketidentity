@@ -26,31 +26,93 @@ namespace ReverseMarket.Areas.Admin.Controllers
             _roleManager = roleManager;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string search, int? userType, bool? isActive, int page = 1)
         {
-            var users = await _userManager.Users.ToListAsync();
-            var userViewModels = new List<UserViewModel>();
+            var pageSize = 20;
 
+            // جلب جميع المستخدمين من Identity
+            var query = _userManager.Users.AsQueryable();
+
+            // تطبيق الفلاتر
+            if (!string.IsNullOrEmpty(search))
+            {
+                query = query.Where(u =>
+                    u.FirstName.Contains(search) ||
+                    u.LastName.Contains(search) ||
+                    u.PhoneNumber.Contains(search) ||
+                    u.Email.Contains(search));
+            }
+
+            if (userType.HasValue)
+            {
+                var userTypeEnum = (UserType)userType.Value;
+                query = query.Where(u => u.UserType == userTypeEnum);
+            }
+
+            if (isActive.HasValue)
+            {
+                query = query.Where(u => u.IsActive == isActive.Value);
+            }
+
+            // حساب الإحصائيات الصحيحة
+            var allUsers = await _userManager.Users.ToListAsync();
+
+            var totalUsers = allUsers.Count;
+            var activeUsers = allUsers.Count(u => u.IsActive);
+            var inactiveUsers = allUsers.Count(u => !u.IsActive);
+            var buyersCount = allUsers.Count(u => u.UserType == UserType.Buyer);
+            var sellersCount = allUsers.Count(u => u.UserType == UserType.Seller);
+
+            // تطبيق الترتيب والصفحات
+            var totalCount = await query.CountAsync();
+            var users = await query
+                .OrderByDescending(u => u.CreatedAt)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            // تحويل إلى UserViewModel
+            var userViewModels = new List<UserViewModel>();
             foreach (var user in users)
             {
                 var roles = await _userManager.GetRolesAsync(user);
                 userViewModels.Add(new UserViewModel
                 {
                     Id = user.Id,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
                     UserName = user.UserName,
                     Email = user.Email,
+                    PhoneNumber = user.PhoneNumber,
+                    City = user.City,
+                    District = user.District,
+                    IsActive = user.IsActive,
+                    IsPhoneVerified = user.IsPhoneVerified,
+                    UserType = user.UserType,
+                    StoreName = user.StoreName,
+                    ProfileImage = user.ProfileImage,
+                    CreatedAt = user.CreatedAt,
                     Roles = roles.ToList()
                 });
             }
 
             var viewModel = new AdminUsersViewModel
             {
-                Users = userViewModels
+                Users = userViewModels,
+                CurrentPage = page,
+                TotalPages = (int)Math.Ceiling((double)totalCount / pageSize),
+                Search = search,
+                UserTypeFilter = userType.HasValue ? (UserType?)userType.Value : null,
+                IsActiveFilter = isActive,
+                TotalUsers = totalUsers,
+                ActiveUsers = activeUsers,
+                InactiveUsers = inactiveUsers,
+                BuyersCount = buyersCount,
+                SellersCount = sellersCount
             };
 
-            return View(viewModel); // ✅ الآن صحيح
+            return View(viewModel);
         }
-
         public async Task<IActionResult> Details(string id)
         {
             if (string.IsNullOrEmpty(id))

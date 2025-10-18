@@ -31,6 +31,7 @@ namespace ReverseMarket.Models
         public bool IsStoreApproved { get; set; }
         public DateTime CreatedAt { get; set; }
         public IList<string> Roles { get; set; }
+        public string GetFullName() => $"{FirstName} {LastName}".Trim();
         public List<string> StoreCategories { get; set; }
 
         public static UserViewModel FromApplicationUser(ApplicationUser user, IList<string> roles, List<string> storeCategories = null)

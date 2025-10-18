@@ -55,9 +55,7 @@ namespace ReverseMarket.Areas.Admin.Models
 
     public class AdminUsersViewModel
     {
-        public List<UserViewModel> Users { get; set; } = new(); // تغيير من User إلى ApplicationUser
-
-
+        public List<UserViewModel> Users { get; set; } = new();
         public int CurrentPage { get; set; }
         public int TotalPages { get; set; }
         public string? Search { get; set; }
@@ -72,53 +70,44 @@ namespace ReverseMarket.Areas.Admin.Models
 
     //public class EditUserViewModel
     //{
-    //    public string Id { get; set; } = ""; // تغيير من int إلى string
+    //    public string Id { get; set; }
 
     //    [Required(ErrorMessage = "الاسم الأول مطلوب")]
-    //    [StringLength(50, ErrorMessage = "الاسم الأول لا يجب أن يزيد عن 50 حرف")]
-    //    public string FirstName { get; set; } = "";
+    //    [StringLength(50)]
+    //    public string? FirstName { get; set; }
 
-    //    [Required(ErrorMessage = "اسم العائلة مطلوب")]
-    //    [StringLength(50, ErrorMessage = "اسم العائلة لا يجب أن يزيد عن 50 حرف")]
-    //    public string LastName { get; set; } = "";
+    //    [Required(ErrorMessage = "الاسم الأخير مطلوب")]
+    //    [StringLength(50)]
+    //    public string? LastName { get; set; }
+
+    //    [Required(ErrorMessage = "اسم المستخدم مطلوب")]
+    //    public string? UserName { get; set; }
 
     //    [EmailAddress(ErrorMessage = "البريد الإلكتروني غير صحيح")]
     //    public string? Email { get; set; }
 
-    //    [Required(ErrorMessage = "رقم الهاتف مطلوب")]
     //    [Phone(ErrorMessage = "رقم الهاتف غير صحيح")]
-    //    public string PhoneNumber { get; set; } = "";
+    //    public string? PhoneNumber { get; set; }
 
-    //    [Required(ErrorMessage = "المحافظة مطلوبة")]
-    //    public string City { get; set; } = "";
-
-    //    [Required(ErrorMessage = "المنطقة مطلوبة")]
-    //    public string District { get; set; } = "";
-
-    //    public string? Location { get; set; }
-
-    //    [Required(ErrorMessage = "تاريخ الميلاد مطلوب")]
-    //    public DateTime DateOfBirth { get; set; }
-
-    //    [Required(ErrorMessage = "الجنس مطلوب")]
-    //    public string Gender { get; set; } = "";
-
+    //    public bool IsActive { get; set; }
     //    public UserType UserType { get; set; }
-
-    //    // بيانات المتجر (للبائعين)
+    //    public string? City { get; set; }
+    //    public string? District { get; set; }
+    //    public string? Location { get; set; }
+    //    public DateTime DateOfBirth { get; set; }
+    //    public string? Gender { get; set; }
     //    public string? StoreName { get; set; }
     //    public string? StoreDescription { get; set; }
     //    public string? WebsiteUrl1 { get; set; }
     //    public string? WebsiteUrl2 { get; set; }
     //    public string? WebsiteUrl3 { get; set; }
-
-    //    // فئات المتجر
-    //    public List<int> StoreCategories { get; set; } = new();
-    //    public List<int> CurrentStoreCategories { get; set; } = new();
-
-    //    // حالة الحساب
-    //    public bool IsActive { get; set; } = true;
-    //    public bool IsPhoneVerified { get; set; } = true;
+    //    public bool IsPhoneVerified { get; set; }
+    //    public bool IsEmailVerified { get; set; }
+    //    public bool IsStoreApproved { get; set; }
+    //    public List<int>? StoreCategories { get; set; }
+    //    public List<string>? CurrentStoreCategories { get; set; }
+    //    public List<string>? SelectedRoles { get; set; }
+    //    public List<string>? AvailableRoles { get; set; }
     //}
 
     public class UserDetailsViewModel
