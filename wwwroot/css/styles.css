@@ -1,0 +1,1219 @@
+﻿/* ==========================================
+   Unified Styles - ملف التنسيق الموحد الكامل
+   ========================================== */
+
+/* ==========================================
+   1. CSS VARIABLES - المتغيرات
+   ========================================== */
+:root {
+    /* Primary Colors */
+    --primary-color: #b3962d;
+    --primary-dark: #8a7320;
+    --primary-light: #d4b74b;
+    /* Secondary Colors */
+    --secondary-color: #34c759;
+    --secondary-dark: #28a745;
+    --secondary-light: #5ed37e;
+    /* Accent Colors */
+    --accent-color: #c9a53a;
+    --accent-light: #e3c56c;
+    /* Text Colors */
+    --text-color: #2c2c2c;
+    --text-muted: #6c757d;
+    /* Background Colors */
+    --bg-light: #f8f9fa;
+    --bg-white: #ffffff;
+    /* Border & Shadow */
+    --border-color: #e9ecef;
+    --border-radius: 12px;
+    --border-radius-lg: 16px;
+    --shadow-sm: 0 2px 8px rgba(0,0,0,0.08);
+    --shadow-md: 0 4px 15px rgba(0,0,0,0.1);
+    --shadow-lg: 0 8px 25px rgba(0,0,0,0.15);
+    /* Transitions */
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-fast: all 0.2s ease;
+    /* Spacing */
+    --spacing-xs: 0.5rem;
+    --spacing-sm: 1rem;
+    --spacing-md: 1.5rem;
+    --spacing-lg: 2rem;
+    --spacing-xl: 3rem;
+}
+
+/* ==========================================
+   1.5 BASE STYLES - الأنماط الأساسية
+   ========================================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: linear-gradient(135deg, #fdfdfb 0%, #f2efe5 100%);
+    color: var(--text-color);
+    line-height: 1.6;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 1;
+}
+
+/* ==========================================
+   1.6 HOME PAGE STYLES - تنسيقات الصفحة الرئيسية
+   ========================================== */
+
+/* Advertisements Section */
+.advertisements-section {
+    padding: 2rem 0;
+}
+
+.advertisement-image {
+    height: 300px;
+    object-fit: cover;
+    border-radius: 15px;
+}
+
+.carousel-caption {
+    background: rgba(0, 0, 0, 0.6);
+    border-radius: 10px;
+    padding: 1rem;
+}
+
+/* Hero Section */
+.hero-section {
+    background: linear-gradient(135deg, rgba(179, 150, 45, 1), rgba(217, 184, 74, 0.9));
+    padding: 4rem 0;
+    color: white;
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+    .hero-section h1 {
+        font-size: 3rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    .hero-section p {
+        font-size: 1.2rem;
+        margin-bottom: 2rem;
+        opacity: 0.9;
+    }
+
+/* Search Section */
+.search-section {
+    background: white;
+    padding: 2rem 0;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    margin-top: -3rem;
+    border-radius: 15px;
+    position: relative;
+    z-index: 10;
+    margin-bottom: 3rem;
+}
+
+.search-form {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+    .search-form .form-control {
+        border-radius: 25px;
+        border: 2px solid var(--border-color);
+        padding: 0.75rem 1.5rem;
+        font-size: 1rem;
+    }
+
+        .search-form .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(179, 150, 45, 0.25);
+        }
+
+/* Categories Section */
+.category-card {
+    background: white;
+    border-radius: 20px;
+    overflow: hidden;
+    transition: all 0.4s ease;
+    border: 1px solid var(--border-color);
+    height: 100%;
+    color: inherit;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    position: relative;
+}
+
+    .category-card:hover {
+        transform: translateY(-8px) scale(1.02);
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+        border-color: var(--primary-color);
+        color: inherit;
+        text-decoration: none;
+    }
+
+.category-image-container {
+    height: 120px;
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+    background: linear-gradient(135deg, var(--primary-light), #f3e8b3);
+}
+
+.category-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+}
+
+.category-card:hover .category-image {
+    transform: scale(1.1);
+}
+
+.category-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+    color: white;
+}
+
+    .category-placeholder i {
+        font-size: 2.5rem;
+        opacity: 0.8;
+    }
+
+.category-content {
+    padding: 1.5rem;
+    text-align: center;
+}
+
+    .category-content h5 {
+        font-weight: 700;
+        color: var(--text-color);
+        margin-bottom: 0.5rem;
+        font-size: 1.1rem;
+    }
+
+    .category-content p {
+        font-size: 0.9rem;
+        margin: 0;
+        line-height: 1.4;
+    }
+
+/* Request Cards */
+.request-card {
+    background: white;
+    border-radius: 15px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    border: 1px solid var(--border-color);
+    height: 100%;
+}
+
+    .request-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    .request-card img {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+    }
+
+.request-card-body {
+    padding: 1.5rem;
+}
+
+/* How It Works */
+.how-it-works {
+    background: white;
+    padding: 4rem 0;
+}
+
+.step-card {
+    text-align: center;
+    padding: 2rem 1rem;
+}
+
+.step-number {
+    width: 60px;
+    height: 60px;
+    background: var(--secondary-color);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 0 auto 1rem;
+}
+
+.section-title {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+    .section-title h2 {
+        font-weight: 700;
+        color: var(--text-color);
+        margin-bottom: 0.5rem;
+    }
+
+/* ==========================================
+   1.7 LANGUAGE & DIRECTION - اللغة والاتجاه
+   ========================================== */
+[dir="rtl"] .ms-auto {
+    margin-left: auto !important;
+}
+
+[dir="rtl"] .me-auto {
+    margin-right: auto !important;
+}
+
+[dir="ltr"] .ms-auto {
+    margin-right: auto !important;
+}
+
+[dir="ltr"] .me-auto {
+    margin-left: auto !important;
+}
+
+/* ==========================================
+   1.8 HEADER STYLES - تنسيقات الهيدر
+   ========================================== */
+.main-header {
+    background: linear-gradient(135deg, #b3962d 0%, #8a7320 100%);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    backdrop-filter: blur(10px);
+}
+
+/* Top Bar */
+.top-bar {
+    background: rgba(0,0,0,0.1);
+    padding: 0.5rem 0;
+    font-size: 0.875rem;
+}
+
+    .top-bar .container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+.contact-info {
+    display: flex;
+    gap: 1.5rem;
+    color: rgba(255,255,255,0.8);
+}
+
+    .contact-info a {
+        color: rgba(255,255,255,0.8);
+        text-decoration: none;
+        transition: var(--transition);
+    }
+
+        .contact-info a:hover {
+            color: white;
+            transform: translateY(-1px);
+        }
+
+.social-links {
+    display: flex;
+    gap: 1rem;
+}
+
+    .social-links a {
+        color: rgba(255,255,255,0.8);
+        font-size: 1.1rem;
+        transition: var(--transition);
+    }
+
+        .social-links a:hover {
+            color: white;
+            transform: translateY(-2px) scale(1.1);
+        }
+
+/* Navbar */
+.navbar-brand {
+    font-weight: 800;
+    font-size: 1.75rem;
+    color: white !important;
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    transition: var(--transition);
+}
+
+    .navbar-brand:hover {
+        transform: scale(1.02);
+    }
+
+    .navbar-brand img {
+        max-height: 45px;
+        filter: brightness(1.1);
+    }
+
+[dir="rtl"] .navbar-brand img {
+    margin-left: 12px;
+}
+
+[dir="ltr"] .navbar-brand img {
+    margin-right: 12px;
+}
+
+.navbar-brand .brand-icon {
+    font-size: 2rem;
+    background: linear-gradient(45deg, #000000, var(--accent-color));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+[dir="rtl"] .navbar-brand .brand-icon {
+    margin-left: 12px;
+}
+
+[dir="ltr"] .navbar-brand .brand-icon {
+    margin-right: 12px;
+}
+
+/* Navbar Links */
+.navbar-nav .nav-link {
+    color: rgba(255,255,255,0.9) !important;
+    font-weight: 500;
+    padding: 0.75rem 1.25rem !important;
+    border-radius: 25px;
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+}
+
+    .navbar-nav .nav-link:hover,
+    .navbar-nav .nav-link.active {
+        color: white !important;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(255,255,255,0.2);
+        background: rgba(255,255,255,0.1);
+    }
+
+/* User Avatar */
+.user-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #000000, var(--accent-color));
+    color: white;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+[dir="rtl"] .user-avatar {
+    margin-left: 8px;
+}
+
+[dir="ltr"] .user-avatar {
+    margin-right: 8px;
+}
+
+.user-dropdown {
+    display: flex !important;
+    align-items: center !important;
+}
+
+/* Language Selector */
+.language-selector .dropdown-menu {
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-md);
+    border: none;
+    padding: 0.5rem 0;
+}
+
+.language-selector .dropdown-item {
+    padding: 0.75rem 1.25rem;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+    .language-selector .dropdown-item:hover {
+        background-color: rgba(179, 150, 45, 0.1);
+        color: var(--primary-color);
+    }
+
+    .language-selector .dropdown-item.active {
+        background-color: rgba(179, 150, 45, 0.15);
+        color: var(--primary-color);
+    }
+
+.language-selector .flag {
+    font-size: 1.2rem;
+}
+
+/* Dropdown Menu */
+.dropdown-menu {
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-md);
+    border: none;
+    padding: 0.5rem 0;
+}
+
+.dropdown-item {
+    padding: 0.75rem 1.25rem;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+}
+
+    .dropdown-item:hover {
+        background-color: rgba(179, 150, 45, 0.1);
+        color: var(--primary-color);
+    }
+
+    .dropdown-item i {
+        width: 20px;
+    }
+
+.dropdown-divider {
+    margin: 0.5rem 0;
+    opacity: 0.3;
+}
+
+.dropdown-item.text-danger {
+    color: #dc3545 !important;
+}
+
+    .dropdown-item.text-danger:hover {
+        background-color: rgba(220, 53, 69, 0.1);
+        color: #dc3545 !important;
+    }
+
+.dropdown-menu form {
+    margin: 0;
+    padding: 0;
+}
+
+    .dropdown-menu form button {
+        width: 100%;
+        text-align: inherit;
+        border: none;
+        background: none;
+        cursor: pointer;
+        padding: 0.75rem 1.25rem;
+        font-size: inherit;
+        font-family: inherit;
+    }
+
+        .dropdown-menu form button:hover {
+            background-color: rgba(179, 150, 45, 0.1);
+        }
+
+/* ==========================================
+   1.9 FOOTER STYLES - تنسيقات الفوتر
+   ========================================== */
+.main-footer {
+    background: linear-gradient(135deg, #000000 0%, #2c2c2c 100%);
+    color: white;
+    padding: 3rem 0 1rem;
+    margin-top: auto;
+}
+
+.footer-logo {
+    max-height: 60px;
+    margin-bottom: 1rem;
+    filter: brightness(1.2);
+}
+
+.footer-section h5 {
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    color: var(--accent-color);
+    position: relative;
+}
+
+    .footer-section h5::after {
+        content: '';
+        position: absolute;
+        bottom: -8px;
+        left: 0;
+        width: 50px;
+        height: 3px;
+        background: linear-gradient(90deg, var(--accent-color), var(--primary-light));
+        border-radius: 2px;
+    }
+
+.footer-section a {
+    color: rgba(255,255,255,0.8);
+    text-decoration: none;
+    transition: var(--transition);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.25rem 0;
+}
+
+    .footer-section a:hover {
+        color: var(--accent-light);
+        transform: translateX(-5px);
+    }
+
+[dir="rtl"] .footer-section a:hover {
+    transform: translateX(5px);
+}
+
+.footer-section ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+    .footer-section ul li {
+        margin-bottom: 0.5rem;
+    }
+
+.footer-bottom {
+    border-top: 1px solid rgba(255,255,255,0.1);
+    margin-top: 2rem;
+    padding-top: 2rem;
+    text-align: center;
+    color: rgba(255,255,255,0.7);
+}
+
+    .footer-bottom p {
+        margin: 0;
+    }
+
+/* ==========================================
+   2. GLOBAL CONTAINERS - الحاويات العامة
+   ========================================== */
+.container-custom {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: var(--spacing-lg) var(--spacing-md);
+}
+
+.card-custom {
+    background: var(--bg-white);
+    border-radius: var(--border-radius-lg);
+    padding: var(--spacing-lg);
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--border-color);
+    transition: var(--transition);
+}
+
+    .card-custom:hover {
+        box-shadow: var(--shadow-lg);
+        transform: translateY(-2px);
+    }
+
+/* ==========================================
+   3. FORM SECTIONS - أقسام النماذج
+   ========================================== */
+.form-section {
+    margin-bottom: var(--spacing-lg);
+    padding-bottom: var(--spacing-md);
+    border-bottom: 1px solid var(--border-color);
+}
+
+    .form-section:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
+    }
+
+.section-title {
+    color: var(--primary-color);
+    margin-bottom: var(--spacing-md);
+    font-weight: 600;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+}
+
+    .section-title i {
+        margin-inline-end: 0.5rem;
+    }
+
+/* Form Controls */
+.form-control,
+.form-select {
+    border: 2px solid var(--border-color);
+    border-radius: 10px;
+    padding: 0.75rem 1rem;
+    transition: var(--transition);
+    font-size: 1rem;
+}
+
+    .form-control:focus,
+    .form-select:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 0.2rem rgba(179, 150, 45, 0.25);
+        outline: none;
+    }
+
+.form-label {
+    font-weight: 500;
+    color: var(--text-color);
+    margin-bottom: 0.5rem;
+}
+
+/* ==========================================
+   4. BUTTONS - الأزرار
+   ========================================== */
+.btn-custom {
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+    border: none;
+    color: white;
+    padding: 0.75rem 2rem;
+    border-radius: 25px;
+    font-weight: 600;
+    transition: var(--transition);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    box-shadow: var(--shadow-md);
+    cursor: pointer;
+}
+
+    .btn-custom:hover {
+        transform: translateY(-3px);
+        box-shadow: var(--shadow-lg);
+        background: linear-gradient(135deg, var(--primary-dark), var(--primary-color));
+        color: white;
+    }
+
+.btn-outline-custom {
+    border: 2px solid var(--primary-color);
+    color: var(--primary-color);
+    background: transparent;
+    padding: 0.75rem 2rem;
+    border-radius: 25px;
+    font-weight: 600;
+    transition: var(--transition);
+}
+
+    .btn-outline-custom:hover {
+        background: var(--primary-color);
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-md);
+    }
+
+/* ==========================================
+   5. PROGRESS STEPS - خطوات التقدم
+   ========================================== */
+.progress-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    flex: 1;
+    position: relative;
+}
+
+.step-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #e9ecef;
+    color: #6c757d;
+    margin-bottom: 0.5rem;
+    transition: var(--transition);
+    font-size: 1.2rem;
+    z-index: 2;
+}
+
+.progress-step.completed .step-icon {
+    background: var(--primary-color);
+    color: white;
+}
+
+.progress-step.active .step-icon {
+    background: var(--secondary-color);
+    color: white;
+    box-shadow: 0 0 0 4px rgba(52, 199, 89, 0.2);
+}
+
+.progress-line {
+    height: 2px;
+    background: #e9ecef;
+    flex: 1;
+    margin: 25px 20px 0;
+    transition: var(--transition);
+}
+
+    .progress-line.completed {
+        background: var(--primary-color);
+    }
+
+/* ==========================================
+   6. ACCOUNT TYPE CARDS - بطاقات نوع الحساب
+   ========================================== */
+.account-type-card {
+    border: 2px solid var(--border-color);
+    border-radius: 15px;
+    cursor: pointer;
+    transition: var(--transition);
+    height: 100%;
+    background: white;
+}
+
+    .account-type-card:hover {
+        border-color: var(--primary-color);
+        box-shadow: var(--shadow-md);
+        transform: translateY(-4px);
+    }
+
+    .account-type-card.selected {
+        border-color: var(--primary-color);
+        background: rgba(179, 150, 45, 0.05);
+        box-shadow: var(--shadow-lg);
+    }
+
+    .account-type-card .card-body {
+        padding: 2rem;
+    }
+
+/* ==========================================
+   7. OTP INPUT - إدخال رمز التحقق
+   ========================================== */
+.otp-input-container {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin: 20px 0;
+}
+
+.otp-input {
+    width: 60px;
+    height: 60px;
+    text-align: center;
+    font-size: 24px;
+    font-weight: bold;
+    border: 2px solid var(--border-color);
+    border-radius: 10px;
+    background: white;
+    transition: var(--transition);
+}
+
+    .otp-input:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 0.2rem rgba(179, 150, 45, 0.25);
+        outline: none;
+    }
+
+    .otp-input.filled {
+        border-color: var(--secondary-color);
+        background-color: rgba(52, 199, 89, 0.1);
+    }
+
+    .otp-input.error {
+        border-color: #dc3545;
+        background-color: rgba(220, 53, 69, 0.1);
+        animation: shake 0.3s;
+    }
+
+@keyframes shake {
+    0%, 100% {
+        transform: translateX(0);
+    }
+
+    25% {
+        transform: translateX(-5px);
+    }
+
+    75% {
+        transform: translateX(5px);
+    }
+}
+
+/* ==========================================
+   8. FILE UPLOAD - رفع الملفات
+   ========================================== */
+.upload-area {
+    margin-top: 1rem;
+}
+
+.upload-zone {
+    border: 2px dashed var(--border-color);
+    border-radius: 15px;
+    padding: 3rem 2rem;
+    text-align: center;
+    cursor: pointer;
+    transition: var(--transition);
+    background: #fafafa;
+}
+
+    .upload-zone:hover {
+        border-color: var(--primary-color);
+        background: rgba(179, 150, 45, 0.05);
+    }
+
+    .upload-zone.dragover {
+        border-color: var(--secondary-color);
+        background: rgba(52, 199, 89, 0.1);
+        transform: scale(1.02);
+    }
+
+.upload-content {
+    pointer-events: none;
+}
+
+.image-preview-item {
+    position: relative;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    transition: var(--transition);
+}
+
+    .image-preview-item:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-md);
+    }
+
+.remove-image-btn {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    z-index: 10;
+}
+
+.image-info {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(transparent, rgba(0,0,0,0.8));
+    color: white;
+    padding: 1rem 0.5rem 0.5rem;
+}
+
+/* ==========================================
+   9. STATISTICS CARDS - بطاقات الإحصائيات
+   ========================================== */
+.stat-card {
+    padding: 1.5rem;
+    border-radius: var(--border-radius);
+    text-align: center;
+    transition: var(--transition);
+}
+
+    .stat-card:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--shadow-md);
+    }
+
+    .stat-card h3 {
+        margin: 0;
+        font-size: 2rem;
+        font-weight: bold;
+    }
+
+    .stat-card p {
+        margin: 5px 0 0 0;
+        font-size: 0.9rem;
+        opacity: 0.9;
+    }
+
+/* ==========================================
+   10. PROFILE INFO - معلومات الملف الشخصي
+   ========================================== */
+.profile-info .info-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px solid #eee;
+}
+
+    .profile-info .info-item:last-child {
+        border-bottom: none;
+    }
+
+    .profile-info .info-item i {
+        width: 20px;
+        text-align: center;
+    }
+
+/* ==========================================
+   11. CHAT STYLES - تنسيقات المحادثة
+   ========================================== */
+.chat-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 5px;
+}
+
+.message {
+    max-width: 70%;
+    padding: 10px 14px;
+    border-radius: 15px;
+    font-size: 14px;
+    word-wrap: break-word;
+}
+
+.sender {
+    align-self: flex-end;
+    background: #fff;
+    color: #000;
+    border: 1px solid #ccc;
+    border-bottom-right-radius: 2px;
+}
+
+.receiver {
+    align-self: flex-start;
+    background: var(--primary-color);
+    color: #fff;
+    border-bottom-left-radius: 2px;
+}
+
+.message-content img {
+    border-radius: 8px;
+    max-width: 200px;
+}
+
+.time {
+    display: block;
+    font-size: 11px;
+    opacity: 0.6;
+    margin-top: 4px;
+    text-align: end;
+}
+
+/* ==========================================
+   12. TABLES - الجداول
+   ========================================== */
+.table th {
+    background-color: var(--bg-light);
+    font-weight: 600;
+    border-bottom: 2px solid #dee2e6;
+    color: var(--text-color);
+}
+
+.table td {
+    vertical-align: middle;
+}
+
+.table-hover tbody tr:hover {
+    background-color: rgba(179, 150, 45, 0.05);
+}
+
+/* ==========================================
+   13. ALERTS - التنبيهات
+   ========================================== */
+.alert {
+    border-radius: var(--border-radius);
+    padding: 1rem 1.25rem;
+    margin-bottom: 1rem;
+}
+
+    .alert i {
+        margin-inline-end: 0.5rem;
+    }
+
+/* ==========================================
+   14. BADGES - الشارات
+   ========================================== */
+.badge-custom {
+    background: var(--accent-color);
+    color: white;
+    padding: 0.3rem 0.8rem;
+    border-radius: 15px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+/* ==========================================
+   15. BLURRED TEXT - نص مشوش
+   ========================================== */
+.blurred-text {
+    filter: blur(4px);
+    -webkit-filter: blur(4px);
+    user-select: none;
+    pointer-events: none;
+}
+
+/* ==========================================
+   16. RESPONSIVE DESIGN - التصميم المتجاوب
+   ========================================== */
+@media (max-width: 768px) {
+    .container-custom {
+        padding: var(--spacing-md) var(--spacing-sm);
+    }
+
+    .card-custom {
+        padding: var(--spacing-md);
+    }
+
+    .otp-input {
+        width: 50px;
+        height: 50px;
+        font-size: 20px;
+    }
+
+    .otp-input-container {
+        gap: 10px;
+    }
+
+    .upload-zone {
+        padding: 2rem 1rem;
+    }
+
+    .form-section {
+        margin-bottom: var(--spacing-md);
+    }
+
+    .progress-step span {
+        font-size: 0.8rem;
+    }
+
+    .progress-line {
+        margin: 25px 10px 0;
+    }
+
+    .message {
+        max-width: 85%;
+    }
+}
+
+@media (max-width: 480px) {
+    .btn-custom,
+    .btn-outline-custom {
+        padding: 0.6rem 1.5rem;
+        font-size: 0.9rem;
+    }
+
+    .section-title {
+        font-size: 1rem;
+    }
+}
+
+/* ==========================================
+   17. ANIMATIONS - الرسوم المتحركة
+   ========================================== */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.fade-in {
+    animation: fadeIn 0.5s ease-out;
+}
+
+.slide-in {
+    animation: slideIn 0.4s ease-out;
+}
+
+/* ==========================================
+   18. UTILITY CLASSES - فئات مساعدة
+   ========================================== */
+.text-primary {
+    color: var(--primary-color) !important;
+}
+
+.text-secondary {
+    color: var(--secondary-color) !important;
+}
+
+.text-muted {
+    color: var(--text-muted) !important;
+}
+
+.bg-primary {
+    background-color: var(--primary-color) !important;
+}
+
+.bg-secondary {
+    background-color: var(--secondary-color) !important;
+}
+
+.bg-light {
+    background-color: var(--bg-light) !important;
+}
+
+.rounded {
+    border-radius: var(--border-radius) !important;
+}
+
+.rounded-lg {
+    border-radius: var(--border-radius-lg) !important;
+}
+
+.rounded-circle {
+    border-radius: 50% !important;
+}
+
+.shadow-sm {
+    box-shadow: var(--shadow-sm) !important;
+}
+
+.shadow-md {
+    box-shadow: var(--shadow-md) !important;
+}
+
+.shadow-lg {
+    box-shadow: var(--shadow-lg) !important;
+}
+
+/* ==========================================
+   19. PRINT STYLES - أنماط الطباعة
+   ========================================== */
+@media print {
+    .no-print {
+        display: none !important;
+    }
+
+    .card-custom {
+        box-shadow: none;
+        border: 1px solid #ddd;
+    }
+}
