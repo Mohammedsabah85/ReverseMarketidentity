@@ -4,6 +4,7 @@ using ReverseMarket.Data;
 using ReverseMarket.Models;
 using ReverseMarket.Models.Identity;
 using ReverseMarket.Areas.Admin.Models;
+using ReverseMarket.CustomWhatsappService;
 
 namespace ReverseMarket.Areas.Admin.Controllers
 {
@@ -12,11 +13,16 @@ namespace ReverseMarket.Areas.Admin.Controllers
     {
         private readonly ApplicationDbContext _dbContext;
         private readonly ILogger<RequestsController> _logger;
+        private readonly WhatsAppService _whatsAppService;
 
-        public RequestsController(ApplicationDbContext context, ILogger<RequestsController> logger)
+        public RequestsController(
+            ApplicationDbContext context,
+            ILogger<RequestsController> logger,
+            WhatsAppService whatsAppService)
         {
             _dbContext = context;
             _logger = logger;
+            _whatsAppService = whatsAppService;
         }
 
         public async Task<IActionResult> Index(RequestStatus? status = null, int page = 1)
@@ -77,7 +83,11 @@ namespace ReverseMarket.Areas.Admin.Controllers
         {
             try
             {
-                var request = await _dbContext.Requests.FindAsync(id);
+                var request = await _dbContext.Requests
+                    .Include(r => r.User)
+                    .Include(r => r.Category)
+                    .FirstOrDefaultAsync(r => r.Id == id);
+
                 if (request == null)
                 {
                     TempData["ErrorMessage"] = "الطلب غير موجود";
@@ -97,8 +107,17 @@ namespace ReverseMarket.Areas.Admin.Controllers
                 if (requestStatus == RequestStatus.Approved)
                 {
                     request.ApprovedAt = DateTime.Now;
+
+                    // إرسال إشعار للمستخدم
                     await NotifyUserAboutApprovalAsync(request);
+
+                    // إرسال إشعار للمتاجر المتخصصة
                     await NotifyStoresAboutNewRequestAsync(request);
+                }
+                else if (requestStatus == RequestStatus.Rejected)
+                {
+                    // إرسال إشعار بالرفض
+                    await NotifyUserAboutRejectionAsync(request);
                 }
 
                 await _dbContext.SaveChangesAsync();
@@ -124,7 +143,6 @@ namespace ReverseMarket.Areas.Admin.Controllers
             }
         }
 
-        // إضافة ميثود تعديل الطلب
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
@@ -181,7 +199,6 @@ namespace ReverseMarket.Areas.Admin.Controllers
             }
         }
 
-        // إضافة ميثود حذف الطلب
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id)
@@ -198,7 +215,6 @@ namespace ReverseMarket.Areas.Admin.Controllers
                     return RedirectToAction("Index");
                 }
 
-                // حذف الصور المرتبطة
                 if (request.Images != null && request.Images.Any())
                 {
                     _dbContext.RequestImages.RemoveRange(request.Images);
@@ -218,7 +234,6 @@ namespace ReverseMarket.Areas.Admin.Controllers
             }
         }
 
-        // إضافة ميثود إيقاف/تفعيل الطلب
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ToggleRequestStatus(int id)
@@ -232,7 +247,6 @@ namespace ReverseMarket.Areas.Admin.Controllers
                     return RedirectToAction("Index");
                 }
 
-                // التبديل بين حالة معتمد ومؤجل
                 if (request.Status == RequestStatus.Approved)
                 {
                     request.Status = RequestStatus.Postponed;
@@ -256,19 +270,35 @@ namespace ReverseMarket.Areas.Admin.Controllers
             }
         }
 
+        // ✅ إرسال إشعار للمستخدم بالموافقة على الطلب
         private async Task NotifyUserAboutApprovalAsync(Request request)
         {
             try
             {
-                var user = await _dbContext.Users.FindAsync(request.UserId);
-                if (user != null && !string.IsNullOrEmpty(user.PhoneNumber))
+                if (request.User != null && !string.IsNullOrEmpty(request.User.PhoneNumber))
                 {
-                    var message = $"مرحباً {user.FirstName}!\n\n" +
+                    var message = $"مرحباً {request.User.FirstName}!\n\n" +
                                  $"تم الموافقة على طلبك: {request.Title}\n\n" +
                                  $"سيتم إشعار المتاجر المتخصصة وستبدأ بتلقي العروض قريباً.\n\n" +
                                  $"شكراً لاستخدامك السوق العكسي";
 
-                    _logger.LogInformation("WhatsApp إلى {PhoneNumber}: {Message}", user.PhoneNumber, message);
+                    var whatsAppRequest = new WhatsAppMessageRequest
+                    {
+                        recipient = request.User.PhoneNumber,
+                        message = message
+                    };
+
+                    var result = await _whatsAppService.SendMessageAsync(whatsAppRequest);
+
+                    if (result.Success)
+                    {
+                        _logger.LogInformation("✅ تم إرسال إشعار الموافقة بنجاح إلى {PhoneNumber}", request.User.PhoneNumber);
+                    }
+                    else
+                    {
+                        _logger.LogError("❌ فشل إرسال إشعار الموافقة إلى {PhoneNumber}: {Error}",
+                            request.User.PhoneNumber, result.Message);
+                    }
                 }
             }
             catch (Exception ex)
@@ -277,33 +307,109 @@ namespace ReverseMarket.Areas.Admin.Controllers
             }
         }
 
+        // ✅ إرسال إشعار للمستخدم برفض الطلب
+        private async Task NotifyUserAboutRejectionAsync(Request request)
+        {
+            try
+            {
+                if (request.User != null && !string.IsNullOrEmpty(request.User.PhoneNumber))
+                {
+                    var message = $"مرحباً {request.User.FirstName}!\n\n" +
+                                 $"نأسف لإبلاغك بأن طلبك: {request.Title}\n" +
+                                 $"لم تتم الموافقة عليه.\n\n";
+
+                    if (!string.IsNullOrEmpty(request.AdminNotes))
+                    {
+                        message += $"السبب: {request.AdminNotes}\n\n";
+                    }
+
+                    message += "يمكنك إضافة طلب جديد في أي وقت.\n\n" +
+                              "شكراً لتفهمك - السوق العكسي";
+
+                    var whatsAppRequest = new WhatsAppMessageRequest
+                    {
+                        recipient = request.User.PhoneNumber,
+                        message = message
+                    };
+
+                    var result = await _whatsAppService.SendMessageAsync(whatsAppRequest);
+
+                    if (result.Success)
+                    {
+                        _logger.LogInformation("✅ تم إرسال إشعار الرفض بنجاح إلى {PhoneNumber}", request.User.PhoneNumber);
+                    }
+                    else
+                    {
+                        _logger.LogError("❌ فشل إرسال إشعار الرفض إلى {PhoneNumber}: {Error}",
+                            request.User.PhoneNumber, result.Message);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "خطأ في إرسال إشعار الرفض");
+            }
+        }
+
+        // ✅ إرسال إشعار للمتاجر المتخصصة عن طلب جديد
         private async Task NotifyStoresAboutNewRequestAsync(Request request)
         {
             try
             {
+                // البحث عن المتاجر المتخصصة بنفس الفئة
                 var relevantStores = await _dbContext.StoreCategories
                     .Include(sc => sc.User)
-                    .Where(sc => sc.CategoryId == request.CategoryId ||
-                               sc.SubCategory1Id == request.SubCategory1Id ||
-                               sc.SubCategory2Id == request.SubCategory2Id)
+                    .Where(sc =>
+                        (sc.CategoryId == request.CategoryId ||
+                         sc.SubCategory1Id == request.SubCategory1Id ||
+                         sc.SubCategory2Id == request.SubCategory2Id) &&
+                        sc.User.UserType == UserType.Seller &&
+                        sc.User.IsActive &&
+                        sc.User.IsStoreApproved)
                     .Select(sc => sc.User)
-                    .Where(u => u.UserType == UserType.Seller)
                     .Distinct()
                     .ToListAsync();
+
+                _logger.LogInformation("🔍 تم العثور على {Count} متجر متخصص للطلب {RequestId}",
+                    relevantStores.Count, request.Id);
 
                 foreach (var store in relevantStores)
                 {
                     if (!string.IsNullOrEmpty(store.PhoneNumber))
                     {
-                        var message = $"مرحباً {store.StoreName ?? store.FirstName}!\n\n" +
-                                     $"طلب جديد في متجركم: {request.Title}\n" +
-                                     $"الموقع: {request.City} - {request.District}\n\n" +
+                        var message = $"🔔 طلب جديد في تخصصك!\n\n" +
+                                     $"مرحباً {store.StoreName ?? store.FirstName}!\n\n" +
+                                     $"📝 الطلب: {request.Title}\n" +
+                                     $"📂 الفئة: {request.Category?.Name}\n" +
+                                     $"📍 الموقع: {request.City} - {request.District}\n\n" +
                                      $"للمشاهدة والتواصل مع العميل، تفضل بزيارة موقعنا\n\n" +
                                      $"السوق العكسي";
 
-                        _logger.LogInformation("WhatsApp إلى {PhoneNumber}: {Message}", store.PhoneNumber, message);
+                        var whatsAppRequest = new WhatsAppMessageRequest
+                        {
+                            recipient = store.PhoneNumber,
+                            message = message
+                        };
+
+                        var result = await _whatsAppService.SendMessageAsync(whatsAppRequest);
+
+                        if (result.Success)
+                        {
+                            _logger.LogInformation("✅ تم إرسال إشعار بنجاح إلى المتجر {StoreName} - {PhoneNumber}",
+                                store.StoreName, store.PhoneNumber);
+                        }
+                        else
+                        {
+                            _logger.LogError("❌ فشل إرسال إشعار إلى المتجر {StoreName} - {PhoneNumber}: {Error}",
+                                store.StoreName, store.PhoneNumber, result.Message);
+                        }
+
+                        // تأخير قصير بين الرسائل لتجنب Rate Limiting
+                        await Task.Delay(500);
                     }
                 }
+
+                _logger.LogInformation("✅ تم الانتهاء من إرسال الإشعارات لـ {Count} متجر", relevantStores.Count);
             }
             catch (Exception ex)
             {

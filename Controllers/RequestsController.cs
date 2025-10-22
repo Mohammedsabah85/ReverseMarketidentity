@@ -6,6 +6,7 @@ using ReverseMarket.Models;
 using ReverseMarket.Services;
 using Microsoft.AspNetCore.Identity;
 using ReverseMarket.Models.Identity;
+using ReverseMarket.CustomWhatsappService;
 
 namespace ReverseMarket.Controllers
 {
@@ -14,20 +15,23 @@ namespace ReverseMarket.Controllers
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly IWhatsAppService _whatsAppService;
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly ILogger<RequestsController> _logger; // إضافة Logger
+        private readonly ILogger<RequestsController> _logger;
+        private readonly WhatsAppService _customWhatsAppService;
 
         public RequestsController(
             ApplicationDbContext context,
             IWebHostEnvironment webHostEnvironment,
             IWhatsAppService whatsAppService,
             UserManager<ApplicationUser> userManager,
-            ILogger<RequestsController> logger) // إضافة Logger
+            ILogger<RequestsController> logger,
+            WhatsAppService customWhatsAppService)
             : base(context)
         {
             _webHostEnvironment = webHostEnvironment;
             _whatsAppService = whatsAppService;
             _userManager = userManager;
-            _logger = logger; // تهيئة Logger
+            _logger = logger;
+            _customWhatsAppService = customWhatsAppService;
         }
 
         public async Task<IActionResult> Index(string search, int? categoryId, int page = 1)
@@ -92,7 +96,7 @@ namespace ReverseMarket.Controllers
         }
 
         [HttpGet]
-        [Authorize] // يتطلب تسجيل الدخول
+        [Authorize]
         public async Task<IActionResult> Create()
         {
             ViewBag.Categories = await _context.Categories.Where(c => c.IsActive).ToListAsync();
@@ -139,6 +143,9 @@ namespace ReverseMarket.Controllers
                         await SaveRequestImagesAsync(request.Id, model.Images);
                     }
 
+                    // ✅ إرسال إشعار للإدارة عن الطلب الجديد
+                    await NotifyAdminAboutNewRequestAsync(request);
+
                     TempData["SuccessMessage"] = "تم إرسال طلبك بنجاح! سيتم مراجعته والموافقة عليه في أقرب وقت.";
                     return RedirectToAction("Index");
                 }
@@ -152,7 +159,6 @@ namespace ReverseMarket.Controllers
             ViewBag.Categories = await _context.Categories.Where(c => c.IsActive).ToListAsync();
             return View(model);
         }
-
 
         private async Task SaveRequestImagesAsync(int requestId, List<IFormFile> images)
         {
@@ -206,7 +212,50 @@ namespace ReverseMarket.Controllers
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"خطأ في حفظ الصور: {ex.Message}");
+                _logger.LogError(ex, "خطأ في حفظ الصور");
+            }
+        }
+
+        // ✅ إرسال إشعار للإدارة عن طلب جديد
+        private async Task NotifyAdminAboutNewRequestAsync(Request request)
+        {
+            try
+            {
+                // رقم الإدارة
+                var adminPhone = "+9647700227210";
+
+                var user = await _userManager.FindByIdAsync(request.UserId);
+                var category = await _context.Categories.FindAsync(request.CategoryId);
+
+                var message = $"📢 طلب جديد يحتاج مراجعة!\n\n" +
+                             $"👤 المستخدم: {user?.FirstName} {user?.LastName}\n" +
+                             $"📝 العنوان: {request.Title}\n" +
+                             $"📂 الفئة: {category?.Name}\n" +
+                             $"📍 الموقع: {request.City} - {request.District}\n" +
+                             $"🕐 التاريخ: {request.CreatedAt:yyyy-MM-dd HH:mm}\n\n" +
+                             $"يرجى مراجعة الطلب واعتماده\n\n" +
+                             $"السوق العكسي";
+
+                var whatsAppRequest = new WhatsAppMessageRequest
+                {
+                    recipient = adminPhone,
+                    message = message
+                };
+
+                var result = await _customWhatsAppService.SendMessageAsync(whatsAppRequest);
+
+                if (result.Success)
+                {
+                    _logger.LogInformation("✅ تم إرسال إشعار للإدارة عن طلب جديد #{RequestId}", request.Id);
+                }
+                else
+                {
+                    _logger.LogError("❌ فشل إرسال إشعار للإدارة: {Error}", result.Message);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "خطأ في إرسال إشعار للإدارة");
             }
         }
 
