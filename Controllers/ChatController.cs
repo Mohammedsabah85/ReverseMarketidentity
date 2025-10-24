@@ -4,16 +4,13 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
-using NuGet.Configuration;
-using NuGet.Protocol.Plugins;
 using ReverseMarket.Data;
-using ReverseMarket.Migrations;
 using ReverseMarket.Models.Identity;
 using ReverseMarket.SignalR;
 
 namespace ReverseMarket.Controllers
 {
-    [Authorize]
+    [Authorize] // ✅ التأكد من أن المستخدم مسجل دخول
     public class ChatController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -27,6 +24,7 @@ namespace ReverseMarket.Controllers
             _hubContext = hubContext;
         }
 
+        // ✅ صفحة المحادثات الخاصة بالمستخدم - يجب أن تظهر بدون لوحة تحكم الأدمن
         public async Task<IActionResult> Index(string withUser)
         {
             // check it first : 
@@ -44,13 +42,19 @@ namespace ReverseMarket.Controllers
 
             var ReceiverFullName = await _userManager.FindByNameAsync(ReceiverShaping);
 
+            if (ReceiverFullName == null)
+            {
+                TempData["ErrorMessage"] = "المستخدم غير موجود";
+                return RedirectToAction(nameof(MyChatting));
+            }
+
             ChatMembersDto members = new ChatMembersDto();
             members.SenderId = User.Identity.Name.ToLower();
             members.ReceiverId = withUser.ToLower();
             members.SenderFullName = SenderFullName.FirstName + " " + SenderFullName.LastName;
             members.ReceiverFullName = ReceiverFullName.FirstName + " " + ReceiverFullName.LastName;
 
-            return View(members); // Don’t load messages in main view
+            return View(members); // Don't load messages in main view
         }
 
         // Ajax endpoint to load messages
@@ -138,6 +142,7 @@ namespace ReverseMarket.Controllers
             return Ok();
         }
 
+        // ✅ صفحة قائمة المحادثات - للمستخدمين العاديين فقط
         public async Task<IActionResult> MyChatting()
         {
             var currentUser = User.Identity.Name.ToLower();
@@ -151,7 +156,7 @@ namespace ReverseMarket.Controllers
              {
                  UserName = u.UserName,
                  FirstName = u.FirstName,
-                 LastName =  u.LastName
+                 LastName = u.LastName
              }
              )
              .Distinct()
@@ -159,5 +164,21 @@ namespace ReverseMarket.Controllers
 
             return View(users); // A list to click chat with any user
         }
+    }
+
+    // ✅ Models للمحادثات
+    public class ChatMembersDto
+    {
+        public string SenderId { get; set; }
+        public string ReceiverId { get; set; }
+        public string SenderFullName { get; set; }
+        public string ReceiverFullName { get; set; }
+    }
+
+    public class UnReadMessagesDto
+    {
+        public string UserName { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
     }
 }
