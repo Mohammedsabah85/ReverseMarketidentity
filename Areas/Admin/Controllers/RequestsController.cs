@@ -113,16 +113,22 @@ namespace ReverseMarket.Areas.Admin.Controllers
                     // ✅ إرسال إشعار للمستخدم بالموافقة
                     await NotifyUserAboutApprovalAsync(request);
 
+                    // ✅ حفظ التغييرات أولاً قبل إرسال الإشعارات للمتاجر
+                    await _dbContext.SaveChangesAsync();
+
                     // ✅ إرسال إشعار للمتاجر المتخصصة - بعد الموافقة فقط
                     await NotifyStoresAboutApprovedRequestAsync(request);
                 }
                 else if (requestStatus == RequestStatus.Rejected)
                 {
+                    await _dbContext.SaveChangesAsync();
                     // إرسال إشعار بالرفض
                     await NotifyUserAboutRejectionAsync(request);
                 }
-
-                await _dbContext.SaveChangesAsync();
+                else
+                {
+                    await _dbContext.SaveChangesAsync();
+                }
 
                 var statusText = requestStatus switch
                 {
@@ -365,97 +371,140 @@ namespace ReverseMarket.Areas.Admin.Controllers
             }
         }
 
-        // ✅ إرسال إشعار للمتاجر المتخصصة بعد موافقة الأدمن - مصحح ومحسّن
+        // ✅✅✅ النسخة المصححة الكاملة - إرسال إشعار للمتاجر المتخصصة بعد موافقة الأدمن
         private async Task NotifyStoresAboutApprovedRequestAsync(Request request)
         {
             try
             {
-                _logger.LogInformation("🔍 البحث عن المتاجر المتخصصة للطلب المعتمد #{RequestId}", request.Id);
+                _logger.LogInformation("🔍 بدء عملية البحث عن المتاجر المتخصصة للطلب المعتمد #{RequestId}", request.Id);
 
-                // البحث عن المتاجر المتخصصة بنفس الفئة
-                var relevantStoresQuery = _dbContext.StoreCategories
+                // ✅ جلب بيانات الطلب كاملة مع جميع العلاقات
+                var fullRequest = await _dbContext.Requests
+                    .Include(r => r.User)
+                    .Include(r => r.Category)
+                    .Include(r => r.SubCategory1)
+                    .Include(r => r.SubCategory2)
+                    .FirstOrDefaultAsync(r => r.Id == request.Id);
+
+                if (fullRequest == null)
+                {
+                    _logger.LogError("❌ لم يتم العثور على الطلب #{RequestId} في قاعدة البيانات", request.Id);
+                    return;
+                }
+
+                _logger.LogInformation("✅ تم جلب بيانات الطلب: Category={CategoryId}, SubCat1={SubCat1Id}, SubCat2={SubCat2Id}",
+                    fullRequest.CategoryId, fullRequest.SubCategory1Id, fullRequest.SubCategory2Id);
+
+                // ✅ البحث عن المتاجر المتخصصة بنفس الفئة
+                IQueryable<StoreCategory> relevantStoresQuery = _dbContext.StoreCategories
                     .Include(sc => sc.User)
                     .Where(sc =>
                         sc.User.UserType == UserType.Seller &&
                         sc.User.IsActive &&
                         sc.User.IsStoreApproved &&
-                        !string.IsNullOrEmpty(sc.User.PhoneNumber))
-                    .AsQueryable();
+                        !string.IsNullOrEmpty(sc.User.PhoneNumber));
 
-                // تطبيق الفلتر بناءً على الفئات
-                if (request.SubCategory2Id.HasValue)
+                // ✅ تطبيق الفلتر الصحيح بناءً على مستوى الفئة
+                if (fullRequest.SubCategory2Id.HasValue)
                 {
+                    // البحث عن المتاجر التي لديها نفس SubCategory2 بالضبط
                     relevantStoresQuery = relevantStoresQuery.Where(sc =>
-                        sc.SubCategory2Id == request.SubCategory2Id);
+                        sc.SubCategory2Id == fullRequest.SubCategory2Id);
+
+                    _logger.LogInformation("🔍 البحث بناءً على SubCategory2: {SubCat2Id}", fullRequest.SubCategory2Id);
                 }
-                else if (request.SubCategory1Id.HasValue)
+                else if (fullRequest.SubCategory1Id.HasValue)
                 {
+                    // ✅ البحث عن المتاجر التي لديها نفس SubCategory1 
+                    // أو أي SubCategory2 تنتمي لنفس SubCategory1
+                    var subCategory2IdsUnderSubCategory1 = await _dbContext.SubCategories2
+                        .Where(sc2 => sc2.SubCategory1Id == fullRequest.SubCategory1Id)
+                        .Select(sc2 => sc2.Id)
+                        .ToListAsync();
+
+                    _logger.LogInformation("🔍 تم العثور على {Count} فئة فرعية ثانية تحت SubCategory1: {SubCat1Id}",
+                        subCategory2IdsUnderSubCategory1.Count, fullRequest.SubCategory1Id);
+
                     relevantStoresQuery = relevantStoresQuery.Where(sc =>
-                        sc.SubCategory1Id == request.SubCategory1Id ||
-                        sc.SubCategory2Id.HasValue);
+                        sc.SubCategory1Id == fullRequest.SubCategory1Id ||
+                        (sc.SubCategory2Id.HasValue && subCategory2IdsUnderSubCategory1.Contains(sc.SubCategory2Id.Value)));
+
+                    _logger.LogInformation("🔍 البحث بناءً على SubCategory1: {SubCat1Id}", fullRequest.SubCategory1Id);
                 }
                 else
                 {
+                    // البحث عن المتاجر التي لديها نفس Category فقط
                     relevantStoresQuery = relevantStoresQuery.Where(sc =>
-                        sc.CategoryId == request.CategoryId);
+                        sc.CategoryId == fullRequest.CategoryId);
+
+                    _logger.LogInformation("🔍 البحث بناءً على Category: {CategoryId}", fullRequest.CategoryId);
                 }
 
-                var relevantStores = await relevantStoresQuery
-                    .Select(sc => sc.User)
+                // ✅ الحصول على IDs المستخدمين بشكل فريد أولاً
+                var storeUserIds = await relevantStoresQuery
+                    .Select(sc => sc.UserId)
                     .Distinct()
                     .ToListAsync();
 
-                _logger.LogInformation("🔍 تم العثور على {Count} متجر متخصص للطلب المعتمد #{RequestId}",
-                    relevantStores.Count, request.Id);
+                _logger.LogInformation("🔍 تم العثور على {Count} معرف مستخدم فريد", storeUserIds.Count);
 
-                if (!relevantStores.Any())
+                if (!storeUserIds.Any())
                 {
-                    _logger.LogInformation("ℹ️ لا توجد متاجر متخصصة لهذا الطلب");
+                    _logger.LogWarning("⚠️ لا توجد متاجر متخصصة لهذا الطلب!");
+                    _logger.LogWarning("⚠️ يرجى التحقق من أن المتاجر قد أضافت الفئات الصحيحة في ملفاتهم الشخصية");
                     return;
                 }
 
-                // إعداد مسار الفئات
-                var categoryPath = request.Category?.Name ?? "غير محدد";
-                if (request.SubCategory1 != null)
+                // ✅ جلب المستخدمين بناءً على الـ IDs
+                var relevantStores = await _dbContext.Users
+                    .Where(u => storeUserIds.Contains(u.Id))
+                    .ToListAsync();
+
+                _logger.LogInformation("✅ تم العثور على {Count} متجر متخصص للطلب المعتمد #{RequestId}",
+                    relevantStores.Count, request.Id);
+
+                // ✅ إعداد مسار الفئات للعرض
+                var categoryPath = fullRequest.Category?.Name ?? "غير محدد";
+                if (fullRequest.SubCategory1 != null)
                 {
-                    categoryPath += $" > {request.SubCategory1.Name}";
+                    categoryPath += $" > {fullRequest.SubCategory1.Name}";
                 }
-                if (request.SubCategory2 != null)
+                if (fullRequest.SubCategory2 != null)
                 {
-                    categoryPath += $" > {request.SubCategory2.Name}";
+                    categoryPath += $" > {fullRequest.SubCategory2.Name}";
                 }
 
                 var successCount = 0;
                 var failureCount = 0;
 
-                // إرسال الإشعارات لكل متجر
+                // ✅ إرسال الإشعارات لكل متجر
                 foreach (var store in relevantStores)
                 {
                     try
                     {
-                        // ✅ بناء رسالة مفصلة وواضحة
-                        var messageText = $"طلب جديد معتمد في تخصصك!\n\n" +
-                                         $"مرحبا {store.StoreName ?? store.FirstName}!\n\n" +
-                                         $"عنوان الطلب: {request.Title}\n\n" +
-                                         $"الفئة: {categoryPath}\n\n" +
-                                         $"الموقع: {request.City} - {request.District}\n\n" +
-                                         $"التفاصيل:\n{request.Description}\n\n" +
-                                         $"المشتري: {request.User?.FirstName} {request.User?.LastName}\n" +
-                                         $"للتواصل: {request.User?.PhoneNumber}\n\n" +
-                                         $"تاريخ الطلب: {request.CreatedAt:yyyy-MM-dd}\n\n" +
+                        // ✅ بناء رسالة مفصلة وواضحة مع إيموجي للوضوح
+                        var messageText = $"🔔 طلب جديد معتمد في تخصصك!\n\n" +
+                                         $"مرحباً {store.StoreName ?? store.FirstName}!\n\n" +
+                                         $"📌 عنوان الطلب: {fullRequest.Title}\n\n" +
+                                         $"📂 الفئة: {categoryPath}\n\n" +
+                                         $"📍 الموقع: {fullRequest.City} - {fullRequest.District}\n\n" +
+                                         $"📝 التفاصيل:\n{fullRequest.Description}\n\n" +
+                                         $"👤 المشتري: {fullRequest.User?.FirstName} {fullRequest.User?.LastName}\n" +
+                                         $"📞 للتواصل: {fullRequest.User?.PhoneNumber}\n\n" +
+                                         $"📅 تاريخ الطلب: {fullRequest.CreatedAt:yyyy-MM-dd}\n\n" +
                                          $"للمشاهدة الكاملة، تفضل بزيارة موقعنا\n\n" +
-                                         $"السوق العكسي";
+                                         $"🛒 السوق العكسي";
 
-                        // ✅ تسجيل الرسالة للتأكد من محتواها
-                        _logger.LogInformation("📤 إرسال رسالة للمتجر {StoreName} - {Phone}:\n{Message}",
-                            store.StoreName, store.PhoneNumber, messageText);
+                        _logger.LogInformation("📤 إرسال رسالة للمتجر {StoreName} ({StoreId}) - {Phone}",
+                            store.StoreName ?? store.FirstName, store.Id, store.PhoneNumber);
 
                         var whatsAppRequest = new WhatsAppMessageRequest
                         {
                             recipient = store.PhoneNumber,
                             message = messageText,
                             type = "whatsapp",
-                            lang = "ar"
+                            lang = "ar",
+                            sender_id = "AliJamal"
                         };
 
                         var result = await _whatsAppService.SendMessageAsync(whatsAppRequest);
@@ -464,13 +513,13 @@ namespace ReverseMarket.Areas.Admin.Controllers
                         {
                             successCount++;
                             _logger.LogInformation("✅ تم إرسال إشعار بنجاح إلى المتجر {StoreName} - {PhoneNumber}",
-                                store.StoreName, store.PhoneNumber);
+                                store.StoreName ?? store.FirstName, store.PhoneNumber);
                         }
                         else
                         {
                             failureCount++;
                             _logger.LogError("❌ فشل إرسال إشعار إلى المتجر {StoreName} - {PhoneNumber}: {Error}",
-                                store.StoreName, store.PhoneNumber, result.Message);
+                                store.StoreName ?? store.FirstName, store.PhoneNumber, result.Message ?? "غير معروف");
                         }
 
                         // تأخير قصير بين الرسائل لتجنب Rate Limiting
@@ -479,12 +528,18 @@ namespace ReverseMarket.Areas.Admin.Controllers
                     catch (Exception storeEx)
                     {
                         failureCount++;
-                        _logger.LogError(storeEx, "❌ خطأ في إرسال إشعار للمتجر {StoreName}", store.StoreName);
+                        _logger.LogError(storeEx, "❌ خطأ في إرسال إشعار للمتجر {StoreName} ({StoreId})",
+                            store.StoreName ?? store.FirstName, store.Id);
                     }
                 }
 
                 _logger.LogInformation("✅ تم الانتهاء من إرسال الإشعارات: {SuccessCount} نجحت، {FailureCount} فشلت",
                     successCount, failureCount);
+
+                if (successCount == 0 && failureCount > 0)
+                {
+                    _logger.LogError("❌ فشل إرسال جميع الإشعارات! يرجى التحقق من إعدادات WhatsApp API");
+                }
             }
             catch (Exception ex)
             {
