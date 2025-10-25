@@ -1,7 +1,70 @@
 ﻿@model RequestsViewModel
+
 @inject IStringLocalizer<SharedResource> Localizer
 @{
     ViewData["Title"] = Localizer["Requests"];
+}
+
+<!-- Advertisements Slider Section -->
+@if (Model.Advertisements.Any())
+{
+    <section class="advertisements-section">
+        <div class="container">
+            <div id="advertisementsCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="5000">
+                <div class="carousel-indicators">
+                    @for (int i = 0; i < Model.Advertisements.Count; i++)
+                    {
+                        <button type="button" data-bs-target="#advertisementsCarousel" data-bs-slide-to="@i"
+                                class="@(i == 0 ? "active" : "")" aria-current="@(i == 0 ? "true" : "false")"
+                                aria-label="@Localizer["Advertisement"] @(i + 1)"></button>
+                    }
+                </div>
+                <div class="carousel-inner">
+                    @for (int i = 0; i < Model.Advertisements.Count; i++)
+                    {
+                        var ad = Model.Advertisements[i];
+                        <div class="carousel-item @(i == 0 ? "active" : "")">
+                            @if (!string.IsNullOrEmpty(ad.LinkUrl))
+                            {
+                                <a href="@ad.LinkUrl" target="_blank">
+                                    <img src="@ad.ImagePath" class="d-block w-100 advertisement-image" alt="@ad.Title">
+                                </a>
+                            }
+                            else
+                            {
+                                <img src="@ad.ImagePath" class="d-block w-100 advertisement-image" alt="@ad.Title">
+                            }
+
+                            @if (!string.IsNullOrEmpty(ad.Title) || !string.IsNullOrEmpty(ad.Description))
+                            {
+                                <div class="carousel-caption d-none d-md-block">
+                                    @if (!string.IsNullOrEmpty(ad.Title))
+                                    {
+                                        <h5>@ad.Title</h5>
+                                    }
+                                    @if (!string.IsNullOrEmpty(ad.Description))
+                                    {
+                                        <p>@ad.Description</p>
+                                    }
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+                @if (Model.Advertisements.Count > 1)
+                {
+                    <button class="carousel-control-prev" type="button" data-bs-target="#advertisementsCarousel" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">@Localizer["Previous"]</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#advertisementsCarousel" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">@Localizer["Next"]</span>
+                    </button>
+                }
+            </div>
+        </div>
+    </section>
 }
 
 <div class="container-custom">

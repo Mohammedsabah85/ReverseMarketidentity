@@ -119,12 +119,28 @@ namespace ReverseMarket.Controllers
                     //await _whatsAppService.SendOTPAsync(cleanPhoneNumber, adminOtp);
                     var request = new WhatsAppMessageRequest
                     {
-                        recipient = cleanPhoneNumber, // e.g. "+9647502171212"
-                        message = adminOtp
+                        recipient = cleanPhoneNumber,
+                        message = $"كود تسجيل دخول الأدمن: {adminOtp}\nصالح لمدة 5 دقائق",
+                        type = "whatsapp",  // ✅ إضافة النوع
+                        lang = "ar",        // ✅ إضافة اللغة
+                        sender_id = "AliJamal"  // ✅ إضافة المرسل
                     };
 
-                    await _whats.SendMessageAsync(request);
-                    TempData["InfoMessage"] = "تم إرسال رمز التحقق للأدمن";
+                    _logger.LogInformation("📤 إرسال كود للأدمن {Phone}: {Code}", cleanPhoneNumber, adminOtp);
+
+                    var result = await _whats.SendMessageAsync(request);
+
+                    if (result.Success)
+                    {
+                        _logger.LogInformation("✅ تم إرسال كود الأدمن بنجاح");
+                        TempData["InfoMessage"] = "تم إرسال رمز التحقق للأدمن";
+                    }
+                    else
+                    {
+                        _logger.LogError("❌ فشل إرسال كود الأدمن: {Error}", result.Message);
+                        TempData["ErrorMessage"] = "فشل إرسال رمز التحقق";
+                    }
+
                     return RedirectToAction("VerifyAdminOTP");
                 }
 

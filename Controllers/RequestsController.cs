@@ -71,7 +71,15 @@ namespace ReverseMarket.Controllers
                 CurrentPage = page,
                 TotalPages = (int)Math.Ceiling((double)totalRequests / pageSize),
                 Search = search,
-                SelectedCategoryId = categoryId
+                SelectedCategoryId = categoryId,
+
+                 Advertisements = await _context.Advertisements
+                    .Where(a => a.IsActive &&
+                           a.StartDate <= DateTime.Now &&
+                           (a.EndDate == null || a.EndDate >= DateTime.Now))
+                    .OrderBy(a => a.DisplayOrder)
+                    .ThenBy(a => a.CreatedAt)
+                    .ToListAsync(),
             };
 
             return View(model);

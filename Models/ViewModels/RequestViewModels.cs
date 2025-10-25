@@ -4,6 +4,7 @@ namespace ReverseMarket.Models
 {
     public class RequestsViewModel
     {
+        public List<Advertisement> Advertisements { get; set; } = new();
         public List<Request> Requests { get; set; } = new();
         public List<Category> Categories { get; set; } = new();
         public int CurrentPage { get; set; }

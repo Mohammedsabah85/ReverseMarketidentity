@@ -1,14 +1,15 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Localization;
 using ReverseMarket.CustomWhatsappService;
 using ReverseMarket.Data;
 using ReverseMarket.Models;
+using ReverseMarket.Models.ViewModels;
+using ReverseMarket.Resources;
 using ReverseMarket.Services;
 using System.Diagnostics;
 using Twilio.Types;
 using static System.Net.Mime.MediaTypeNames;
-using Microsoft.Extensions.Localization;
-using ReverseMarket.Resources;
 
 namespace ReverseMarket.Controllers
 {
@@ -75,68 +76,178 @@ namespace ReverseMarket.Controllers
 
         public async Task<IActionResult> About()
         {
+            //var siteSettings = await _context.SiteSettings.FirstOrDefaultAsync();
+            //ViewBag.SiteSettings = siteSettings;
+            //return View();
             var siteSettings = await _context.SiteSettings.FirstOrDefaultAsync();
-            ViewBag.SiteSettings = siteSettings;
-            return View();
+
+            // جلب الإعلانات النشطة والمرتبة
+            var advertisements = await _context.Advertisements
+                .Where(a => a.IsActive &&
+                            a.StartDate <= DateTime.Now &&
+                            (a.EndDate == null || a.EndDate >= DateTime.Now))
+                .OrderBy(a => a.DisplayOrder)
+                .ThenBy(a => a.CreatedAt)
+                .ToListAsync();
+
+            // إنشاء الموديل الموحد
+            var model = new HomeViewModel
+            {
+                SiteSettings = siteSettings,
+                Advertisements = advertisements
+            };
+
+            // تمرير الموديل إلى الواجهة
+            return View(model);
         }
 
+        //public async Task<IActionResult> Contact()
+        //{
+        //    //var siteSettings = await _context.SiteSettings.FirstOrDefaultAsync();
+        //    //ViewBag.SiteSettings = siteSettings;
+        //    //return View();
+        //    var siteSettings = await _context.SiteSettings.FirstOrDefaultAsync();
+
+        //    // جلب الإعلانات النشطة والمرتبة
+        //    var advertisements = await _context.Advertisements
+        //        .Where(a => a.IsActive &&
+        //                    a.StartDate <= DateTime.Now &&
+        //                    (a.EndDate == null || a.EndDate >= DateTime.Now))
+        //        .OrderBy(a => a.DisplayOrder)
+        //        .ThenBy(a => a.CreatedAt)
+        //        .ToListAsync();
+
+        //    // إنشاء الموديل الموحد
+        //    var model = new HomeViewModel
+        //    {
+        //        SiteSettings = siteSettings,
+        //        Advertisements = advertisements
+        //    };
+
+        //    // تمرير الموديل إلى الواجهة
+        //    return View(model);
+        //}
+
+        [HttpGet]
         public async Task<IActionResult> Contact()
         {
             var siteSettings = await _context.SiteSettings.FirstOrDefaultAsync();
-            ViewBag.SiteSettings = siteSettings;
-            return View();
+
+            var advertisements = await _context.Advertisements
+                .Where(a => a.IsActive &&
+                            a.StartDate <= DateTime.Now &&
+                            (a.EndDate == null || a.EndDate >= DateTime.Now))
+                .OrderBy(a => a.DisplayOrder)
+                .ThenBy(a => a.CreatedAt)
+                .ToListAsync();
+
+            var model = new ContactPageViewModel
+            {
+                SiteSettings = siteSettings,
+                Advertisements = advertisements
+            };
+
+            return View(model);
         }
+
 
         public IActionResult IntellectualProperty()
         {
             return View();
         }
 
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public async Task<IActionResult> Contact(ContactFormModel model)
+        //{
+        //    if (ModelState.IsValid)
+        //    {
+        //        try
+        //        {
+        //            _logger.LogInformation("Attempting to send contact form email");
+
+        //            // إرسال البريد الإلكتروني
+        //            var result = await _emailService.SendContactFormEmailAsync(
+        //                model.Name,
+        //                model.Email,
+        //                model.Phone,
+        //                model.Subject,
+        //                model.Message
+        //            );
+
+        //            if (result)
+        //            {
+        //                TempData["SuccessMessage"] = "تم إرسال رسالتك بنجاح! سنرد عليك قريباً.";
+        //                _logger.LogInformation("Contact form email sent successfully");
+        //                return RedirectToAction(nameof(Contact));
+        //            }
+        //            else
+        //            {
+        //                _logger.LogError("Failed to send contact form email");
+        //                TempData["ErrorMessage"] = "عذراً، حدث خطأ في إرسال الرسالة. يرجى التأكد من إعدادات البريد الإلكتروني أو المحاولة لاحقاً.";
+        //                return View(model);
+        //            }
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            // تسجيل الخطأ التفصيلي
+        //            _logger.LogError($"Exception in Contact form: {ex.Message}");
+        //            _logger.LogError($"Stack trace: {ex.StackTrace}");
+
+        //            TempData["ErrorMessage"] = "حدث خطأ غير متوقع. يرجى المحاولة مرة أخرى لاحقاً.";
+        //            return View(model);
+        //        }
+        //    }
+
+        //    var siteSettings = await _context.SiteSettings.FirstOrDefaultAsync();
+        //    ViewBag.SiteSettings = siteSettings;
+        //    return View(model);
+        //}
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Contact(ContactFormModel model)
+        public async Task<IActionResult> Contact(ContactPageViewModel model)
         {
-            if (ModelState.IsValid)
-            {
+            //if (ModelState.IsValid)
+            //{
                 try
                 {
                     _logger.LogInformation("Attempting to send contact form email");
 
-                    // إرسال البريد الإلكتروني
                     var result = await _emailService.SendContactFormEmailAsync(
-                        model.Name,
-                        model.Email,
-                        model.Phone,
-                        model.Subject,
-                        model.Message
+                        model.ContactForm.Name,
+                        model.ContactForm.Email,
+                        model.ContactForm.Phone,
+                        model.ContactForm.Subject,
+                        model.ContactForm.Message
                     );
 
                     if (result)
                     {
                         TempData["SuccessMessage"] = "تم إرسال رسالتك بنجاح! سنرد عليك قريباً.";
-                        _logger.LogInformation("Contact form email sent successfully");
                         return RedirectToAction(nameof(Contact));
                     }
                     else
                     {
-                        _logger.LogError("Failed to send contact form email");
-                        TempData["ErrorMessage"] = "عذراً، حدث خطأ في إرسال الرسالة. يرجى التأكد من إعدادات البريد الإلكتروني أو المحاولة لاحقاً.";
-                        return View(model);
+                        TempData["ErrorMessage"] = "عذراً، حدث خطأ في إرسال الرسالة. حاول لاحقاً.";
                     }
                 }
                 catch (Exception ex)
                 {
-                    // تسجيل الخطأ التفصيلي
                     _logger.LogError($"Exception in Contact form: {ex.Message}");
-                    _logger.LogError($"Stack trace: {ex.StackTrace}");
-
                     TempData["ErrorMessage"] = "حدث خطأ غير متوقع. يرجى المحاولة مرة أخرى لاحقاً.";
-                    return View(model);
                 }
-            }
+            //}
 
-            var siteSettings = await _context.SiteSettings.FirstOrDefaultAsync();
-            ViewBag.SiteSettings = siteSettings;
+            // في حال فشل ModelState أو إرسال البريد
+            model.SiteSettings = await _context.SiteSettings.FirstOrDefaultAsync();
+            model.Advertisements = await _context.Advertisements
+                .Where(a => a.IsActive &&
+                            a.StartDate <= DateTime.Now &&
+                            (a.EndDate == null || a.EndDate >= DateTime.Now))
+                .OrderBy(a => a.DisplayOrder)
+                .ThenBy(a => a.CreatedAt)
+                .ToListAsync();
+
             return View(model);
         }
 

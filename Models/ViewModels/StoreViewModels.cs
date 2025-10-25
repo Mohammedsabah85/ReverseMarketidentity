@@ -4,6 +4,7 @@ namespace ReverseMarket.Models
 {
     public class StoresViewModel
     {
+        public List<Advertisement> Advertisements { get; set; } = new();
         public List<ApplicationUser> Stores { get; set; } = new();
         public List<Category> Categories { get; set; } = new();
         public int CurrentPage { get; set; }
