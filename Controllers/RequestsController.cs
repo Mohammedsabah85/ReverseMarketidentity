@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ReverseMarket.Data;
 using ReverseMarket.Models;
+using ReverseMarket.Models.ViewModels;
 using ReverseMarket.Services;
 using Microsoft.AspNetCore.Identity;
 using ReverseMarket.Models.Identity;
@@ -34,7 +35,7 @@ namespace ReverseMarket.Controllers
             _customWhatsAppService = customWhatsAppService;
         }
 
-        public async Task<IActionResult> Index(string search, int? categoryId, int page = 1)
+        public async Task<IActionResult> Index(string search, int? categoryId, int? subCategory1Id, int? subCategory2Id, int page = 1)
         {
             var pageSize = 12;
 
@@ -47,12 +48,22 @@ namespace ReverseMarket.Controllers
                 .Include(r => r.User)
                 .AsQueryable();
 
+            // البحث النصي
             if (!string.IsNullOrEmpty(search))
             {
                 query = query.Where(r => r.Title.Contains(search) || r.Description.Contains(search));
             }
 
-            if (categoryId.HasValue)
+            // الفلترة حسب الفئات
+            if (subCategory2Id.HasValue)
+            {
+                query = query.Where(r => r.SubCategory2Id == subCategory2Id.Value);
+            }
+            else if (subCategory1Id.HasValue)
+            {
+                query = query.Where(r => r.SubCategory1Id == subCategory1Id.Value);
+            }
+            else if (categoryId.HasValue)
             {
                 query = query.Where(r => r.CategoryId == categoryId.Value);
             }
@@ -64,16 +75,37 @@ namespace ReverseMarket.Controllers
                 .Take(pageSize)
                 .ToListAsync();
 
+            // جلب الفئات الفرعية بناءً على الاختيارات
+            var subCategories1 = new List<SubCategory1>();
+            var subCategories2 = new List<SubCategory2>();
+
+            if (categoryId.HasValue)
+            {
+                subCategories1 = await _context.SubCategories1
+                    .Where(sc => sc.CategoryId == categoryId.Value && sc.IsActive)
+                    .ToListAsync();
+            }
+
+            if (subCategory1Id.HasValue)
+            {
+                subCategories2 = await _context.SubCategories2
+                    .Where(sc => sc.SubCategory1Id == subCategory1Id.Value && sc.IsActive)
+                    .ToListAsync();
+            }
+
             var model = new RequestsViewModel
             {
                 Requests = requests,
                 Categories = await _context.Categories.Where(c => c.IsActive).ToListAsync(),
+                SubCategories1 = subCategories1,
+                SubCategories2 = subCategories2,
                 CurrentPage = page,
                 TotalPages = (int)Math.Ceiling((double)totalRequests / pageSize),
                 Search = search,
                 SelectedCategoryId = categoryId,
-
-                 Advertisements = await _context.Advertisements
+                SelectedSubCategory1Id = subCategory1Id,
+                SelectedSubCategory2Id = subCategory2Id,
+                Advertisements = await _context.Advertisements
                     .Where(a => a.IsActive &&
                            a.StartDate <= DateTime.Now &&
                            (a.EndDate == null || a.EndDate >= DateTime.Now))
@@ -151,7 +183,7 @@ namespace ReverseMarket.Controllers
                         await SaveRequestImagesAsync(request.Id, model.Images);
                     }
 
-                    // ✅ إرسال إشعار للإدارة عن الطلب الجديد
+                    // إرسال إشعار للإدارة عن الطلب الجديد
                     await NotifyAdminAboutNewRequestAsync(request);
 
                     TempData["SuccessMessage"] = "تم إرسال طلبك بنجاح! سيتم مراجعته والموافقة عليه في أقرب وقت.";
@@ -224,15 +256,12 @@ namespace ReverseMarket.Controllers
             }
         }
 
-        // ✅ إرسال إشعار للإدارة عن طلب جديد - مصحح
         private async Task NotifyAdminAboutNewRequestAsync(Request request)
         {
             try
             {
-                // رقم الإدارة
                 var adminPhone = "+9647700227210";
 
-                // ✅ جلب بيانات الطلب كاملة
                 var fullRequest = await _context.Requests
                     .Include(r => r.User)
                     .Include(r => r.Category)
@@ -246,7 +275,6 @@ namespace ReverseMarket.Controllers
                     return;
                 }
 
-                // ✅ بناء الرسالة بالتفاصيل الكاملة
                 var categoryPath = fullRequest.Category?.Name ?? "غير محدد";
                 if (fullRequest.SubCategory1 != null)
                 {
@@ -268,7 +296,6 @@ namespace ReverseMarket.Controllers
                                  $"يرجى مراجعة الطلب واعتماده\n\n" +
                                  $"السوق العكسي";
 
-                // ✅ تسجيل الرسالة للتأكد من محتواها
                 _logger.LogInformation("📤 إرسال رسالة للأدمن:\n{Message}", messageText);
 
                 var whatsAppRequest = new WhatsAppMessageRequest
@@ -295,12 +322,11 @@ namespace ReverseMarket.Controllers
                 _logger.LogError(ex, "❌ خطأ في إرسال إشعار للإدارة");
             }
         }
-
         [HttpGet]
         public async Task<IActionResult> GetSubCategories1(int categoryId)
         {
             var subCategories = await _context.SubCategories1
-                .Where(sc => sc.CategoryId == categoryId && sc.IsActive)
+                .Where(sc => sc.CategoryId == categoryId) // إزالة && sc.IsActive
                 .Select(sc => new { id = sc.Id, name = sc.Name })
                 .ToListAsync();
 
@@ -311,11 +337,33 @@ namespace ReverseMarket.Controllers
         public async Task<IActionResult> GetSubCategories2(int subCategory1Id)
         {
             var subCategories = await _context.SubCategories2
-                .Where(sc => sc.SubCategory1Id == subCategory1Id && sc.IsActive)
+                .Where(sc => sc.SubCategory1Id == subCategory1Id) // إزالة && sc.IsActive
                 .Select(sc => new { id = sc.Id, name = sc.Name })
                 .ToListAsync();
 
             return Json(subCategories);
         }
+        //[HttpGet]
+        //public async Task<IActionResult> GetSubCategories1(int categoryId)
+        //{
+        //    var subCategories = await _context.SubCategories1
+        //        .Where(sc => sc.CategoryId == categoryId && sc.IsActive)
+        //        .Select(sc => new { id = sc.Id, name = sc.Name })
+        //        .ToListAsync();
+
+        //    return Json(subCategories);
+        //}
+
+        //[HttpGet]
+        //public async Task<IActionResult> GetSubCategories2(int subCategory1Id)
+        //{
+        //    var subCategories = await _context.SubCategories2
+        //        .Where(sc => sc.SubCategory1Id == subCategory1Id && sc.IsActive)
+        //        .Select(sc => new { id = sc.Id, name = sc.Name })
+        //        .ToListAsync();
+
+        //    return Json(subCategories);
+        //}
     }
 }
+

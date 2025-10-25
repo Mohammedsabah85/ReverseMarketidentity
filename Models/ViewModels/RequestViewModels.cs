@@ -4,14 +4,19 @@ namespace ReverseMarket.Models
 {
     public class RequestsViewModel
     {
-        public List<Advertisement> Advertisements { get; set; } = new();
         public List<Request> Requests { get; set; } = new();
         public List<Category> Categories { get; set; } = new();
+        public List<SubCategory1> SubCategories1 { get; set; } = new();
+        public List<SubCategory2> SubCategories2 { get; set; } = new();
         public int CurrentPage { get; set; }
         public int TotalPages { get; set; }
         public string? Search { get; set; }
         public int? SelectedCategoryId { get; set; }
+        public int? SelectedSubCategory1Id { get; set; }
+        public int? SelectedSubCategory2Id { get; set; }
+        public List<Advertisement> Advertisements { get; set; } = new();
     }
+
 
     public class CreateRequestViewModel
     {
