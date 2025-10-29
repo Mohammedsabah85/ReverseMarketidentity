@@ -228,6 +228,26 @@ namespace ReverseMarket.Controllers
         }
 
         [HttpGet]
+        public IActionResult Login()
+        {
+            // Check if user is already logged in
+            if (User.Identity?.IsAuthenticated == true)
+            {
+                if (User.IsInRole("Admin"))
+                {
+                    return RedirectToAction("Index", "Dashboard", new { area = "Admin" });
+                }
+                return RedirectToAction("Index", "Home");
+            }
+
+            var model = new LoginViewModel
+            {
+                CountryCode = "+964"
+            };
+            return View(model);
+        }
+
+        [HttpGet]
         public IActionResult VerifyAdminOTP()
         {
             var adminPhone = HttpContext.Session.GetString("AdminPhone");
@@ -606,18 +626,46 @@ namespace ReverseMarket.Controllers
                     // Add store categories for sellers
                     if (model.UserType == UserType.Seller && model.StoreCategories?.Any() == true)
                     {
-                        foreach (var categoryId in model.StoreCategories)
+                        foreach (var subCategory2IdStr in model.StoreCategories)
                         {
-                            var storeCategory = new StoreCategory
+                            if (int.TryParse(subCategory2IdStr.ToString(), out int subCategory2Id))
                             {
-                                UserId = user.Id,
-                                CategoryId = categoryId,
-                                CreatedAt = DateTime.Now
-                            };
-                            _context.StoreCategories.Add(storeCategory);
+                                // جلب SubCategory2 للحصول على المعلومات الكاملة
+                                var subCategory2 = await _context.SubCategories2
+                                    .Include(sc2 => sc2.SubCategory1)
+                                    .FirstOrDefaultAsync(sc2 => sc2.Id == subCategory2Id);
+
+                                if (subCategory2 != null)
+                                {
+                                    var storeCategory = new StoreCategory
+                                    {
+                                        UserId = user.Id,
+                                        CategoryId = subCategory2.SubCategory1.CategoryId,
+                                        SubCategory1Id = subCategory2.SubCategory1Id,
+                                        SubCategory2Id = subCategory2.Id,
+                                        CreatedAt = DateTime.Now
+                                    };
+                                    _context.StoreCategories.Add(storeCategory);
+                                }
+                            }
                         }
                         await _context.SaveChangesAsync();
                     }
+                
+                    //if (model.UserType == UserType.Seller && model.StoreCategories?.Any() == true)
+                    //{
+                    //    foreach (var categoryId in model.StoreCategories)
+                    //    {
+                    //        var storeCategory = new StoreCategory
+                    //        {
+                    //            UserId = user.Id,
+                    //            CategoryId = categoryId,
+                    //            CreatedAt = DateTime.Now
+                    //        };
+                    //        _context.StoreCategories.Add(storeCategory);
+                    //    }
+                    //    await _context.SaveChangesAsync();
+                    //}
 
                     // Sign in the user مع isPersistent = true للحفاظ على الجلسة
                     await _signInManager.SignInAsync(user, isPersistent: true);

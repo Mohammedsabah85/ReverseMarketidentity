@@ -1,0 +1,151 @@
+@model List<ApplicationUser>
+@{
+    ViewData["Title"] = "الروابط المعلقة";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h3>الروابط المعلقة - بانتظار المراجعة</h3>
+    <a href="/Admin/Stores/PendingApproval" class="btn btn-outline-primary">
+        <i class="fas fa-store me-2"></i>
+        المتاجر المعلقة
+    </a>
+</div>
+
+<div class="card-admin">
+    <div class="card-body">
+        @if (Model.Any())
+        {
+            <div class="table-responsive">
+                <table class="table table-admin">
+                    <thead>
+                        <tr>
+                            <th>اسم المتجر</th>
+                            <th>المالك</th>
+                            <th>رقم الهاتف</th>
+                            <th>الروابط الحالية</th>
+                            <th>الروابط الجديدة (معلقة)</th>
+                            <th>تاريخ الطلب</th>
+                            <th>الإجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var store in Model)
+                        {
+                            <tr>
+                                <td>
+                                    <strong>@store.StoreName</strong>
+                                </td>
+                                <td>@store.FirstName @store.LastName</td>
+                                <td>@store.PhoneNumber</td>
+                                <td>
+                                    @if (!string.IsNullOrEmpty(store.WebsiteUrl1) || 
+                                         !string.IsNullOrEmpty(store.WebsiteUrl2) || 
+                                         !string.IsNullOrEmpty(store.WebsiteUrl3))
+                                    {
+                                        <small>
+                                            @if (!string.IsNullOrEmpty(store.WebsiteUrl1))
+                                            {
+                                                <div><i class="fas fa-link me-1"></i> <a href="@store.WebsiteUrl1" target="_blank">@store.WebsiteUrl1</a></div>
+                                            }
+                                            @if (!string.IsNullOrEmpty(store.WebsiteUrl2))
+                                            {
+                                                <div><i class="fas fa-link me-1"></i> <a href="@store.WebsiteUrl2" target="_blank">@store.WebsiteUrl2</a></div>
+                                            }
+                                            @if (!string.IsNullOrEmpty(store.WebsiteUrl3))
+                                            {
+                                                <div><i class="fas fa-link me-1"></i> <a href="@store.WebsiteUrl3" target="_blank">@store.WebsiteUrl3</a></div>
+                                            }
+                                        </small>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">لا توجد روابط حالية</span>
+                                    }
+                                </td>
+                                <td>
+                                    <div class="alert alert-warning mb-0 p-2">
+                                        <strong>جديد:</strong>
+                                        @if (!string.IsNullOrEmpty(store.PendingWebsiteUrl1))
+                                        {
+                                            <div><i class="fas fa-link me-1"></i> <a href="@store.PendingWebsiteUrl1" target="_blank">@store.PendingWebsiteUrl1</a></div>
+                                        }
+                                        @if (!string.IsNullOrEmpty(store.PendingWebsiteUrl2))
+                                        {
+                                            <div><i class="fas fa-link me-1"></i> <a href="@store.PendingWebsiteUrl2" target="_blank">@store.PendingWebsiteUrl2</a></div>
+                                        }
+                                        @if (!string.IsNullOrEmpty(store.PendingWebsiteUrl3))
+                                        {
+                                            <div><i class="fas fa-link me-1"></i> <a href="@store.PendingWebsiteUrl3" target="_blank">@store.PendingWebsiteUrl3</a></div>
+                                        }
+                                    </div>
+                                </td>
+                                <td>
+                                    <small>@(store.UpdatedAt?.ToString("dd/MM/yyyy") ?? "غير محدد")</small>
+                                </td>
+                                <td>
+                                    <div class="btn-group">
+                                        <a href="/Admin/Users/Details/@store.Id" class="btn btn-outline-info btn-sm" title="التفاصيل">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <form method="post" asp-action="ApproveUrlChanges" asp-route-id="@store.Id" style="display:inline;">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="btn btn-outline-success btn-sm" 
+                                                    onclick="return confirm('هل أنت متأكد من الموافقة على هذه الروابط؟')"
+                                                    title="موافقة">
+                                                <i class="fas fa-check"></i> موافقة
+                                            </button>
+                                        </form>
+                                        <button type="button" class="btn btn-outline-danger btn-sm" 
+                                                onclick="rejectUrlChanges('@store.Id', '@store.StoreName')"
+                                                title="رفض">
+                                            <i class="fas fa-times"></i> رفض
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="text-center py-5">
+                <i class="fas fa-check-circle fa-4x text-success mb-3"></i>
+                <h5 class="text-muted">لا توجد روابط معلقة</h5>
+                <p class="text-muted">جميع الروابط تمت مراجعتها</p>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function rejectUrlChanges(id, storeName) {
+            var reason = prompt(`سبب رفض الروابط الجديدة لمتجر "${storeName}":`);
+            if (reason) {
+                var form = document.createElement('form');
+                form.method = 'POST';
+                form.action = `/Admin/Stores/RejectUrlChanges/${id}`;
+
+                var reasonInput = document.createElement('input');
+                reasonInput.type = 'hidden';
+                reasonInput.name = 'reason';
+                reasonInput.value = reason;
+                form.appendChild(reasonInput);
+
+                var token = document.querySelector('input[name="__RequestVerificationToken"]');
+                if (token) {
+                    var tokenInput = document.createElement('input');
+                    tokenInput.type = 'hidden';
+                    tokenInput.name = '__RequestVerificationToken';
+                    tokenInput.value = token.value;
+                    form.appendChild(tokenInput);
+                }
+
+                document.body.appendChild(form);
+                form.submit();
+            }
+        }
+    </script>
+}

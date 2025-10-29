@@ -67,6 +67,14 @@ namespace ReverseMarket.Models.Identity
         //public virtual ICollection<Request> Requests { get; set; } = new List<Request>();
         //public virtual ICollection<StoreCategory> StoreCategories { get; set; } = new List<StoreCategory>();
 
+        public string? PendingWebsiteUrl1 { get; set; }
+        public string? PendingWebsiteUrl2 { get; set; }
+        public string? PendingWebsiteUrl3 { get; set; }
+
+        public bool HasPendingUrlChanges { get; set; }
+
+
+        public DateTime? UrlsLastApprovedAt { get; set; }
 
         public virtual ICollection<Request> Requests { get; set; } = new List<Request>();
         public virtual ICollection<StoreCategory> StoreCategories { get; set; } = new List<StoreCategory>();

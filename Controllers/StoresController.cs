@@ -6,13 +6,10 @@ using ReverseMarket.Models.Identity;
 
 namespace ReverseMarket.Controllers
 {
-    public class StoresController : Controller
+    public class StoresController : BaseController
     {
-        private readonly ApplicationDbContext _context;
-
-        public StoresController(ApplicationDbContext context)
+        public StoresController(ApplicationDbContext context) : base(context)
         {
-            _context = context;
         }
 
         public async Task<IActionResult> Index(string search, int? categoryId, int page = 1)
@@ -23,7 +20,7 @@ namespace ReverseMarket.Controllers
            .Where(u => u.UserType == UserType.Seller &&
                       !string.IsNullOrEmpty(u.StoreName) &&
                       u.IsActive &&
-                      u.IsStoreApproved) // إضافة شرط الموافقة
+                      u.IsStoreApproved)
            .Include(u => u.StoreCategories)
            .ThenInclude(sc => sc.Category)
            .AsQueryable();
@@ -48,7 +45,7 @@ namespace ReverseMarket.Controllers
 
             var model = new StoresViewModel
             {
-                Stores = stores, // ApplicationUser مباشرة
+                Stores = stores,
                 Categories = await _context.Categories.Where(c => c.IsActive).ToListAsync(),
                 CurrentPage = page,
                 TotalPages = (int)Math.Ceiling((double)totalStores / pageSize),
@@ -62,14 +59,12 @@ namespace ReverseMarket.Controllers
                     .OrderBy(a => a.DisplayOrder)
                     .ThenBy(a => a.CreatedAt)
                     .ToListAsync(),
-
-
             };
 
             return View(model);
         }
 
-        public async Task<IActionResult> Details(string id) // غيّر من int إلى string
+        public async Task<IActionResult> Details(string id)
         {
             var store = await _context.Users
                 .Include(u => u.StoreCategories)

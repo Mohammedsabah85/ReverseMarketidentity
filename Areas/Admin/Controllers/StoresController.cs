@@ -41,6 +41,85 @@ namespace ReverseMarket.Areas.Admin.Controllers
             return View(pendingStores);
         }
 
+        // ✅ صفحة جديدة لمراجعة الروابط المعلقة
+        public async Task<IActionResult> PendingUrlChanges()
+        {
+            var storesWithPendingUrls = await _userManager.Users
+                .Where(u => u.UserType == UserType.Seller && u.HasPendingUrlChanges)
+                .OrderByDescending(u => u.UpdatedAt)
+                .ToListAsync();
+
+            return View(storesWithPendingUrls);
+        }
+
+        // ✅ الموافقة على الروابط الجديدة
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ApproveUrlChanges(string id)
+        {
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null || user.UserType != UserType.Seller)
+            {
+                TempData["ErrorMessage"] = "المتجر غير موجود";
+                return RedirectToAction("PendingUrlChanges");
+            }
+
+            // نقل الروابط من Pending إلى الروابط الفعلية
+            user.WebsiteUrl1 = user.PendingWebsiteUrl1;
+            user.WebsiteUrl2 = user.PendingWebsiteUrl2;
+            user.WebsiteUrl3 = user.PendingWebsiteUrl3;
+
+            // إعادة تعيين الحقول المعلقة
+            user.PendingWebsiteUrl1 = null;
+            user.PendingWebsiteUrl2 = null;
+            user.PendingWebsiteUrl3 = null;
+            user.HasPendingUrlChanges = false;
+            user.UrlsLastApprovedAt = DateTime.Now;
+
+            var result = await _userManager.UpdateAsync(user);
+
+            if (result.Succeeded)
+            {
+                // إرسال إشعار بالموافقة
+                await NotifyUrlApprovalAsync(user);
+
+                TempData["SuccessMessage"] = $"تم اعتماد الروابط الجديدة لمتجر {user.StoreName}";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "حدث خطأ أثناء اعتماد الروابط";
+            }
+
+            return RedirectToAction("PendingUrlChanges");
+        }
+
+        // ✅ رفض الروابط الجديدة
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RejectUrlChanges(string id, string reason)
+        {
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null)
+            {
+                TempData["ErrorMessage"] = "المتجر غير موجود";
+                return RedirectToAction("PendingUrlChanges");
+            }
+
+            // حذف الروابط المعلقة
+            user.PendingWebsiteUrl1 = null;
+            user.PendingWebsiteUrl2 = null;
+            user.PendingWebsiteUrl3 = null;
+            user.HasPendingUrlChanges = false;
+
+            await _userManager.UpdateAsync(user);
+
+            // إرسال إشعار بالرفض
+            await NotifyUrlRejectionAsync(user, reason);
+
+            TempData["SuccessMessage"] = $"تم رفض الروابط الجديدة لمتجر {user.StoreName}";
+            return RedirectToAction("PendingUrlChanges");
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ApproveStore(string id)
@@ -60,9 +139,7 @@ namespace ReverseMarket.Areas.Admin.Controllers
 
             if (result.Succeeded)
             {
-                // ✅ إرسال إشعار الموافقة على المتجر
                 await NotifyStoreApprovalAsync(user);
-
                 TempData["SuccessMessage"] = $"تم اعتماد متجر {user.StoreName} بنجاح";
             }
             else
@@ -84,7 +161,6 @@ namespace ReverseMarket.Areas.Admin.Controllers
                 return RedirectToAction("PendingApproval");
             }
 
-            // ✅ إرسال إشعار الرفض
             await NotifyStoreRejectionAsync(user, reason);
 
             user.IsActive = false;
@@ -94,7 +170,80 @@ namespace ReverseMarket.Areas.Admin.Controllers
             return RedirectToAction("PendingApproval");
         }
 
-        // ✅ إرسال إشعار الموافقة على المتجر
+        // ✅ إرسال إشعار الموافقة على الروابط
+        private async Task NotifyUrlApprovalAsync(ApplicationUser store)
+        {
+            try
+            {
+                if (!string.IsNullOrEmpty(store.PhoneNumber))
+                {
+                    var message = $"مرحباً {store.StoreName}!\n\n" +
+                                 $"تم اعتماد تحديثات الروابط الخاصة بمتجرك ✅\n\n" +
+                                 $"الروابط الجديدة:\n";
+
+                    if (!string.IsNullOrEmpty(store.WebsiteUrl1))
+                        message += $"• {store.WebsiteUrl1}\n";
+                    if (!string.IsNullOrEmpty(store.WebsiteUrl2))
+                        message += $"• {store.WebsiteUrl2}\n";
+                    if (!string.IsNullOrEmpty(store.WebsiteUrl3))
+                        message += $"• {store.WebsiteUrl3}\n";
+
+                    message += "\nشكراً لك - السوق العكسي";
+
+                    var whatsAppRequest = new WhatsAppMessageRequest
+                    {
+                        recipient = store.PhoneNumber,
+                        message = message
+                    };
+
+                    var result = await _whatsAppService.SendMessageAsync(whatsAppRequest);
+
+                    if (result.Success)
+                    {
+                        _logger.LogInformation("✅ تم إرسال إشعار الموافقة على الروابط إلى {PhoneNumber}",
+                            store.PhoneNumber);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "خطأ في إرسال إشعار الموافقة على الروابط");
+            }
+        }
+
+        // ✅ إرسال إشعار رفض الروابط
+        private async Task NotifyUrlRejectionAsync(ApplicationUser store, string reason)
+        {
+            try
+            {
+                if (!string.IsNullOrEmpty(store.PhoneNumber))
+                {
+                    var message = $"مرحباً {store.StoreName}!\n\n" +
+                                 $"نأسف لإبلاغك بأن الروابط الجديدة لم تتم الموافقة عليها.\n\n";
+
+                    if (!string.IsNullOrEmpty(reason))
+                    {
+                        message += $"السبب: {reason}\n\n";
+                    }
+
+                    message += "يمكنك إعادة المحاولة بروابط أخرى.\n\n" +
+                              "شكراً لتفهمك - السوق العكسي";
+
+                    var whatsAppRequest = new WhatsAppMessageRequest
+                    {
+                        recipient = store.PhoneNumber,
+                        message = message
+                    };
+
+                    await _whatsAppService.SendMessageAsync(whatsAppRequest);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "خطأ في إرسال إشعار رفض الروابط");
+            }
+        }
+
         private async Task NotifyStoreApprovalAsync(ApplicationUser store)
         {
             try
@@ -136,7 +285,6 @@ namespace ReverseMarket.Areas.Admin.Controllers
             }
         }
 
-        // ✅ إرسال إشعار رفض المتجر
         private async Task NotifyStoreRejectionAsync(ApplicationUser store, string reason)
         {
             try

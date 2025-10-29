@@ -48,5 +48,9 @@ namespace ReverseMarket.Models
         public string? WebsiteUrl1 { get; set; }
         public string? WebsiteUrl2 { get; set; }
         public string? WebsiteUrl3 { get; set; }
+        public bool HasPendingUrlChanges { get; set; }
+        public string? PendingWebsiteUrl1 { get; set; }
+        public string? PendingWebsiteUrl2 { get; set; }
+        public string? PendingWebsiteUrl3 { get; set; }
     }
 }

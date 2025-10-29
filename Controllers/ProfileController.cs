@@ -124,8 +124,14 @@ namespace ReverseMarket.Controllers
                 StoreDescription = user.StoreDescription,
                 WebsiteUrl1 = user.WebsiteUrl1,
                 WebsiteUrl2 = user.WebsiteUrl2,
-                WebsiteUrl3 = user.WebsiteUrl3
-            };
+                WebsiteUrl3 = user.WebsiteUrl3,
+                // إضافة الروابط المعلقة إن وجدت
+                HasPendingUrlChanges = user.HasPendingUrlChanges,
+                PendingWebsiteUrl1 = user.PendingWebsiteUrl1,
+                PendingWebsiteUrl2 = user.PendingWebsiteUrl2,
+                PendingWebsiteUrl3 = user.PendingWebsiteUrl3, 
+ 
+    };
 
             return View(model);
         }
@@ -152,7 +158,7 @@ namespace ReverseMarket.Controllers
                 return NotFound();
             }
 
-            // تحديث البيانات
+            // تحديث البيانات الأساسية (لا تحتاج موافقة)
             user.FirstName = model.FirstName;
             user.LastName = model.LastName;
             user.Email = model.Email;
@@ -166,9 +172,22 @@ namespace ReverseMarket.Controllers
             {
                 user.StoreName = model.StoreName;
                 user.StoreDescription = model.StoreDescription;
-                user.WebsiteUrl1 = model.WebsiteUrl1;
-                user.WebsiteUrl2 = model.WebsiteUrl2;
-                user.WebsiteUrl3 = model.WebsiteUrl3;
+
+                // ✅ معالجة الروابط - تحتاج موافقة الإدارة
+                bool urlsChanged = false;
+
+                // التحقق من تغيير الروابط
+                if (model.WebsiteUrl1 != user.WebsiteUrl1 ||
+                    model.WebsiteUrl2 != user.WebsiteUrl2 ||
+                    model.WebsiteUrl3 != user.WebsiteUrl3)
+                {
+                    // حفظ الروابط الجديدة كـ pending
+                    user.PendingWebsiteUrl1 = model.WebsiteUrl1;
+                    user.PendingWebsiteUrl2 = model.WebsiteUrl2;
+                    user.PendingWebsiteUrl3 = model.WebsiteUrl3;
+                    user.HasPendingUrlChanges = true;
+                    urlsChanged = true;
+                }
             }
 
             user.UpdatedAt = DateTime.Now;
@@ -176,7 +195,14 @@ namespace ReverseMarket.Controllers
             var result = await _userManager.UpdateAsync(user);
             if (result.Succeeded)
             {
-                TempData["SuccessMessage"] = "تم تحديث ملفك الشخصي بنجاح";
+                if (user.UserType == UserType.Seller && user.HasPendingUrlChanges)
+                {
+                    TempData["WarningMessage"] = "تم حفظ تعديلاتك بنجاح. الروابط الجديدة بانتظار موافقة الإدارة.";
+                }
+                else
+                {
+                    TempData["SuccessMessage"] = "تم تحديث ملفك الشخصي بنجاح";
+                }
                 return RedirectToAction("Index");
             }
 
@@ -188,5 +214,4 @@ namespace ReverseMarket.Controllers
             return View(model);
         }
     }
-
 }
