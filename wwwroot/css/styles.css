@@ -1217,3 +1217,35 @@ main {
         border: 1px solid #ddd;
     }
 }
+/* Notification Styles */
+.notification-item {
+    padding: 15px;
+    border-bottom: 1px solid #e9ecef;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+    .notification-item:hover {
+        background-color: #f8f9fa;
+    }
+
+    .notification-item.unread {
+        background-color: #e7f3ff;
+        border-right: 4px solid #007bff;
+    }
+
+.notification-icon {
+    width: 45px;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f8f9fa;
+    border-radius: 50%;
+    font-size: 1.25rem;
+}
+
+#notification-badge {
+    font-size: 0.7rem;
+    padding: 0.25em 0.5em;
+}

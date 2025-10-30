@@ -144,28 +144,82 @@ builder.Services.AddSession(options =>
     options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
     options.Cookie.SameSite = SameSiteMode.Lax;
 });
-
 // ====================================
 // 6. Application Services
 // ====================================
 builder.Services.AddHttpContextAccessor();
 
+// WhatsApp Services Configuration
+builder.Services.Configure<WhatsSettings>(builder.Configuration.GetSection("WhatsAppSettings"));
+builder.Services.AddHttpClient<WhatsAppService>();
+builder.Services.AddScoped<WhatsAppService>(); // Custom WhatsApp Service
+
+// IWhatsAppService
 builder.Services.AddScoped<ReverseMarket.Services.IWhatsAppService, ReverseMarket.Services.WhatsAppService>();
+
+// Email Service
+builder.Services.AddScoped<IEmailService, EmailService>();
+
+// 🔔 Notification Service
+builder.Services.AddScoped<INotificationService, NotificationService>();
+
+// Language Service
 builder.Services.AddScoped<ILanguageService, LanguageService>();
+
+// Application Services Extension
 builder.Services.AddApplicationServices(builder.Configuration);
 
 // ====================================
-// 7. SignalR for Real-time Chat
+// 7. SignalR for Real-time features
 // ====================================
-builder.Services.AddSignalR();
+builder.Services.AddSignalR(options =>
+{
+    options.EnableDetailedErrors = true;
+    options.KeepAliveInterval = TimeSpan.FromSeconds(15);
+    options.ClientTimeoutInterval = TimeSpan.FromSeconds(30);
+});
 builder.Services.AddSingleton<IUserIdProvider, NameUserIdProvider>();
+
+// ⚠️ احذف هذا القسم المكرر:
+// ====================================
+// 8. WhatsApp Service Configuration
+// ====================================
+// builder.Services.Configure<WhatsSettings>(
+//     builder.Configuration.GetSection("WhatsAppSettings"));
+// builder.Services.AddHttpClient<WhatsAppService>();
+////// ====================================
+////// 6. Application Services
+////// ====================================
+////builder.Services.AddHttpContextAccessor();
+
+//////builder.Services.AddScoped<ReverseMarket.Services.IWhatsAppService, ReverseMarket.Services.WhatsAppService>();
+
+////builder.Services.AddScoped<ReverseMarket.Services.IWhatsAppService, ReverseMarket.Services.WhatsAppService>();
+////builder.Services.Configure<WhatsSettings>(builder.Configuration.GetSection("WhatsAppSettings"));
+////builder.Services.AddHttpClient<WhatsAppService>();
+////builder.Services.AddScoped<ILanguageService, LanguageService>();
+
+////// Email Service
+////builder.Services.AddScoped<IEmailService, EmailService>();
+
+////// 🔔 Notification Service
+////builder.Services.AddScoped<INotificationService, NotificationService>();
+
+
+////builder.Services.AddApplicationServices(builder.Configuration);
+
+////// ====================================
+////// 7. SignalR for Real-time Chat
+////// ====================================
+////builder.Services.AddSignalR();
+////builder.Services.AddSingleton<IUserIdProvider, NameUserIdProvider>();
 
 // ====================================
 // 8. WhatsApp Service Configuration
 // ====================================
-builder.Services.Configure<WhatsSettings>(
-    builder.Configuration.GetSection("WhatsAppSettings"));
-builder.Services.AddHttpClient<WhatsAppService>();
+//builder.Services.Configure<WhatsSettings>(
+//    builder.Configuration.GetSection("WhatsAppSettings"));
+//builder.Services.AddHttpClient<WhatsAppService>();
 
 // ====================================
 // 9. Development Tools
@@ -215,6 +269,7 @@ app.UseSession();
 
 // SignalR Hub
 app.MapHub<ChatHub>("/chathub");
+app.MapHub<NotificationHub>("/notificationHub");
 
 // Routes
 app.MapControllerRoute(

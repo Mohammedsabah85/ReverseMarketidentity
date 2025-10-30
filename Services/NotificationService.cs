@@ -34,7 +34,9 @@ namespace ReverseMarket.Services
     {
         private readonly ApplicationDbContext _context;
         private readonly IEmailService _emailService;
-        private readonly WhatsAppService _whatsAppService;
+        //private readonly WhatsAppService _whatsAppService;
+        private readonly IWhatsAppService _whatsAppService; // ✅ غيّر هنا
+
         private readonly IHubContext<NotificationHub> _hubContext;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ILogger<NotificationService> _logger;
@@ -42,7 +44,8 @@ namespace ReverseMarket.Services
         public NotificationService(
             ApplicationDbContext context,
             IEmailService emailService,
-            WhatsAppService whatsAppService,
+             //WhatsAppService whatsAppService,
+             IWhatsAppService whatsAppService,
             IHubContext<NotificationHub> hubContext,
             UserManager<ApplicationUser> userManager,
             ILogger<NotificationService> logger)
@@ -237,12 +240,15 @@ namespace ReverseMarket.Services
                 // WhatsAppService does not have SendMessageAsync, so use an available method.
                 // For notification messages, SendWelcomeMessageAsync is the closest match.
                 // You may want to adjust the parameters as needed for your use case.
-                var result = await _whatsAppService.SendWelcomeMessageAsync(
-                    user.PhoneNumber!,
-                    user.FirstName,
-                    user.UserType.ToString()
-                );
-
+                //var result = await _whatsAppService.SendWelcomeMessageAsync(
+                //    user.PhoneNumber!,
+                //    user.FirstName,
+                //    user.UserType.ToString()
+                //);
+                var result = await _whatsAppService.SendWhatsAppNotificationAsync(
+            user.PhoneNumber!,
+            message
+        );
                 if (result)
                 {
                     notification.WhatsAppSent = true;

@@ -175,6 +175,15 @@
                     </ul>
 
                     <ul class="navbar-nav">
+
+
+                        <!-- Notifications Bell -->
+                        @if (isLoggedIn)
+                        {
+                            <li class="nav-item">
+                                @await Html.PartialAsync("_NotificationBell")
+                            </li>
+                        }
                         <!-- Language Selector -->
                         <li class="nav-item dropdown language-selector">
                             <a class="nav-link dropdown-toggle language-dropdown" href="#" id="languageMenu"
@@ -275,6 +284,9 @@
                             </li>
                         }
                     </ul>
+
+
+            
                 @*     <ul class="navbar-nav">
                         <li class="nav-item dropdown language-selector">
                             <a class="nav-link dropdown-toggle language-dropdown" href="#" id="languageMenu"
@@ -598,7 +610,11 @@
 
     <!-- language-manager -->
     <script src="~/js/language-manager.js"></script>
+    <!-- SignalR -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.0/signalr.min.js"></script>
 
+    <!-- Notification Manager -->
+    <script src="~/js/notification-manager.js"></script>
     <script>
         // التحقق من تحميل jQuery
         if (typeof jQuery === 'undefined') {
