@@ -1,5 +1,6 @@
 ﻿@using ReverseMarket.SignalR
-@model ChatMembersDto
+@* @model ChatMembersDto *@
+@model ReverseMarket.Controllers.ChatMembersDto
 @{
     Layout = "/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
     var messages = ViewBag.Messages as List<ChatMessage> ?? new List<ChatMessage>();

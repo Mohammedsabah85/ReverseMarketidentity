@@ -1,5 +1,6 @@
 ﻿@using ReverseMarket.SignalR;
 @model List<ChatMessage>
+
 @{
     var request = Context.Request;
     var currentUser = ViewBag.CurrentUser as string ?? User.Identity.Name;

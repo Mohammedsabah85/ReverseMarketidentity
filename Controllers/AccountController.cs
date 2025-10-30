@@ -47,42 +47,42 @@ namespace ReverseMarket.Controllers
             var adminPhone = "+9647700227211";
             var adminUser = await _userManager.FindByNameAsync(adminPhone);
 
-                adminUser = new ApplicationUser
-                {
-                    UserName = adminPhone,
-                    PhoneNumber = adminPhone,
-                    Email = "user@reversemarket.iq",
-                    EmailConfirmed = true,
-                    PhoneNumberConfirmed = true,
-                    FirstName = "مدير",
-                    LastName = "النظام",
-                    DateOfBirth = new DateTime(1990, 1, 1),
-                    Gender = "ذكر",
-                    City = "بغداد",
-                    District = "الكرادة",
-                    UserType = UserType.Buyer,
-                    IsPhoneVerified = true,
-                    IsEmailVerified = true,
-                    IsActive = true,
-                    CreatedAt = DateTime.Now
-                };
+            adminUser = new ApplicationUser
+            {
+                UserName = adminPhone,
+                PhoneNumber = adminPhone,
+                Email = "user@reversemarket.iq",
+                EmailConfirmed = true,
+                PhoneNumberConfirmed = true,
+                FirstName = "مدير",
+                LastName = "النظام",
+                DateOfBirth = new DateTime(1990, 1, 1),
+                Gender = "ذكر",
+                City = "بغداد",
+                District = "الكرادة",
+                UserType = UserType.Buyer,
+                IsPhoneVerified = true,
+                IsEmailVerified = true,
+                IsActive = true,
+                CreatedAt = DateTime.Now
+            };
 
-                var result = await _userManager.CreateAsync(adminUser, "User@1234");
-                if (result.Succeeded)
-                {
-                    await _userManager.AddToRoleAsync(adminUser, "Admin");
-                    return 1;
-                }
-                else
-                {
-                    return 0;
-                }
+            var result = await _userManager.CreateAsync(adminUser, "User@1234");
+            if (result.Succeeded)
+            {
+                await _userManager.AddToRoleAsync(adminUser, "Admin");
+                return 1;
+            }
+            else
+            {
+                return 0;
+            }
         }
 
         [HttpGet]
         public async Task<IActionResult> LoginAsync()
         {
-             //int operation = await RegisterUser();
+            //int operation = await RegisterUser();
             // Check if user is already logged in
             if (User.Identity?.IsAuthenticated == true)
             {
@@ -228,24 +228,24 @@ namespace ReverseMarket.Controllers
         }
 
         [HttpGet]
-        public IActionResult Login()
-        {
-            // Check if user is already logged in
-            if (User.Identity?.IsAuthenticated == true)
-            {
-                if (User.IsInRole("Admin"))
-                {
-                    return RedirectToAction("Index", "Dashboard", new { area = "Admin" });
-                }
-                return RedirectToAction("Index", "Home");
-            }
+        //public IActionResult Login()
+        //{
+        //    // Check if user is already logged in
+        //    if (User.Identity?.IsAuthenticated == true)
+        //    {
+        //        if (User.IsInRole("Admin"))
+        //        {
+        //            return RedirectToAction("Index", "Dashboard", new { area = "Admin" });
+        //        }
+        //        return RedirectToAction("Index", "Home");
+        //    }
 
-            var model = new LoginViewModel
-            {
-                CountryCode = "+964"
-            };
-            return View(model);
-        }
+        //    var model = new LoginViewModel
+        //    {
+        //        CountryCode = "+964"
+        //    };
+        //    return View(model);
+        //}
 
         [HttpGet]
         public IActionResult VerifyAdminOTP()
@@ -315,7 +315,7 @@ namespace ReverseMarket.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-      
+
         public async Task<IActionResult> VerifyOTP(VerifyOTPViewModel model)
         {
             if (ModelState.IsValid)
@@ -651,7 +651,7 @@ namespace ReverseMarket.Controllers
                         }
                         await _context.SaveChangesAsync();
                     }
-                
+
                     //if (model.UserType == UserType.Seller && model.StoreCategories?.Any() == true)
                     //{
                     //    foreach (var categoryId in model.StoreCategories)
@@ -861,7 +861,7 @@ namespace ReverseMarket.Controllers
                         var user = await _userManager.FindByIdAsync(userId);
                         if (user != null)
                         {
-                           // await _whatsAppService.SendLoginOTPAsync(phoneNumber, newCode, user.FirstName);
+                            // await _whatsAppService.SendLoginOTPAsync(phoneNumber, newCode, user.FirstName);
                             var request = new WhatsAppMessageRequest
                             {
                                 recipient = phoneNumber, // e.g. "+9647502171212"
@@ -938,7 +938,7 @@ namespace ReverseMarket.Controllers
             var random = new Random();
             return random.Next(1000, 9999).ToString();
         }
- 
+
 
         private async Task<string?> SaveProfileImageAsync(IFormFile image)
         {
