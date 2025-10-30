@@ -22,6 +22,8 @@ namespace ReverseMarket.Data
         public DbSet<Advertisement> Advertisements { get; set; }
         public DbSet<SiteSettings> SiteSettings { get; set; }
         public DbSet<ChatMessage> ChatMessages { get; set; }
+        public DbSet<Notification> Notifications { get; set; }
+       
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
