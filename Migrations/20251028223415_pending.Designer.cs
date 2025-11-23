@@ -466,13 +466,13 @@ namespace ReverseMarket.Migrations
                             LastName = "النظام",
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@REVERSEMARKET.IQ",
-                            NormalizedUserName = "+9647700227210",
+                            NormalizedUserName = "+9647805006974",
                             PasswordHash = "AQAAAAIAAYagAAAAEJ3pAOTg7kfNrOQi3F9x8w0iLK1J5AudCF5pN7t8oEj5oMy8q4nRuGHu8C7c0X9Y+Q==",
-                            PhoneNumber = "+9647700227210",
+                            PhoneNumber = "+9647805006974",
                             PhoneNumberConfirmed = true,
                             SecurityStamp = "FIXED-SECURITY-STAMP-12345",
                             TwoFactorEnabled = false,
-                            UserName = "+9647700227210",
+                            UserName = "+9647805006974",
                             UserType = 1
                         });
                 });

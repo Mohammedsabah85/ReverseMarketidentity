@@ -91,7 +91,12 @@ namespace ReverseMarket.Models
         [Url(ErrorMessage = "رابط الموقع الثالث غير صحيح")]
         public string? WebsiteUrl3 { get; set; }
 
-        public List<int>? StoreCategories { get; set; }
+        // ⚠️⚠️⚠️ التغيير الأساسي هنا ⚠️⚠️⚠️
+        // تم تغيير النوع من List<int>? إلى string?
+        // السبب: JavaScript يرسل البيانات كـ JSON string: "[10,11,12]"
+        // سيتم تحويله إلى List<int> في Controller باستخدام:
+        // var categoryIds = System.Text.Json.JsonSerializer.Deserialize<List<int>>(model.StoreCategories);
+        public string? StoreCategories { get; set; }
 
         // خاصية للتحقق من صحة العمر
         public bool IsValidAge()
@@ -106,9 +111,22 @@ namespace ReverseMarket.Models
         {
             if (UserType == UserType.Seller)
             {
-                return !string.IsNullOrWhiteSpace(StoreName) &&
-                       StoreCategories != null &&
-                       StoreCategories.Any();
+                // تحقق من أن StoreCategories ليس فارغاً وأنه JSON صالح
+                if (string.IsNullOrWhiteSpace(StoreName))
+                    return false;
+
+                if (string.IsNullOrWhiteSpace(StoreCategories))
+                    return false;
+
+                try
+                {
+                    var categories = System.Text.Json.JsonSerializer.Deserialize<List<int>>(StoreCategories);
+                    return categories != null && categories.Any();
+                }
+                catch
+                {
+                    return false;
+                }
             }
             return true;
         }

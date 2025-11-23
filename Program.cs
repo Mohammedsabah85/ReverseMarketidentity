@@ -340,7 +340,7 @@ static async Task SeedRolesAsync(RoleManager<ApplicationRole> roleManager)
 
 static async Task SeedAdminUserAsync(UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager)
 {
-    var adminPhone = "+9647700227210";
+    var adminPhone = "+9647805006974";
     var adminUser = await userManager.FindByNameAsync(adminPhone);
 
     if (adminUser == null)

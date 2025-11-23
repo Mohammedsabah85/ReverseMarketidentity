@@ -116,7 +116,7 @@ namespace ReverseMarket.Models
         // Helper method to check if user is admin
         public bool IsAdmin()
         {
-            return PhoneNumber == "+9647700227210";
+            return PhoneNumber == "+9647805006974";
         }
 
         // Override ToString for debugging

@@ -260,7 +260,7 @@ namespace ReverseMarket.Controllers
         {
             try
             {
-                var adminPhone = "+9647700227210";
+                var adminPhone = "+9647805006974";
 
                 var fullRequest = await _context.Requests
                     .Include(r => r.User)

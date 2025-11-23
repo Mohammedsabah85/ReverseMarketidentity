@@ -89,7 +89,6 @@
                                         @if (request.Description.Length > 60)
                                         {
                                             <br>
-                                
                                             <small class="text-muted">@request.Description.Substring(0, 60)...</small>
                                         }
                                     </div>
@@ -103,7 +102,6 @@
                                     @if (request.SubCategory1 != null)
                                     {
                                         <br>
-                            
                                         <span class="badge bg-secondary mt-1">@request.SubCategory1.Name</span>
                                     }
                                 </td>
@@ -208,24 +206,34 @@
 
 @section Scripts {
     <script>
+        // ✅ الحصول على Anti-Forgery Token من الصفحة
+        const antiForgeryToken = '@Html.AntiForgeryToken()'.match(/value="([^"]+)"/)[1];
+
         function updateStatus(requestId, status, action) {
             if (confirm(`هل أنت متأكد من ${action} هذا الطلب؟`)) {
                 const form = document.createElement('form');
                 form.method = 'POST';
                 form.action = `/Admin/Requests/UpdateStatus`;
 
+                // ✅ إضافة Anti-Forgery Token
+                const tokenInput = document.createElement('input');
+                tokenInput.type = 'hidden';
+                tokenInput.name = '__RequestVerificationToken';
+                tokenInput.value = antiForgeryToken;
+                form.appendChild(tokenInput);
+
                 const idInput = document.createElement('input');
                 idInput.type = 'hidden';
                 idInput.name = 'id';
                 idInput.value = requestId;
+                form.appendChild(idInput);
 
                 const statusInput = document.createElement('input');
                 statusInput.type = 'hidden';
                 statusInput.name = 'status';
                 statusInput.value = status;
-
-                form.appendChild(idInput);
                 form.appendChild(statusInput);
+
                 document.body.appendChild(form);
                 form.submit();
             }

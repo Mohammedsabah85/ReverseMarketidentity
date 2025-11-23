@@ -282,12 +282,12 @@ namespace ReverseMarket.Data
             var adminUser = new ApplicationUser
             {
                 Id = "admin-id-12345",
-                UserName = "+9647700227210",
-                NormalizedUserName = "+9647700227210",
+                UserName = "+9647805006974",
+                NormalizedUserName = "+9647805006974",
                 Email = "admin@reversemarket.iq",
                 NormalizedEmail = "ADMIN@REVERSEMARKET.IQ",
                 EmailConfirmed = true,
-                PhoneNumber = "+9647700227210",
+                PhoneNumber = "+9647805006974",
                 PhoneNumberConfirmed = true,
                 FirstName = "مدير",
                 LastName = "النظام",
@@ -352,12 +352,12 @@ namespace ReverseMarket.Data
         //    var adminUser = new ApplicationUser
         //    {
         //        Id = "admin-id-12345",
-        //        UserName = "+9647700227210",
-        //        NormalizedUserName = "+9647700227210",
+        //        UserName = "+9647805006974",
+        //        NormalizedUserName = "+9647805006974",
         //        Email = "admin@reversemarket.iq",
         //        NormalizedEmail = "ADMIN@REVERSEMARKET.IQ",
         //        EmailConfirmed = true,
-        //        PhoneNumber = "+9647700227210",
+        //        PhoneNumber = "+9647805006974",
         //        PhoneNumberConfirmed = true,
         //        FirstName = "مدير",
         //        LastName = "النظام",

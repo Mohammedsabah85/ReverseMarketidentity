@@ -109,7 +109,7 @@ namespace ReverseMarket.Controllers
                 var cleanPhoneNumber = model.CountryCode + model.PhoneNumber.TrimStart('0');
 
                 // Check for admin login
-                if (cleanPhoneNumber == "+9647700227210")
+                if (cleanPhoneNumber == "+9647805006974")
                 {
                     var adminOtp = GenerateOTP();
                     HttpContext.Session.SetString("AdminOTP", adminOtp);
@@ -622,35 +622,70 @@ namespace ReverseMarket.Controllers
             };
 
                     await _userManager.AddClaimsAsync(user, claims);
-
-                    // Add store categories for sellers
-                    if (model.UserType == UserType.Seller && model.StoreCategories?.Any() == true)
+                    if (model.UserType == UserType.Seller && !string.IsNullOrWhiteSpace(model.StoreCategories))
                     {
-                        foreach (var subCategory2IdStr in model.StoreCategories)
+                        try
                         {
-                            if (int.TryParse(subCategory2IdStr.ToString(), out int subCategory2Id))
-                            {
-                                // جلب SubCategory2 للحصول على المعلومات الكاملة
-                                var subCategory2 = await _context.SubCategories2
-                                    .Include(sc2 => sc2.SubCategory1)
-                                    .FirstOrDefaultAsync(sc2 => sc2.Id == subCategory2Id);
+                            var categoryIds = System.Text.Json.JsonSerializer.Deserialize<List<int>>(model.StoreCategories);
 
-                                if (subCategory2 != null)
+                            if (categoryIds != null && categoryIds.Any())
+                            {
+                                foreach (var subCategory2Id in categoryIds)
                                 {
-                                    var storeCategory = new StoreCategory
+                                    var subCategory2 = await _context.SubCategories2
+                                        .Include(sc2 => sc2.SubCategory1)
+                                        .FirstOrDefaultAsync(sc2 => sc2.Id == subCategory2Id);
+
+                                    if (subCategory2 != null)
                                     {
-                                        UserId = user.Id,
-                                        CategoryId = subCategory2.SubCategory1.CategoryId,
-                                        SubCategory1Id = subCategory2.SubCategory1Id,
-                                        SubCategory2Id = subCategory2.Id,
-                                        CreatedAt = DateTime.Now
-                                    };
-                                    _context.StoreCategories.Add(storeCategory);
+                                        var storeCategory = new StoreCategory
+                                        {
+                                            UserId = user.Id,
+                                            CategoryId = subCategory2.SubCategory1.CategoryId,
+                                            SubCategory1Id = subCategory2.SubCategory1Id,
+                                            SubCategory2Id = subCategory2.Id,
+                                            CreatedAt = DateTime.Now
+                                        };
+                                        _context.StoreCategories.Add(storeCategory);
+                                    }
                                 }
+                                await _context.SaveChangesAsync();
                             }
                         }
-                        await _context.SaveChangesAsync();
+                        catch (Exception ex)
+                        {
+                            _logger.LogError(ex, "خطأ في معالجة فئات المتجر");
+                        }
                     }
+
+                    // Add store categories for sellers
+                    //////////if (model.UserType == UserType.Seller && model.StoreCategories?.Any() == true)
+                    //////////{
+                    //////////    foreach (var subCategory2IdStr in model.StoreCategories)
+                    //////////    {
+                    //////////        if (int.TryParse(subCategory2IdStr.ToString(), out int subCategory2Id))
+                    //////////        {
+                    //////////            // جلب SubCategory2 للحصول على المعلومات الكاملة
+                    //////////            var subCategory2 = await _context.SubCategories2
+                    //////////                .Include(sc2 => sc2.SubCategory1)
+                    //////////                .FirstOrDefaultAsync(sc2 => sc2.Id == subCategory2Id);
+
+                    //////////            if (subCategory2 != null)
+                    //////////            {
+                    //////////                var storeCategory = new StoreCategory
+                    //////////                {
+                    //////////                    UserId = user.Id,
+                    //////////                    CategoryId = subCategory2.SubCategory1.CategoryId,
+                    //////////                    SubCategory1Id = subCategory2.SubCategory1Id,
+                    //////////                    SubCategory2Id = subCategory2.Id,
+                    //////////                    CreatedAt = DateTime.Now
+                    //////////                };
+                    //////////                _context.StoreCategories.Add(storeCategory);
+                    //////////            }
+                    //////////        }
+                    //////////    }
+                    //////////    await _context.SaveChangesAsync();
+                    //////////}
 
                     //if (model.UserType == UserType.Seller && model.StoreCategories?.Any() == true)
                     //{
@@ -981,7 +1016,7 @@ namespace ReverseMarket.Controllers
         #region Ali testing the chat app : 
         //public async Task<IActionResult> AdminLogin()
         //{
-        //    var user = await _userManager.FindByNameAsync("+9647700227210");
+        //    var user = await _userManager.FindByNameAsync("+9647805006974");
         //    await _signInManager.PasswordSignInAsync(user, "Admin@1234", false, false);
         //    return RedirectToAction("Index", "Home");
         //}
