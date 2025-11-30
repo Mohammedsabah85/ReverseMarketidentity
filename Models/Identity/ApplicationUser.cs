@@ -25,6 +25,7 @@ namespace ReverseMarket.Models.Identity
         [StringLength(100)]
         public string City { get; set; } = "";
 
+
         [Required]
         [StringLength(100)]
         public string District { get; set; } = "";
@@ -85,6 +86,8 @@ namespace ReverseMarket.Models.Identity
         public string DisplayName => UserType == UserType.Seller && !string.IsNullOrEmpty(StoreName)
             ? StoreName
             : FullName;
+
+
     }
 
     public enum UserType

@@ -1,0 +1,318 @@
+/* 🏪 تنسيقات إضافية لصفحات إدارة المتاجر */
+
+/* بطاقات الإحصائيات */
+.stat-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 1.5rem;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+}
+
+.stat-card.bg-success {
+    background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+}
+
+.stat-card.bg-primary {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+}
+
+.stat-card.bg-warning {
+    background: linear-gradient(135deg, #fa8b0c 0%, #ffd89b 100%);
+}
+
+.stat-card.bg-info {
+    background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+}
+
+.stat-card h4,
+.stat-card h3 {
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.stat-card p {
+    margin: 0;
+    opacity: 0.9;
+    font-size: 0.9rem;
+}
+
+/* البطاقات الإدارية */
+.card-admin {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    margin-bottom: 1.5rem;
+    overflow: hidden;
+}
+
+.card-admin .card-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 1rem 1.5rem;
+}
+
+.card-admin .card-body {
+    padding: 1.5rem;
+}
+
+/* الجدول الإداري */
+.table-admin {
+    margin: 0;
+}
+
+.table-admin thead {
+    background: #f8f9fa;
+}
+
+.table-admin thead th {
+    border: none;
+    font-weight: 600;
+    color: #495057;
+    padding: 1rem;
+}
+
+.table-admin tbody tr {
+    border-bottom: 1px solid #e9ecef;
+    transition: background-color 0.2s ease;
+}
+
+.table-admin tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+.table-admin tbody td {
+    padding: 1rem;
+    vertical-align: middle;
+}
+
+.table-admin tbody tr.table-secondary {
+    background-color: #f1f3f5;
+    opacity: 0.7;
+}
+
+/* أزرار الإجراءات */
+.btn-group-vertical.btn-group-sm .btn {
+    font-size: 0.75rem;
+    padding: 0.4rem 0.6rem;
+}
+
+/* شارات الحالة */
+.badge {
+    padding: 0.4rem 0.8rem;
+    font-weight: 500;
+    font-size: 0.75rem;
+}
+
+/* نموذج التعديل */
+.form-label {
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 0.5rem;
+}
+
+.form-control,
+.form-select {
+    border-radius: 8px;
+    border: 1px solid #dee2e6;
+    padding: 0.6rem 1rem;
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+}
+
+/* Checkboxes للفئات */
+.form-check {
+    padding: 0.75rem;
+    border-radius: 8px;
+    transition: background-color 0.2s ease;
+}
+
+.form-check:hover {
+    background-color: #f8f9fa;
+}
+
+.form-check-input {
+    width: 1.25rem;
+    height: 1.25rem;
+    margin-top: 0.1rem;
+}
+
+.form-check-input:checked {
+    background-color: #667eea;
+    border-color: #667eea;
+}
+
+.form-check-label {
+    margin-right: 0.5rem;
+    cursor: pointer;
+}
+
+/* أزرار */
+.btn {
+    border-radius: 8px;
+    padding: 0.6rem 1.2rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
+}
+
+.btn-success {
+    background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+    border: none;
+}
+
+.btn-success:hover {
+    background: linear-gradient(135deg, #38ef7d 0%, #11998e 100%);
+}
+
+.btn-warning {
+    background: linear-gradient(135deg, #fa8b0c 0%, #ffd89b 100%);
+    border: none;
+    color: white;
+}
+
+.btn-warning:hover {
+    background: linear-gradient(135deg, #ffd89b 0%, #fa8b0c 100%);
+    color: white;
+}
+
+.btn-info {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    border: none;
+}
+
+.btn-info:hover {
+    background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
+}
+
+.btn-outline-primary:hover,
+.btn-outline-success:hover,
+.btn-outline-warning:hover,
+.btn-outline-danger:hover,
+.btn-outline-info:hover {
+    transform: translateY(-2px);
+}
+
+/* رسائل النجاح والخطأ */
+.alert {
+    border-radius: 8px;
+    border: none;
+}
+
+/* تصميم الحالة الفارغة */
+.text-center.py-5 i {
+    opacity: 0.5;
+}
+
+/* تنسيق الروابط المعلقة */
+.card-admin.border-warning {
+    border: 2px solid #ffc107 !important;
+}
+
+.card-admin.border-warning .card-header {
+    background: #ffc107;
+    color: #212529;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .stat-card {
+        margin-bottom: 1rem;
+    }
+
+    .btn-group {
+        flex-direction: column;
+    }
+
+    .btn-group .btn {
+        margin-bottom: 0.5rem;
+    }
+
+    .table-admin {
+        font-size: 0.85rem;
+    }
+
+    .btn-group-vertical {
+        width: 100%;
+    }
+}
+
+/* تحسينات للطباعة */
+@media print {
+    .btn,
+    .card-header,
+    form {
+        display: none;
+    }
+
+    .stat-card {
+        background: white !important;
+        color: black !important;
+        border: 1px solid #dee2e6;
+    }
+}
+
+/* تأثيرات التحميل */
+.loading {
+    pointer-events: none;
+    opacity: 0.6;
+}
+
+.loading::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid #667eea;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* تحسينات إمكانية الوصول */
+.btn:focus,
+.form-control:focus,
+.form-check-input:focus {
+    outline: 2px solid #667eea;
+    outline-offset: 2px;
+}
+
+/* تنسيق النص بالعربية */
+body {
+    direction: rtl;
+    text-align: right;
+}
+
+.table {
+    direction: rtl;
+    text-align: right;
+}

@@ -1,10 +1,11 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ReverseMarket.Data;
 using ReverseMarket.Models.Identity;
 using ReverseMarket.CustomWhatsappService;
+using ReverseMarket.Models;
 
 namespace ReverseMarket.Areas.Admin.Controllers
 {
@@ -27,6 +28,214 @@ namespace ReverseMarket.Areas.Admin.Controllers
             _userManager = userManager;
             _whatsAppService = whatsAppService;
             _logger = logger;
+        }
+
+        // 📋 عرض جميع المتاجر
+        public async Task<IActionResult> Index(string searchTerm, bool? isActive, bool? isApproved)
+        {
+            var query = _userManager.Users
+                .Where(u => u.UserType == UserType.Seller)
+                .Include(u => u.StoreCategories)
+                .ThenInclude(sc => sc.Category)
+                .AsQueryable();
+
+            // تطبيق الفلاتر
+            if (!string.IsNullOrEmpty(searchTerm))
+            {
+                query = query.Where(u => u.StoreName.Contains(searchTerm) || 
+                                        u.FirstName.Contains(searchTerm) || 
+                                        u.LastName.Contains(searchTerm));
+            }
+
+            if (isActive.HasValue)
+            {
+                query = query.Where(u => u.IsActive == isActive.Value);
+            }
+
+            if (isApproved.HasValue)
+            {
+                query = query.Where(u => u.IsStoreApproved == isApproved.Value);
+            }
+
+            var stores = await query.OrderByDescending(u => u.CreatedAt).ToListAsync();
+
+            ViewBag.SearchTerm = searchTerm;
+            ViewBag.IsActive = isActive;
+            ViewBag.IsApproved = isApproved;
+
+            return View(stores);
+        }
+
+        // 📝 صفحة التعديل
+        public async Task<IActionResult> Edit(string id)
+        {
+            if (string.IsNullOrEmpty(id))
+            {
+                return NotFound();
+            }
+
+            var store = await _userManager.Users
+                .Include(u => u.StoreCategories)
+                .ThenInclude(sc => sc.Category)
+                .FirstOrDefaultAsync(u => u.Id == id && u.UserType == UserType.Seller);
+
+            if (store == null)
+            {
+                return NotFound();
+            }
+
+            // جلب جميع الفئات المتاحة
+            ViewBag.AllCategories = await _context.Categories
+                .OrderBy(c => c.Name)
+                .ToListAsync();
+
+            return View(store);
+        }
+
+        // 💾 حفظ التعديلات
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(string id, ApplicationUser model, string[] selectedCategories)
+        {
+            if (id != model.Id)
+            {
+                return NotFound();
+            }
+
+            var store = await _userManager.Users
+                .Include(u => u.StoreCategories)
+                .FirstOrDefaultAsync(u => u.Id == id);
+
+            if (store == null)
+            {
+                return NotFound();
+            }
+
+            try
+            {
+                // تحديث البيانات الأساسية
+                store.StoreName = model.StoreName;
+                store.StoreDescription = model.StoreDescription;
+                store.FirstName = model.FirstName;
+                store.LastName = model.LastName;
+                store.PhoneNumber = model.PhoneNumber;
+                store.Email = model.Email;
+               
+                store.City = model.City;
+                store.WebsiteUrl1 = model.WebsiteUrl1;
+                store.WebsiteUrl2 = model.WebsiteUrl2;
+                store.WebsiteUrl3 = model.WebsiteUrl3;
+                store.UpdatedAt = DateTime.Now;
+
+                // تحديث الفئات
+                if (selectedCategories != null && selectedCategories.Length > 0)
+                {
+                    // حذف الفئات القديمة
+                    _context.StoreCategories.RemoveRange(store.StoreCategories);
+
+                    // إضافة الفئات الجديدة
+                    foreach (var categoryId in selectedCategories)
+                    {
+                        if (int.TryParse(categoryId, out int catId))
+                        {
+                            store.StoreCategories.Add(new StoreCategory
+                            {
+                                UserId = store.Id,
+                                CategoryId = catId
+                            });
+                        }
+                    }
+                }
+
+                await _userManager.UpdateAsync(store);
+                await _context.SaveChangesAsync();
+
+                TempData["SuccessMessage"] = $"تم تحديث بيانات متجر {store.StoreName} بنجاح";
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "خطأ في تحديث المتجر");
+                TempData["ErrorMessage"] = "حدث خطأ أثناء تحديث المتجر";
+                
+                ViewBag.AllCategories = await _context.Categories
+                    .OrderBy(c => c.Name)
+                    .ToListAsync();
+                
+                return View(model);
+            }
+        }
+
+        // 🔄 تفعيل/إيقاف المتجر
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ToggleActive(string id)
+        {
+            var store = await _userManager.FindByIdAsync(id);
+            if (store == null || store.UserType != UserType.Seller)
+            {
+                TempData["ErrorMessage"] = "المتجر غير موجود";
+                return RedirectToAction(nameof(Index));
+            }
+
+            store.IsActive = !store.IsActive;
+            store.UpdatedAt = DateTime.Now;
+
+            var result = await _userManager.UpdateAsync(store);
+
+            if (result.Succeeded)
+            {
+                var status = store.IsActive ? "تفعيل" : "إيقاف";
+                await NotifyStoreStatusChangeAsync(store, store.IsActive);
+                TempData["SuccessMessage"] = $"تم {status} متجر {store.StoreName} بنجاح";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "حدث خطأ أثناء تغيير حالة المتجر";
+            }
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        // 🗑️ حذف المتجر
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Delete(string id)
+        {
+            var store = await _userManager.Users
+                .Include(u => u.StoreCategories)
+                .FirstOrDefaultAsync(u => u.Id == id && u.UserType == UserType.Seller);
+
+            if (store == null)
+            {
+                TempData["ErrorMessage"] = "المتجر غير موجود";
+                return RedirectToAction(nameof(Index));
+            }
+
+            try
+            {
+                // حذف الفئات المرتبطة
+                _context.StoreCategories.RemoveRange(store.StoreCategories);
+
+                // حذف المتجر
+                var result = await _userManager.DeleteAsync(store);
+
+                if (result.Succeeded)
+                {
+                    TempData["SuccessMessage"] = $"تم حذف متجر {store.StoreName} بنجاح";
+                }
+                else
+                {
+                    TempData["ErrorMessage"] = "حدث خطأ أثناء حذف المتجر";
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "خطأ في حذف المتجر");
+                TempData["ErrorMessage"] = "حدث خطأ أثناء حذف المتجر";
+            }
+
+            return RedirectToAction(nameof(Index));
         }
 
         public async Task<IActionResult> PendingApproval()
@@ -168,6 +377,43 @@ namespace ReverseMarket.Areas.Admin.Controllers
 
             TempData["SuccessMessage"] = $"تم رفض متجر {user.StoreName}";
             return RedirectToAction("PendingApproval");
+        }
+
+        // 📧 إشعار تغيير حالة المتجر
+        private async Task NotifyStoreStatusChangeAsync(ApplicationUser store, bool isActive)
+        {
+            try
+            {
+                if (!string.IsNullOrEmpty(store.PhoneNumber))
+                {
+                    var status = isActive ? "تفعيل" : "إيقاف";
+                    var message = $"مرحباً {store.StoreName}!\n\n" +
+                                 $"تم {status} متجرك في السوق العكسي.\n\n";
+
+                    if (isActive)
+                    {
+                        message += "يمكنك الآن استقبال الطلبات والتواصل مع العملاء.\n\n";
+                    }
+                    else
+                    {
+                        message += "في حالة وجود استفسار، يرجى التواصل معنا.\n\n";
+                    }
+
+                    message += "شكراً لك - السوق العكسي";
+
+                    var whatsAppRequest = new WhatsAppMessageRequest
+                    {
+                        recipient = store.PhoneNumber,
+                        message = message
+                    };
+
+                    await _whatsAppService.SendMessageAsync(whatsAppRequest);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "خطأ في إرسال إشعار تغيير حالة المتجر");
+            }
         }
 
         // ✅ إرسال إشعار الموافقة على الروابط

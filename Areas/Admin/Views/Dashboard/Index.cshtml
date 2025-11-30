@@ -1,4 +1,4 @@
-﻿@model AdminDashboardViewModel
+@model AdminDashboardViewModel
 @{
     ViewData["Title"] = "لوحة التحكم الرئيسية";
 }
@@ -130,6 +130,10 @@
                     <a href="/Admin/Requests?status=1" class="btn btn-warning">
                         <i class="fas fa-clock me-2"></i>
                         مراجعة الطلبات المعلقة (@Model.PendingRequests)
+                    </a>
+                    <a href="/Admin/Stores" class="btn btn-info">
+                        <i class="fas fa-store me-2"></i>
+                        إدارة المتاجر
                     </a>
                     <a href="/Admin/Categories/Create" class="btn btn-primary">
                         <i class="fas fa-plus me-2"></i>
