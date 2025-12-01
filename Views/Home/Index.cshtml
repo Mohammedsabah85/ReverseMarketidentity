@@ -134,10 +134,10 @@
             <p>@Localizer["BestCategoriesSubtitle"]</p>
         </div>
 
-        <div class="row g-4">
+        <div class="cards-grid">
             @foreach (var category in Model.Categories.Take(8))
             {
-                <div class="col-lg-3 col-md-4 col-sm-6">
+              @*   <div class="col-lg-3 col-md-4 col-sm-6"> *@
                     <a href="/Requests?categoryId=@category.Id" class="text-decoration-none">
                         <div class="category-card">
                             <div class="category-image-container">
@@ -165,7 +165,7 @@
                             </div>
                         </div>
                     </a>
-                </div>
+               @*  </div> *@
             }
         </div>
     </div>
@@ -181,10 +181,10 @@
 
         @if (Model.RecentRequests.Any())
         {
-            <div class="row g-4">
+            <div class="cards-grid">
                 @foreach (var request in Model.RecentRequests.Take(6))
                 {
-                    <div class="col-lg-4 col-md-6">
+                    @* <div class="col-lg-4 col-md-6"> *@
                         <div class="request-card">
                             @if (request.Images.Any())
                             {
@@ -208,7 +208,7 @@
                         <a href="/Requests/Details/@request.Id" class="btn btn-outline-custom btn-sm">@Localizer["ViewDetails"]</a>
                     </div>
                 </div>
-            </div>
+           @*  </div> *@
                         }
             </div>
         }
@@ -242,35 +242,35 @@
             <p>@Localizer["HowItWorksSubtitle"]</p>
         </div>
 
-        <div class="row g-4">
-            <div class="col-lg-3 col-md-6">
+        <div class="cards-grid">
+           @*  <div class="col-lg-3 col-md-6"> *@
                 <div class="step-card">
                     <div class="step-number">1</div>
                     <h5>@Localizer["Step1Title"]</h5>
                     <p>@Localizer["Step1Description"]</p>
-                </div>
+               @*  </div> *@
             </div>
-            <div class="col-lg-3 col-md-6">
+           @*  <div class="col-lg-3 col-md-6"> *@
                 <div class="step-card">
                     <div class="step-number">2</div>
                     <h5>@Localizer["Step2Title"]</h5>
                     <p>@Localizer["Step2Description"]</p>
-                </div>
+              @*   </div> *@
             </div>
-            <div class="col-lg-3 col-md-6">
+          @*   <div class="col-lg-3 col-md-6"> *@
                 <div class="step-card">
                     <div class="step-number">3</div>
                     <h5>@Localizer["Step3Title"]</h5>
                     <p>@Localizer["Step3Description"]</p>
                 </div>
-            </div>
-            <div class="col-lg-3 col-md-6">
+         @*    </div> *@
+           @*  <div class="col-lg-3 col-md-6"> *@
                 <div class="step-card">
                     <div class="step-number">4</div>
                     <h5>@Localizer["Step4Title"]</h5>
                     <p>@Localizer["Step4Description"]</p>
                 </div>
-            </div>
+           @*  </div> *@
         </div>
     </div>
 </section>
