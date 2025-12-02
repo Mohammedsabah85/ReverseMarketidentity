@@ -65,23 +65,25 @@
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
     }
 
+    <link rel="stylesheet" href="~/css/styles-complete.css" />
+
     <!-- Animate.css for animations -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet" />
+@*     <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet" /> *@
 @*  <link rel="stylesheet" href="~/css/styles-fixed.css" />
     <link rel="stylesheet" href="~/css/footer-enhanced.css" /> *@
 
-    <link rel="stylesheet" href="~/css/styles.css?v=1.0" />
+  @*   <link rel="stylesheet" href="~/css/styles.css?v=1.0" /> *@
 @*     <link rel="stylesheet" href="~/css/components.css?v=3.0" />
     <link rel="stylesheet" href="~/css/advertisements.css?v=3.2" />
     <link rel="stylesheet" href="~/css/cards-enhanced.css?v=1.0" /> *@ 
         <!-- ✨ الملفات المحسّنة - يجب أن تكون أولاً -->
-    <link rel="stylesheet" href="~/css/styles-fixed.css" asp-append-version="true" />
+@*     <link rel="stylesheet" href="~/css/styles-fixed.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/footer-enhanced.css" asp-append-version="true" />
 
     <!-- الملفات الأخرى -->
     <link rel="stylesheet" href="~/css/components.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/cards-enhanced.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/advertisements.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/advertisements.css" asp-append-version="true" /> *@
 
     @await RenderSectionAsync("Styles", required: false)
 
@@ -968,7 +970,15 @@
     <button id="backToTop" class="btn btn-custom position-fixed" style="bottom: 2rem; @(direction == "rtl" ? "left" : "right"): 2rem; z-index: 1000; display: none; border-radius: 50%; width: 50px; height: 50px;">
         <i class="fas fa-arrow-up"></i>
     </button>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+            integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+            crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
+    <script src="~/js/site-unified.js" asp-append-version="true"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.0/signalr.min.js"></script>
+    <script src="~/js/notification-manager.js"></script>
+    <script src="~/js/language-manager.js"></script>
 @*     <!-- Bootstrap -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
@@ -989,7 +999,7 @@
         console.log('🔐 اسم المستخدم:', '@userName');
     </script> *@
     <!-- jQuery - يجب أن يكون أولاً -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+@*     <script src="https://code.jquery.com/jquery-3.6.0.min.js"
             integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
             crossorigin="anonymous"></script>
 
@@ -1003,7 +1013,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.0/signalr.min.js"></script>
 
     <!-- Notification Manager -->
-    <script src="~/js/notification-manager.js"></script>
+    <script src="~/js/notification-manager.js"></script> *@
     <script>
         // التحقق من تحميل jQuery
         if (typeof jQuery === 'undefined') {

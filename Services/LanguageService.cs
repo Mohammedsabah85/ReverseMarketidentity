@@ -32,7 +32,7 @@ namespace ReverseMarket.Services
             {
                 new LanguageInfo { Code = "ar", Name = "Arabic", NativeName = "العربية", Flag = "🇮🇶" },
                 new LanguageInfo { Code = "en", Name = "English", NativeName = "English", Flag = "🇬🇧" },
-                new LanguageInfo { Code = "ku", Name = "Kurdish", NativeName = "کوردی", Flag = "🏴" }
+                new LanguageInfo { Code = "ku", Name = "Kurdish", NativeName = "کوردی", Flag = "KU" }
             };
         }
     }

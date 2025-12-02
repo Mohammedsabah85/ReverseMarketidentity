@@ -5,7 +5,7 @@
 
 /* تطبيق الخط على اللغة الكردية */
 html[lang="ku"] * {
-    font-family: 'Noto Sans Arabic', -apple-system, BlinkMacSystemFont, sans-serif;
+   /* font-family: 'Noto Sans Arabic', -apple-system, BlinkMacSystemFont, sans-serif;*/
 }
 
 /* تحسين عرض النصوص الكردية */
