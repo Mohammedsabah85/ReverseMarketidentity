@@ -67,11 +67,396 @@
 
     <!-- Animate.css for animations -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet" />
+@*  <link rel="stylesheet" href="~/css/styles-fixed.css" />
+    <link rel="stylesheet" href="~/css/footer-enhanced.css" /> *@
 
     <link rel="stylesheet" href="~/css/styles.css?v=1.0" />
-    <link rel="stylesheet" href="~/css/components.css?v=3.0" />
+@*     <link rel="stylesheet" href="~/css/components.css?v=3.0" />
     <link rel="stylesheet" href="~/css/advertisements.css?v=3.2" />
-    <link rel="stylesheet" href="~/css/cards-enhanced.css?v=1.0" />
+    <link rel="stylesheet" href="~/css/cards-enhanced.css?v=1.0" /> *@ 
+        <!-- ✨ الملفات المحسّنة - يجب أن تكون أولاً -->
+    <link rel="stylesheet" href="~/css/styles-fixed.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/footer-enhanced.css" asp-append-version="true" />
+
+    <!-- الملفات الأخرى -->
+    <link rel="stylesheet" href="~/css/components.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/cards-enhanced.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/advertisements.css" asp-append-version="true" />
+
+    @await RenderSectionAsync("Styles", required: false)
+
+
+
+    <!-- Custom CSS -->
+ @*    <style>
+        .btn,
+        .btn-custom,
+        .btn-outline-custom,
+        button[type="submit"],
+        button[type="button"],
+        a.btn {
+            /* الحجم والخط */
+            font-size: 18px !important;
+            font-weight: 600 !important;
+            font-family: 'Cairo', sans-serif !important;
+            line-height: 1.5 !important;
+            /* المسافات */
+            padding: 0.875rem 2rem !important;
+            /* الشكل */
+            border-radius: 12px !important;
+            /* العرض */
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            gap: 0.75rem !important;
+            /* التأثيرات */
+            transition: all 0.3s ease !important;
+            text-decoration: none !important;
+            cursor: pointer !important;
+        }
+
+        /* زر أساسي */
+        .btn-custom,
+        .btn-primary {
+            background: linear-gradient(135deg, #d4b616 0%, #b89f13 100%) !important;
+            color: white !important;
+            border: none !important;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
+        }
+
+            .btn-custom:hover,
+            .btn-primary:hover {
+                background: linear-gradient(135deg, #b89f13 0%, #d4b616 100%) !important;
+                color: white !important;
+                transform: translateY(-3px) !important;
+                box-shadow: 0 8px 24px rgba(212, 182, 22, 0.25) !important;
+            }
+
+        /* زر محيطي */
+        .btn-outline-custom {
+            background: transparent !important;
+            border: 2px solid #d4b616 !important;
+            color: #d4b616 !important;
+        }
+
+            .btn-outline-custom:hover {
+                background: #d4b616 !important;
+                color: white !important;
+                transform: translateY(-3px) !important;
+            }
+
+        /* أحجام الأزرار */
+        .btn-sm {
+            padding: 0.625rem 1.25rem !important;
+            font-size: 16px !important;
+        }
+
+        .btn-lg {
+            padding: 1.125rem 2.5rem !important;
+            font-size: 20px !important;
+        }
+
+        /* ==========================================
+           2. إصلاح الخطوط فوراً
+           ========================================== */
+
+        /* توحيد الخط */
+        body,
+        body *,
+        h1, h2, h3, h4, h5, h6,
+        p, span, div, a,
+        .navbar,
+        .footer,
+        .card,
+        .form-control,
+        .form-select {
+            font-family: 'Cairo', -apple-system, BlinkMacSystemFont, sans-serif !important;
+        }
+
+        /* حجم الخط الأساسي */
+        body {
+            font-size: 18px !important;
+            line-height: 1.75 !important;
+        }
+
+        /* العناوين */
+        h1, .h1 {
+            font-size: 48px !important;
+            font-weight: 800 !important;
+        }
+
+        h2, .h2 {
+            font-size: 38px !important;
+            font-weight: 700 !important;
+        }
+
+        h3, .h3 {
+            font-size: 30px !important;
+            font-weight: 700 !important;
+        }
+
+        h4, .h4 {
+            font-size: 26px !important;
+            font-weight: 600 !important;
+        }
+
+        h5, .h5 {
+            font-size: 22px !important;
+            font-weight: 600 !important;
+        }
+
+        h6, .h6 {
+            font-size: 20px !important;
+            font-weight: 600 !important;
+        }
+
+        /* النصوص */
+        p {
+            font-size: 18px !important;
+            line-height: 1.75 !important;
+        }
+
+        a {
+            font-size: 18px !important;
+        }
+
+        /* ==========================================
+           3. إصلاح الفوتر فوراً - سطر واحد
+           ========================================== */
+
+        .main-footer {
+            background: #27272E !important;
+            padding: 2rem 0 1.25rem !important;
+        }
+
+            /* محتوى الفوتر */
+            .main-footer .container,
+            .main-footer .footer-content {
+                display: flex !important;
+                justify-content: space-between !important;
+                align-items: center !important;
+                flex-wrap: nowrap !important;
+                gap: 2rem !important;
+                margin-bottom: 1.5rem !important;
+            }
+
+            /* أقسام الفوتر */
+            .main-footer .footer-section {
+                flex: 1 1 auto !important;
+                min-width: 0 !important;
+            }
+
+            /* عناوين الفوتر */
+            .main-footer h5 {
+                font-size: 20px !important;
+                margin-bottom: 0.75rem !important;
+                color: #d4b616 !important;
+            }
+
+            /* روابط الفوتر */
+            .main-footer ul {
+                display: flex !important;
+                flex-wrap: nowrap !important;
+                gap: 1.5rem !important;
+                list-style: none !important;
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+
+                .main-footer ul li {
+                    margin: 0 !important;
+                }
+
+            .main-footer a {
+                color: rgba(255,255,255,0.75) !important;
+                font-size: 16px !important;
+                white-space: nowrap !important;
+                text-decoration: none !important;
+            }
+
+                .main-footer a:hover {
+                    color: #d4b616 !important;
+                }
+
+        /* سطر الحقوق */
+        .footer-bottom {
+            border-top: 1px solid rgba(255,255,255,0.1) !important;
+            padding-top: 1.25rem !important;
+            text-align: center !important;
+        }
+
+            .footer-bottom p {
+                font-size: 14px !important;
+                color: rgba(255,255,255,0.6) !important;
+                margin: 0 !important;
+            }
+
+        /* ==========================================
+           4. إصلاحات إضافية
+           ========================================== */
+
+        /* Hero Section */
+        .hero-section h1 {
+            font-size: 3.5rem !important;
+        }
+
+        .hero-section p {
+            font-size: 1.5rem !important;
+        }
+
+        /* Navbar */
+        .navbar-nav .nav-link {
+            font-size: 18px !important;
+            padding: 0.75rem 1.25rem !important;
+        }
+
+        .navbar-brand {
+            font-size: 1.75rem !important;
+        }
+
+        /* Forms */
+        .form-control,
+        .form-select {
+            font-size: 18px !important;
+            padding: 0.875rem 1.25rem !important;
+        }
+
+        .form-label {
+            font-size: 18px !important;
+            font-weight: 500 !important;
+        }
+
+        /* Tables */
+        .table {
+            font-size: 18px !important;
+        }
+
+            .table th {
+                font-size: 18px !important;
+                padding: 1.25rem 1rem !important;
+            }
+
+            .table td {
+                font-size: 18px !important;
+                padding: 1.25rem 1rem !important;
+            }
+
+        /* Cards */
+        .card-title,
+        .category-content h5,
+        .request-card-body h5 {
+            font-size: 22px !important;
+        }
+
+        .card-text,
+        .category-content p,
+        .request-card-body p {
+            font-size: 18px !important;
+        }
+
+        /* ==========================================
+           5. تصميم متجاوب
+           ========================================== */
+
+        /* Tablet */
+        @@media (max-width: 991px) {
+            body
+
+        {
+            font-size: 17px !important;
+        }
+
+        .btn {
+            font-size: 17px !important;
+        }
+
+        h1 {
+            font-size: 42px !important;
+        }
+
+        h2 {
+            font-size: 34px !important;
+        }
+
+        /* فوتر في سطرين */
+        .main-footer .container,
+        .main-footer .footer-content {
+            flex-wrap: wrap !important;
+        }
+
+        .main-footer ul {
+            flex-direction: column !important;
+            gap: 0.75rem !important;
+        }
+
+        }
+
+        /* Mobile */
+        @@media (max-width: 768px) {
+            body
+
+        {
+            font-size: 16px !important;
+        }
+
+        .btn {
+            font-size: 16px !important;
+            padding: 0.75rem 1.5rem !important;
+            width: 100% !important;
+        }
+
+        h1 {
+            font-size: 36px !important;
+        }
+
+        h2 {
+            font-size: 28px !important;
+        }
+
+        h3 {
+            font-size: 24px !important;
+        }
+
+        .hero-section h1 {
+            font-size: 2rem !important;
+        }
+
+        /* فوتر في عمود */
+        .main-footer .container,
+        .main-footer .footer-content {
+            flex-direction: column !important;
+            align-items: flex-start !important;
+        }
+
+        }
+
+        /* ==========================================
+           6. تأكيدات نهائية - أعلى أولوية
+           ========================================== */
+
+        /* تأكيد الأزرار */
+        button,
+        a.btn,
+        .btn {
+            min-height: 48px !important;
+            min-width: auto !important;
+        }
+
+        /* تأكيد الخطوط */
+        * {
+            font-family: 'Cairo', sans-serif !important;
+        }
+
+        body[dir="ltr"] * {
+            font-family: 'Montserrat', sans-serif !important;
+        }
+
+        /* تأكيد الفوتر */
+        .main-footer {
+            width: 100% !important;
+            overflow: hidden !important;
+        }
+    </style> *@
 
 </head>
 
@@ -715,333 +1100,359 @@
 
     <!-- Custom CSS -->
     <style>
-        :root {
-            --primary-color: #b3962d;
-            --primary-dark: #8a7320;
-            --primary-light: #d4b74b;
-            --secondary-color: #000000;
-            --secondary-dark: #2c2c2c;
-            --accent-color: #c9a53a;
-            --accent-light: #e3c56c;
-            --text-color: #2c2c2c;
-            --text-muted: #6c757d;
-            --light-bg: #f8f9fa;
-            --white: #ffffff;
-            --border-color: #e9ecef;
-            --shadow-light: 0 2px 10px rgba(0,0,0,0.1);
-            --shadow-medium: 0 4px 20px rgba(0,0,0,0.15);
-            --shadow-heavy: 0 8px 30px rgba(0,0,0,0.2);
-            --border-radius: 12px;
-            --border-radius-lg: 16px;
-            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
+       .btn,
+.btn-custom,
+.btn-outline-custom,
+button[type="submit"],
+button[type="button"],
+a.btn {
+    /* الحجم والخط */
+    font-size: 18px !important;
+    font-weight: 600 !important;
+    font-family: 'Cairo', sans-serif !important;
+    line-height: 1.5 !important;
+    
+    /* المسافات */
+    padding: 0.875rem 2rem !important;
+    
+    /* الشكل */
+    border-radius: 12px !important;
+    
+    /* العرض */
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 0.75rem !important;
+    
+    /* التأثيرات */
+    transition: all 0.3s ease !important;
+    text-decoration: none !important;
+    cursor: pointer !important;
+}
 
-        * {
-            font-family: @if (currentLanguage == "ar" || currentLanguage == "ku") {
-            <text>'Cairo', -apple-system, BlinkMacSystemFont, sans-serif;
-            </text>
-                        } else
-            {
+/* زر أساسي */
+.btn-custom,
+.btn-primary {
+    background: linear-gradient(135deg, #d4b616 0%, #b89f13 100%) !important;
+    color: white !important;
+    border: none !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
+}
 
-                <text>'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-                </text>
-            }
-        }
+.btn-custom:hover,
+.btn-primary:hover {
+    background: linear-gradient(135deg, #b89f13 0%, #d4b616 100%) !important;
+    color: white !important;
+    transform: translateY(-3px) !important;
+    box-shadow: 0 8px 24px rgba(212, 182, 22, 0.25) !important;
+}
 
-        body {
-            background: linear-gradient(135deg, #fdfdfb 0%, #f2efe5 100%);
-            color: var(--text-color);
-            line-height: 1.6;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
+/* زر محيطي */
+.btn-outline-custom {
+    background: transparent !important;
+    border: 2px solid #d4b616 !important;
+    color: #d4b616 !important;
+}
 
-        /* ====== HEADER ====== */
-        .main-header {
-            background: linear-gradient(135deg, #b3962d 0%, #8a7320 100%);
-            box-shadow: var(--shadow-medium);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            backdrop-filter: blur(10px);
-        }
+.btn-outline-custom:hover {
+    background: #d4b616 !important;
+    color: white !important;
+    transform: translateY(-3px) !important;
+}
 
-        .top-bar {
-            background: rgba(0,0,0,0.1);
-            padding: 0.5rem 0;
-            font-size: 0.875rem;
-        }
+/* أحجام الأزرار */
+.btn-sm {
+    padding: 0.625rem 1.25rem !important;
+    font-size: 16px !important;
+}
 
-            .top-bar .container {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-            }
+.btn-lg {
+    padding: 1.125rem 2.5rem !important;
+    font-size: 20px !important;
+}
 
-        .contact-info {
-            display: flex;
-            gap: 1.5rem;
-            color: rgba(255,255,255,0.8);
-        }
+/* ==========================================
+   2. إصلاح الخطوط فوراً
+   ========================================== */
 
-            .contact-info a {
-                color: rgba(255,255,255,0.8);
-                text-decoration: none;
-                transition: var(--transition);
-            }
+/* توحيد الخط */
+body,
+body *,
+h1, h2, h3, h4, h5, h6,
+p, span, div, a,
+.navbar,
+.footer,
+.card,
+.form-control,
+.form-select {
+    font-family: 'Cairo', -apple-system, BlinkMacSystemFont, sans-serif !important;
+}
 
-                .contact-info a:hover {
-                    color: white;
-                    transform: translateY(-1px);
-                }
+/* حجم الخط الأساسي */
+body {
+    font-size: 18px !important;
+    line-height: 1.75 !important;
+}
 
-        .social-links {
-            display: flex;
-            gap: 1rem;
-        }
+/* العناوين */
+h1, .h1 {
+    font-size: 48px !important;
+    font-weight: 800 !important;
+}
 
-            .social-links a {
-                color: rgba(255,255,255,0.8);
-                font-size: 1.1rem;
-                transition: var(--transition);
-            }
+h2, .h2 {
+    font-size: 38px !important;
+    font-weight: 700 !important;
+}
 
-                .social-links a:hover {
-                    color: white;
-                    transform: translateY(-2px) scale(1.1);
-                }
+h3, .h3 {
+    font-size: 30px !important;
+    font-weight: 700 !important;
+}
 
-        .navbar-brand {
-            font-weight: 800;
-            font-size: 1.75rem;
-            color: white !important;
-            display: flex;
-            align-items: center;
-            text-decoration: none;
-            transition: var(--transition);
-        }
+h4, .h4 {
+    font-size: 26px !important;
+    font-weight: 600 !important;
+}
 
-            .navbar-brand:hover {
-                transform: scale(1.02);
-            }
+h5, .h5 {
+    font-size: 22px !important;
+    font-weight: 600 !important;
+}
 
-            .navbar-brand img {
-                max-height: 45px;
-                filter: brightness(1.1);
-                @if (direction == "rtl")
-                {
-                    <text>margin-left: 12px;
-                    </text>
-                }
-                else
-                {
+h6, .h6 {
+    font-size: 20px !important;
+    font-weight: 600 !important;
+}
 
-                    <text>margin-right: 12px;
-                    </text>
-                }
-            }
+/* النصوص */
+p {
+    font-size: 18px !important;
+    line-height: 1.75 !important;
+}
 
-            .navbar-brand .brand-icon {
-                font-size: 2rem;
-                background: linear-gradient(45deg, var(--secondary-color), var(--accent-color));
-                -webkit-background-clip: text;
-                -webkit-text-fill-color: transparent;
-                background-clip: text;
-                @if (direction == "rtl")
-                {
-                    <text>margin-left: 12px;
-                    </text>
-                }
-                else
-                {
+a {
+    font-size: 18px !important;
+}
 
-                    <text>margin-right: 12px;
-                    </text>
-                }
-            }
+/* ==========================================
+   3. إصلاح الفوتر فوراً - سطر واحد
+   ========================================== */
 
-        .navbar-nav .nav-link {
-            color: rgba(255,255,255,0.9) !important;
-            font-weight: 500;
-            padding: 0.75rem 1.25rem !important;
-            border-radius: 25px;
-            transition: var(--transition);
-            position: relative;
-            overflow: hidden;
-        }
+.main-footer {
+    background: #27272E !important;
+    padding: 2rem 0 1.25rem !important;
+}
 
-            .navbar-nav .nav-link:hover,
-            .navbar-nav .nav-link.active {
-                color: white !important;
-                transform: translateY(-2px);
-                box-shadow: 0 4px 15px rgba(255,255,255,0.2);
-            }
+/* محتوى الفوتر */
+.main-footer .container,
+.main-footer .footer-content {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    flex-wrap: nowrap !important;
+    gap: 2rem !important;
+    margin-bottom: 1.5rem !important;
+}
 
-        /* ====== BUTTONS ====== */
-        .btn-custom {
-            background: linear-gradient(135deg, var(--secondary-color), var(--secondary-dark));
-            border: none;
-            color: white;
-            padding: 0.75rem 2rem;
-            border-radius: 25px;
-            font-weight: 600;
-            transition: var(--transition);
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-        }
+/* أقسام الفوتر */
+.main-footer .footer-section {
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+}
 
-            .btn-custom:hover {
-                transform: translateY(-3px);
-                box-shadow: 0 8px 25px rgba(0,0,0,0.4);
-                background: linear-gradient(135deg, var(--secondary-dark), var(--secondary-color));
-            }
+/* عناوين الفوتر */
+.main-footer h5 {
+    font-size: 20px !important;
+    margin-bottom: 0.75rem !important;
+    color: #d4b616 !important;
+}
 
-        .btn-outline-custom {
-            border: 2px solid white;
-            color: white;
-            background: transparent;
-            padding: 0.75rem 2rem;
-            border-radius: 25px;
-            font-weight: 600;
-            transition: var(--transition);
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
+/* روابط الفوتر */
+.main-footer ul {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    gap: 1.5rem !important;
+    list-style: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
 
-            .btn-outline-custom:hover {
-                background: white;
-                color: #b3962d;
-                transform: translateY(-2px);
-                box-shadow: 0 4px 15px rgba(255,255,255,0.3);
-            }
+.main-footer ul li {
+    margin: 0 !important;
+}
 
-        /* ====== ALERTS ====== */
-        .alert-success {
-            background: linear-gradient(135deg, rgba(179, 150, 45, 0.15), rgba(179, 150, 45, 0.05));
-            color: var(--primary-dark);
-            border-left: 4px solid var(--primary-color);
-        }
+.main-footer a {
+    color: rgba(255,255,255,0.75) !important;
+    font-size: 16px !important;
+    white-space: nowrap !important;
+    text-decoration: none !important;
+}
 
-        .alert-danger {
-            background: linear-gradient(135deg, rgba(220, 53, 69, 0.1), rgba(220, 53, 69, 0.05));
-            color: #721c24;
-            border-left: 4px solid #dc3545;
-        }
+.main-footer a:hover {
+    color: #d4b616 !important;
+}
 
-        .alert-warning {
-            background: linear-gradient(135deg, rgba(255, 193, 7, 0.1), rgba(255, 193, 7, 0.05));
-            color: #856404;
-            border-left: 4px solid #ffc107;
-        }
+/* سطر الحقوق */
+.footer-bottom {
+    border-top: 1px solid rgba(255,255,255,0.1) !important;
+    padding-top: 1.25rem !important;
+    text-align: center !important;
+}
 
-        .alert-info {
-            background: linear-gradient(135deg, rgba(13, 202, 240, 0.1), rgba(13, 202, 240, 0.05));
-            color: #055160;
-            border-left: 4px solid #0dcaf0;
-        }
+.footer-bottom p {
+    font-size: 14px !important;
+    color: rgba(255,255,255,0.6) !important;
+    margin: 0 !important;
+}
 
-        /* ====== FOOTER ====== */
-        .main-footer {
-            background: linear-gradient(135deg, #000000 0%, #2c2c2c 100%);
-            color: white;
-            padding: 3rem 0 1rem;
-            margin-top: auto;
-        }
+/* ==========================================
+   4. إصلاحات إضافية
+   ========================================== */
 
-        .footer-logo {
-            max-height: 60px;
-            margin-bottom: 1rem;
-            filter: brightness(1.2);
-        }
+/* Hero Section */
+.hero-section h1 {
+    font-size: 3.5rem !important;
+}
 
-        .footer-section h5 {
-            font-weight: 700;
-            margin-bottom: 1.5rem;
-            color: var(--accent-color);
-            position: relative;
-        }
+.hero-section p {
+    font-size: 1.5rem !important;
+}
 
-            .footer-section h5::after {
-                content: '';
-                position: absolute;
-                bottom: -8px;
-                left: 0;
-                width: 50px;
-                height: 3px;
-                background: linear-gradient(90deg, var(--accent-color), var(--primary-light));
-                border-radius: 2px;
-            }
+/* Navbar */
+.navbar-nav .nav-link {
+    font-size: 18px !important;
+    padding: 0.75rem 1.25rem !important;
+}
 
-        .footer-section a {
-            color: rgba(255,255,255,0.8);
-            text-decoration: none;
-            transition: var(--transition);
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.25rem 0;
-        }
+.navbar-brand {
+    font-size: 1.75rem !important;
+}
 
-            .footer-section a:hover {
-                color: var(--accent-light);
-                transform: translateX( @(direction == "rtl" ? "5px" : "-5px") );
-            }
+/* Forms */
+.form-control,
+.form-select {
+    font-size: 18px !important;
+    padding: 0.875rem 1.25rem !important;
+}
 
-        .footer-bottom {
-            border-top: 1px solid rgba(255,255,255,0.1);
-            margin-top: 2rem;
-            padding-top: 2rem;
-            text-align: center;
-            color: rgba(255,255,255,0.7);
-        }
+.form-label {
+    font-size: 18px !important;
+    font-weight: 500 !important;
+}
 
-        /* ====== RESPONSIVE ====== */
-        @@media (max-width: 768px) {
-            .top-bar {
-                display: none;
-            }
+/* Tables */
+.table {
+    font-size: 18px !important;
+}
 
-            .navbar-brand {
-                font-size: 1.5rem;
-            }
+.table th {
+    font-size: 18px !important;
+    padding: 1.25rem 1rem !important;
+}
 
-            .navbar-nav {
-                margin-top: 1rem;
-                padding-top: 1rem;
-                border-top: 1px solid rgba(255,255,255,0.1);
-            }
+.table td {
+    font-size: 18px !important;
+    padding: 1.25rem 1rem !important;
+}
 
-                .navbar-nav .nav-link {
-                    padding: 0.5rem 1rem !important;
-                    margin: 0.25rem 0;
-                }
+/* Cards */
+.card-title,
+.category-content h5,
+.request-card-body h5 {
+    font-size: 22px !important;
+}
 
-            .card-custom {
-                padding: 1.5rem;
-            }
+.card-text,
+.category-content p,
+.request-card-body p {
+    font-size: 18px !important;
+}
 
-            .main-footer {
-                padding: 2rem 0 1rem;
-            }
-        }
+/* ==========================================
+   5. تصميم متجاوب
+   ========================================== */
 
-        @@keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
+/* Tablet */
+@media (max-width: 991px) {
+    body {
+        font-size: 17px !important;
+    }
+    
+    .btn {
+        font-size: 17px !important;
+    }
+    
+    h1 { font-size: 42px !important; }
+    h2 { font-size: 34px !important; }
+    
+    /* فوتر في سطرين */
+    .main-footer .container,
+    .main-footer .footer-content {
+        flex-wrap: wrap !important;
+    }
+    
+    .main-footer ul {
+        flex-direction: column !important;
+        gap: 0.75rem !important;
+    }
+}
 
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
+/* Mobile */
+@media (max-width: 768px) {
+    body {
+        font-size: 16px !important;
+    }
+    
+    .btn {
+        font-size: 16px !important;
+        padding: 0.75rem 1.5rem !important;
+        width: 100% !important;
+    }
+    
+    h1 { font-size: 36px !important; }
+    h2 { font-size: 28px !important; }
+    h3 { font-size: 24px !important; }
+    
+    .hero-section h1 {
+        font-size: 2rem !important;
+    }
+    
+    /* فوتر في عمود */
+    .main-footer .container,
+    .main-footer .footer-content {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+    }
+}
+
+/* ==========================================
+   6. تأكيدات نهائية - أعلى أولوية
+   ========================================== */
+
+/* تأكيد الأزرار */
+button,
+a.btn,
+.btn {
+    min-height: 48px !important;
+    min-width: auto !important;
+}
+
+/* تأكيد الخطوط */
+* {
+    font-family: 'Cairo', sans-serif !important;
+}
+
+body[dir="ltr"] * {
+    font-family: 'Montserrat', sans-serif !important;
+}
+
+/* تأكيد الفوتر */
+.main-footer {
+    width: 100% !important;
+    overflow: hidden !important;
+}
+
     </style>
 </head>
 

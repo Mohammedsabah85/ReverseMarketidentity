@@ -1,0 +1,655 @@
+/* ==========================================
+   STYLES FIXED - إصلاح شامل للتصميم
+   Version: 3.0 Enhanced
+   التحديثات: أزرار محسّنة + خطوط أكبر + فوتر في سطر واحد
+   ========================================== */
+
+/* ==========================================
+   1. FONTS - تحسين الخطوط
+   ========================================== */
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap');
+
+/* ==========================================
+   2. ENHANCED CSS VARIABLES - متغيرات محسّنة
+   ========================================== */
+:root {
+    /* Primary Colors */
+    --color-primary: #d4b616;
+    --light-primary: #ffeaa7;
+    --primary-dark: #b89f13;
+    
+    /* UI Colors */
+    --color-white: #ffffff;
+    --color-dark: #27272E;
+    --color-light: #CBD3D9;
+    --color-lighter: #F6F7FB;
+    
+    /* Text Colors */
+    --color-heading: #283442;
+    --color-body: #555555;
+    --text-muted: #999FAE;
+    
+    /* ✨ أحجام خطوط محسّنة - أكبر وأوضح */
+    --font-size-base: 18px;        /* كان 16px */
+    --font-size-large: 20px;       /* جديد */
+    --font-size-small: 16px;       /* كان 14px */
+    --font-size-tiny: 14px;        /* كان 12px */
+    --h1: 48px;                    /* كان 46px */
+    --h2: 38px;                    /* كان 36px */
+    --h3: 30px;                    /* كان 28px */
+    --h4: 26px;                    /* كان 24px */
+    --h5: 22px;                    /* كان 20px */
+    --h6: 20px;                    /* كان 18px */
+    
+    /* Font Weights */
+    --font-light: 300;
+    --font-regular: 400;
+    --font-medium: 500;
+    --font-semi-bold: 600;
+    --font-bold: 700;
+    --font-extra-bold: 800;
+    
+    /* Spacing & Sizing */
+    --border-radius-btn: 12px;     /* أكبر للأزرار */
+    --btn-padding-y: 0.875rem;     /* أكبر */
+    --btn-padding-x: 2rem;         /* أكبر */
+    --btn-font-size: 18px;         /* أكبر */
+    
+    /* Transitions */
+    --transition: 0.3s ease;
+    --shadow-light: 0 2px 8px rgba(0, 0, 0, 0.08);
+    --shadow-hover: 0 8px 24px rgba(212, 182, 22, 0.25);
+}
+
+/* ==========================================
+   3. BASE STYLES - أنماط أساسية محسّنة
+   ========================================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    font-size: 10px;
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: 'Cairo', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: var(--font-size-base);
+    line-height: 1.75;
+    color: var(--color-body);
+    background: var(--color-lighter);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* توحيد الخطوط */
+body, 
+body *,
+.navbar,
+.footer,
+.btn,
+h1, h2, h3, h4, h5, h6,
+p, span, div, a {
+    font-family: 'Cairo', -apple-system, BlinkMacSystemFont, sans-serif !important;
+}
+
+body[dir="ltr"],
+body[dir="ltr"] * {
+    font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, sans-serif !important;
+}
+
+main {
+    flex: 1;
+}
+
+/* ==========================================
+   4. TYPOGRAPHY - تحسين الخطوط
+   ========================================== */
+h1, h2, h3, h4, h5, h6 {
+    font-weight: var(--font-bold);
+    color: var(--color-heading);
+    margin: 0 0 1rem 0;
+    line-height: 1.3;
+}
+
+h1 { font-size: var(--h1); }
+h2 { font-size: var(--h2); }
+h3 { font-size: var(--h3); }
+h4 { font-size: var(--h4); }
+h5 { font-size: var(--h5); }
+h6 { font-size: var(--h6); }
+
+p {
+    margin: 0 0 1rem 0;
+    font-size: var(--font-size-base);
+    line-height: 1.75;
+}
+
+a {
+    color: var(--color-heading);
+    text-decoration: none;
+    transition: var(--transition);
+}
+
+/* ==========================================
+   5. BUTTONS - أزرار محسّنة وأكثر احترافية
+   ========================================== */
+.btn,
+.btn-custom,
+.btn-outline-custom {
+    /* الحجم والمسافات */
+    padding: var(--btn-padding-y) var(--btn-padding-x);
+    font-size: var(--btn-font-size);
+    font-weight: var(--font-semi-bold);
+    line-height: 1.5;
+    
+    /* الشكل */
+    border-radius: var(--border-radius-btn);
+    border: 2px solid transparent;
+    
+    /* العرض */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    
+    /* التأثيرات */
+    transition: all var(--transition);
+    cursor: pointer;
+    text-decoration: none;
+    white-space: nowrap;
+    
+    /* الخط */
+    font-family: 'Cairo', sans-serif !important;
+    letter-spacing: 0.3px;
+}
+
+/* زر أساسي */
+.btn-custom {
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--primary-dark) 100%);
+    color: var(--color-white);
+    box-shadow: var(--shadow-light);
+    border: none;
+}
+
+.btn-custom:hover {
+    background: linear-gradient(135deg, var(--primary-dark) 0%, var(--color-primary) 100%);
+    color: var(--color-white);
+    box-shadow: var(--shadow-hover);
+    transform: translateY(-3px);
+}
+
+/* زر محيطي */
+.btn-outline-custom {
+    background: transparent;
+    border: 2px solid var(--color-primary);
+    color: var(--color-primary);
+}
+
+.btn-outline-custom:hover {
+    background: var(--color-primary);
+    color: var(--color-white);
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-hover);
+}
+
+/* أحجام الأزرار */
+.btn-sm {
+    padding: 0.625rem 1.25rem;
+    font-size: 16px;
+}
+
+.btn-lg {
+    padding: 1.125rem 2.5rem;
+    font-size: 20px;
+}
+
+/* أزرار ملونة */
+.btn-success {
+    background: #28a745;
+    color: white;
+    border: none;
+}
+
+.btn-danger {
+    background: #dc3545;
+    color: white;
+    border: none;
+}
+
+.btn-warning {
+    background: #ffc107;
+    color: #212529;
+    border: none;
+}
+
+.btn-info {
+    background: #17a2b8;
+    color: white;
+    border: none;
+}
+
+.btn-success:hover,
+.btn-danger:hover,
+.btn-warning:hover,
+.btn-info:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-hover);
+    opacity: 0.9;
+}
+
+/* أيقونات الأزرار */
+.btn i {
+    font-size: 1.1em;
+}
+
+/* ==========================================
+   6. HEADER - تحسين الهيدر
+   ========================================== */
+.main-header {
+    background: var(--color-white);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+/* Top Bar */
+.top-bar {
+    background: var(--color-dark);
+    padding: 0.875rem 0;
+    font-size: var(--font-size-small);
+}
+
+.contact-info a,
+.social-links a {
+    font-size: var(--font-size-small);
+    transition: var(--transition);
+}
+
+/* Navbar */
+.main-navbar {
+    padding: 1.25rem 0;
+}
+
+.navbar-brand {
+    font-size: 1.75rem;
+    font-weight: var(--font-extra-bold);
+    color: var(--color-heading) !important;
+}
+
+.navbar-nav .nav-link {
+    font-size: var(--font-size-base);
+    font-weight: var(--font-medium);
+    padding: 0.75rem 1.25rem !important;
+    border-radius: 10px;
+}
+
+.navbar-nav .nav-link:hover {
+    background: rgba(212, 182, 22, 0.08);
+    color: var(--color-primary) !important;
+}
+
+/* ==========================================
+   7. HERO SECTION - تحسين القسم الرئيسي
+   ========================================== */
+.hero-section {
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--primary-dark) 100%);
+    padding: 5rem 0;
+    color: var(--color-white);
+    text-align: center;
+}
+
+.hero-section h1 {
+    font-size: 3.5rem;
+    font-weight: var(--font-extra-bold);
+    margin-bottom: 1.5rem;
+    color: var(--color-white);
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.hero-section p {
+    font-size: 1.5rem;
+    margin-bottom: 2.5rem;
+    color: var(--color-white);
+    opacity: 0.95;
+}
+
+.hero-section .btn {
+    font-size: 1.125rem;
+    padding: 1rem 2.5rem;
+}
+
+/* ==========================================
+   8. SEARCH SECTION - تحسين البحث
+   ========================================== */
+.search-section {
+    background: var(--color-white);
+    padding: 2.5rem;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    margin-top: -3rem;
+    border-radius: 20px;
+    position: relative;
+    z-index: 10;
+}
+
+.search-form .form-control,
+.search-form .form-select {
+    padding: 1rem 1.25rem;
+    font-size: var(--font-size-base);
+    border-radius: 12px;
+    border: 2px solid var(--color-light);
+}
+
+.search-form .btn {
+    padding: 1rem 2rem;
+    font-size: var(--font-size-base);
+}
+
+/* ==========================================
+   9. FOOTER - فوتر في سطر واحد
+   ========================================== */
+.main-footer {
+    background: var(--color-dark);
+    color: rgba(255,255,255,0.85);
+    padding: 2.5rem 0 1.5rem;
+    margin-top: auto;
+}
+
+/* Footer Content في سطر واحد */
+.footer-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: nowrap;
+    gap: 2rem;
+    margin-bottom: 1.5rem;
+}
+
+.footer-section {
+    flex: 1;
+    min-width: 0; /* مهم للـ flex */
+}
+
+.footer-section h5 {
+    font-size: var(--font-size-large);
+    font-weight: var(--font-bold);
+    margin-bottom: 1rem;
+    color: var(--color-primary);
+}
+
+.footer-section p,
+.footer-section a {
+    font-size: var(--font-size-small);
+    margin-bottom: 0.5rem;
+}
+
+.footer-section ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.footer-section ul li {
+    margin: 0;
+}
+
+.footer-section a {
+    color: rgba(255,255,255,0.75);
+    white-space: nowrap;
+    transition: var(--transition);
+}
+
+.footer-section a:hover {
+    color: var(--color-primary);
+}
+
+/* Footer Bottom */
+.footer-bottom {
+    border-top: 1px solid rgba(255,255,255,0.1);
+    padding-top: 1.5rem;
+    text-align: center;
+    font-size: var(--font-size-small);
+}
+
+/* ==========================================
+   10. CARDS - تحسين الكروت
+   ========================================== */
+.category-card,
+.request-card {
+    border-radius: 16px;
+    overflow: hidden;
+    transition: all var(--transition);
+    box-shadow: var(--shadow-light);
+}
+
+.category-card:hover,
+.request-card:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--shadow-hover);
+}
+
+.category-content h5,
+.request-card-body h5 {
+    font-size: var(--h5);
+    font-weight: var(--font-bold);
+}
+
+.category-content p,
+.request-card-body p {
+    font-size: var(--font-size-base);
+    line-height: 1.6;
+}
+
+/* ==========================================
+   11. FORMS - تحسين النماذج
+   ========================================== */
+.form-control,
+.form-select {
+    padding: 0.875rem 1.25rem;
+    font-size: var(--font-size-base);
+    border-radius: 10px;
+    border: 2px solid var(--color-light);
+}
+
+.form-label {
+    font-size: var(--font-size-base);
+    font-weight: var(--font-medium);
+    margin-bottom: 0.625rem;
+}
+
+/* ==========================================
+   12. TABLES - تحسين الجداول
+   ========================================== */
+.table {
+    font-size: var(--font-size-base);
+}
+
+.table th {
+    font-size: var(--font-size-base);
+    font-weight: var(--font-semi-bold);
+    padding: 1.25rem 1rem;
+}
+
+.table td {
+    padding: 1.25rem 1rem;
+    font-size: var(--font-size-base);
+}
+
+/* ==========================================
+   13. SECTION TITLES - عناوين الأقسام
+   ========================================== */
+.section-title h2 {
+    font-size: var(--h2);
+    font-weight: var(--font-extra-bold);
+    margin-bottom: 1rem;
+}
+
+.section-title p {
+    font-size: var(--font-size-large);
+    color: var(--color-body);
+}
+
+/* ==========================================
+   14. STEP CARDS - كروت الخطوات
+   ========================================== */
+.step-card h4,
+.step-card h5 {
+    font-size: var(--h5);
+    font-weight: var(--font-semi-bold);
+}
+
+.step-card p {
+    font-size: var(--font-size-base);
+}
+
+.step-number {
+    width: 80px;
+    height: 80px;
+    font-size: 2rem;
+}
+
+/* ==========================================
+   15. RESPONSIVE - تصميم متجاوب
+   ========================================== */
+
+/* Tablet */
+@media (max-width: 991px) {
+    :root {
+        --font-size-base: 17px;
+        --btn-font-size: 17px;
+        --h1: 42px;
+        --h2: 34px;
+    }
+    
+    .hero-section h1 {
+        font-size: 2.5rem;
+    }
+    
+    .footer-content {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .footer-section ul {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    :root {
+        --font-size-base: 16px;
+        --btn-font-size: 16px;
+        --btn-padding-y: 0.75rem;
+        --btn-padding-x: 1.5rem;
+        --h1: 36px;
+        --h2: 28px;
+        --h3: 24px;
+    }
+    
+    .hero-section {
+        padding: 3rem 0;
+    }
+    
+    .hero-section h1 {
+        font-size: 2rem;
+    }
+    
+    .hero-section p {
+        font-size: 1.125rem;
+    }
+    
+    .search-section {
+        padding: 1.5rem;
+    }
+    
+    .btn {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .footer-section h5 {
+        font-size: var(--font-size-base);
+    }
+    
+    .navbar-brand {
+        font-size: 1.5rem;
+    }
+}
+
+@media (max-width: 576px) {
+    :root {
+        --font-size-base: 15px;
+        --btn-font-size: 15px;
+    }
+    
+    .btn-lg {
+        padding: 0.875rem 1.75rem;
+        font-size: 17px;
+    }
+}
+
+/* ==========================================
+   16. UTILITIES - فئات مساعدة
+   ========================================== */
+.text-primary { color: var(--color-primary) !important; }
+.bg-primary { background: var(--color-primary) !important; }
+
+.fw-bold { font-weight: var(--font-bold) !important; }
+.fw-semibold { font-weight: var(--font-semi-bold) !important; }
+
+.fs-large { font-size: var(--font-size-large) !important; }
+.fs-base { font-size: var(--font-size-base) !important; }
+.fs-small { font-size: var(--font-size-small) !important; }
+
+/* ==========================================
+   17. ANIMATIONS - رسوم متحركة
+   ========================================== */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in {
+    animation: fadeIn 0.6s ease-out;
+}
+
+/* ==========================================
+   18. ACCESSIBILITY - إمكانية الوصول
+   ========================================== */
+:focus-visible {
+    outline: 3px solid var(--color-primary);
+    outline-offset: 2px;
+}
+
+.btn:focus-visible {
+    outline: 3px solid var(--color-primary);
+    outline-offset: 3px;
+}
+
+/* ==========================================
+   19. PRINT - أنماط الطباعة
+   ========================================== */
+@media print {
+    .navbar,
+    .footer,
+    .btn {
+        display: none !important;
+    }
+    
+    body {
+        font-size: 12pt;
+    }
+}

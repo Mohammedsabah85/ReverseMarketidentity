@@ -1,0 +1,437 @@
+/* ==========================================
+   FOOTER ENHANCED - فوتر محسّن في سطر واحد
+   Version: 2.0
+   ========================================== */
+
+/* إعادة تعيين الفوتر */
+.main-footer {
+    background: #27272E;
+    color: rgba(255,255,255,0.85);
+    padding: 2rem 0 1.25rem;
+    margin-top: auto;
+}
+
+/* ==========================================
+   SINGLE LINE FOOTER - فوتر في سطر واحد
+   ========================================== */
+
+/* الحاوية الرئيسية */
+.footer-content-wrapper {
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 2rem;
+}
+
+/* صف واحد للمحتوى */
+.footer-single-line {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: nowrap;
+    gap: 3rem;
+    margin-bottom: 1.5rem;
+    min-height: 60px;
+}
+
+/* أقسام الفوتر */
+.footer-single-line .footer-section {
+    flex: 0 1 auto;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+/* قسم الشعار */
+.footer-section.logo-section {
+    flex: 0 0 auto;
+}
+
+.footer-logo {
+    max-height: 50px;
+    width: auto;
+}
+
+/* قسم معلومات الاتصال */
+.footer-section.contact-section {
+    flex: 1 1 auto;
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+}
+
+.contact-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    white-space: nowrap;
+    font-size: 15px;
+}
+
+.contact-item i {
+    color: #d4b616;
+    font-size: 1.1em;
+}
+
+.contact-item a {
+    color: rgba(255,255,255,0.85);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.contact-item a:hover {
+    color: #d4b616;
+}
+
+/* قسم الروابط */
+.footer-section.links-section {
+    flex: 1 1 auto;
+}
+
+.footer-links-horizontal {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.footer-links-horizontal li {
+    margin: 0;
+}
+
+.footer-links-horizontal a {
+    color: rgba(255,255,255,0.75);
+    text-decoration: none;
+    font-size: 15px;
+    white-space: nowrap;
+    transition: color 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.footer-links-horizontal a:hover {
+    color: #d4b616;
+}
+
+.footer-links-horizontal i {
+    font-size: 0.9em;
+}
+
+/* قسم السوشيال ميديا */
+.footer-section.social-section {
+    flex: 0 0 auto;
+}
+
+.social-links-horizontal {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.social-links-horizontal a {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255,255,255,0.1);
+    border-radius: 50%;
+    color: rgba(255,255,255,0.85);
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+}
+
+.social-links-horizontal a:hover {
+    background: #d4b616;
+    color: #27272E;
+    transform: translateY(-3px);
+}
+
+/* خط الحقوق */
+.footer-bottom {
+    border-top: 1px solid rgba(255,255,255,0.1);
+    padding-top: 1.25rem;
+    text-align: center;
+}
+
+.footer-bottom-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: nowrap;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    font-size: 14px;
+    color: rgba(255,255,255,0.6);
+}
+
+.footer-copyright {
+    margin: 0;
+}
+
+.footer-bottom-links {
+    display: flex;
+    gap: 1.5rem;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.footer-bottom-links a {
+    color: rgba(255,255,255,0.6);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.footer-bottom-links a:hover {
+    color: #d4b616;
+}
+
+/* ==========================================
+   COMPACT VERSION - نسخة مدمجة أكثر
+   ========================================== */
+.footer-ultra-compact .footer-single-line {
+    gap: 2rem;
+    min-height: 50px;
+}
+
+.footer-ultra-compact .contact-item,
+.footer-ultra-compact .footer-links-horizontal a {
+    font-size: 14px;
+}
+
+.footer-ultra-compact .social-links-horizontal a {
+    width: 36px;
+    height: 36px;
+    font-size: 1rem;
+}
+
+/* ==========================================
+   RESPONSIVE - للشاشات المتوسطة
+   ========================================== */
+@media (max-width: 1200px) {
+    .footer-single-line {
+        gap: 2rem;
+    }
+    
+    .footer-links-horizontal {
+        gap: 1rem;
+    }
+    
+    .contact-section {
+        gap: 1.5rem;
+    }
+}
+
+/* Tablet */
+@media (max-width: 991px) {
+    /* نقسم لسطرين فقط في التابلت */
+    .footer-single-line {
+        flex-wrap: wrap;
+        gap: 1.5rem;
+    }
+    
+    .footer-section.logo-section,
+    .footer-section.contact-section {
+        flex: 1 1 45%;
+    }
+    
+    .footer-section.links-section,
+    .footer-section.social-section {
+        flex: 1 1 45%;
+    }
+    
+    .footer-bottom-content {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+    }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    .footer-single-line {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1.5rem;
+    }
+    
+    .footer-section {
+        width: 100%;
+        flex-direction: column;
+        align-items: flex-start !important;
+    }
+    
+    .contact-section {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+    }
+    
+    .footer-links-horizontal {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+    }
+    
+    .social-links-horizontal {
+        width: 100%;
+        justify-content: flex-start;
+    }
+    
+    .footer-bottom-content {
+        padding: 0 1rem;
+    }
+}
+
+/* Small Mobile */
+@media (max-width: 576px) {
+    .main-footer {
+        padding: 1.5rem 0 1rem;
+    }
+    
+    .footer-content-wrapper {
+        padding: 0 1rem;
+    }
+    
+    .contact-item,
+    .footer-links-horizontal a {
+        font-size: 14px;
+    }
+    
+    .social-links-horizontal a {
+        width: 38px;
+        height: 38px;
+    }
+}
+
+/* ==========================================
+   PRINT - للطباعة
+   ========================================== */
+@media print {
+    .main-footer {
+        background: white;
+        color: black;
+        border-top: 2px solid #ddd;
+    }
+    
+    .social-links-horizontal,
+    .footer-links-horizontal {
+        display: none;
+    }
+    
+    .footer-bottom {
+        border-top: 1px solid #ddd;
+    }
+}
+
+/* ==========================================
+   RTL SUPPORT - دعم العربية
+   ========================================== */
+body[dir="rtl"] .footer-single-line {
+    direction: rtl;
+}
+
+body[dir="rtl"] .footer-links-horizontal a i {
+    margin-left: 0.5rem;
+    margin-right: 0;
+}
+
+/* ==========================================
+   DARK MODE - الوضع الداكن
+   ========================================== */
+@media (prefers-color-scheme: dark) {
+    .main-footer {
+        background: #1a1a1e;
+    }
+}
+
+/* ==========================================
+   ANIMATION - حركات
+   ========================================== */
+@keyframes footerFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.footer-single-line {
+    animation: footerFadeIn 0.6s ease-out;
+}
+
+/* ==========================================
+   ACCESSIBILITY - إمكانية الوصول
+   ========================================== */
+.footer-links-horizontal a:focus,
+.social-links-horizontal a:focus {
+    outline: 2px solid #d4b616;
+    outline-offset: 2px;
+}
+
+/* ==========================================
+   EXAMPLE STRUCTURE HELPER
+   كيفية استخدام هذا التنسيق
+   ========================================== */
+
+/*
+<footer class="main-footer">
+    <div class="footer-content-wrapper">
+        <div class="footer-single-line">
+            <!-- Logo -->
+            <div class="footer-section logo-section">
+                <img src="/images/logo.png" alt="Logo" class="footer-logo">
+            </div>
+            
+            <!-- Contact Info -->
+            <div class="footer-section contact-section">
+                <div class="contact-item">
+                    <i class="fas fa-phone"></i>
+                    <a href="tel:+964">+964 770 123 4567</a>
+                </div>
+                <div class="contact-item">
+                    <i class="fas fa-envelope"></i>
+                    <a href="mailto:info@site.com">info@site.com</a>
+                </div>
+            </div>
+            
+            <!-- Links -->
+            <div class="footer-section links-section">
+                <ul class="footer-links-horizontal">
+                    <li><a href="/"><i class="fas fa-home"></i> الرئيسية</a></li>
+                    <li><a href="/about"><i class="fas fa-info-circle"></i> من نحن</a></li>
+                    <li><a href="/contact"><i class="fas fa-envelope"></i> اتصل بنا</a></li>
+                </ul>
+            </div>
+            
+            <!-- Social -->
+            <div class="footer-section social-section">
+                <div class="social-links-horizontal">
+                    <a href="#" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" title="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="#" title="Twitter"><i class="fab fa-twitter"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="footer-bottom">
+        <div class="footer-bottom-content">
+            <p class="footer-copyright">© 2025 جميع الحقوق محفوظة</p>
+            <ul class="footer-bottom-links">
+                <li><a href="/terms">الشروط</a></li>
+                <li><a href="/privacy">الخصوصية</a></li>
+            </ul>
+        </div>
+    </div>
+</footer>
+*/
