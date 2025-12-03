@@ -66,24 +66,9 @@
     }
 
     <link rel="stylesheet" href="~/css/styles-complete.css" />
+    <link rel="stylesheet" href="~/css/notifications.css" />
+   
 
-    <!-- Animate.css for animations -->
-@*     <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet" /> *@
-@*  <link rel="stylesheet" href="~/css/styles-fixed.css" />
-    <link rel="stylesheet" href="~/css/footer-enhanced.css" /> *@
-
-  @*   <link rel="stylesheet" href="~/css/styles.css?v=1.0" /> *@
-@*     <link rel="stylesheet" href="~/css/components.css?v=3.0" />
-    <link rel="stylesheet" href="~/css/advertisements.css?v=3.2" />
-    <link rel="stylesheet" href="~/css/cards-enhanced.css?v=1.0" /> *@ 
-        <!-- ✨ الملفات المحسّنة - يجب أن تكون أولاً -->
-@*     <link rel="stylesheet" href="~/css/styles-fixed.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/footer-enhanced.css" asp-append-version="true" />
-
-    <!-- الملفات الأخرى -->
-    <link rel="stylesheet" href="~/css/components.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/cards-enhanced.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/advertisements.css" asp-append-version="true" /> *@
 
     @await RenderSectionAsync("Styles", required: false)
 
@@ -306,72 +291,7 @@
                     </ul>
 
 
-            
-                @*     <ul class="navbar-nav">
-                        <li class="nav-item dropdown language-selector">
-                            <a class="nav-link dropdown-toggle language-dropdown" href="#" id="languageMenu"
-                               role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <span class="flag">@currentLangInfo.Flag</span>
-                                <span class="d-none d-sm-inline">@currentLangInfo.NativeName</span>
-                            </a>
-                            <ul class="dropdown-menu dropdown-menu-end" id="languageDropdown">
-                                @foreach (var language in supportedLanguages)
-                                {
-                                    <li>
-                                        <form method="post" action="@Url.Action("SetLanguage", "Language")" class="language-form">
-                                            @Html.AntiForgeryToken()
-                                            <input type="hidden" name="culture" value="@language.Code" />
-                                            <input type="hidden" name="returnUrl" value="@(Context.Request.Path + Context.Request.QueryString)" />
-                                            <button type="submit"
-                                                    class="dropdown-item @(currentLanguage == language.Code ? "active" : "")"
-                                                    @(currentLanguage == language.Code ? "disabled" : "")>
-                                                <span class="flag">@language.Flag</span>
-                                                <span>@language.NativeName</span>
-                                                @if (currentLanguage == language.Code)
-                                                {
-                                                    <i class="fas fa-check ms-auto text-success"></i>
-                                                }
-                                            </button>
-                                        </form>
-                                    </li>
-                                }
-                            </ul>
-                        </li>
-
-                        @if (isLoggedIn)
-                        {
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle user-dropdown" href="#" id="userMenu" role="button" data-bs-toggle="dropdown">
-                                    <div class="user-avatar">@(userName?.FirstOrDefault() ?? 'U')</div>
-                                    <span class="d-none d-md-inline">@userName</span>
-                                </a>
-                                <ul class="dropdown-menu dropdown-menu-end">
-                                    @if (isAdmin)
-                                    {
-                                        <li><a class="dropdown-item" href="/Admin/Dashboard"><i class="fas fa-tachometer-alt @(direction == "rtl" ? "ms-2" : "me-2")"></i>@Localizer["AdminPanel"]</a></li>
-                                    }
-                                    else
-                                    {
-                                        <li><a class="dropdown-item" href="/Account/Profile"><i class="fas fa-user @(direction == "rtl" ? "ms-2" : "me-2")"></i>@Localizer["Profile"]</a></li>
-                                        <li><a class="dropdown-item" href="/Requests/Create"><i class="fas fa-plus @(direction == "rtl" ? "ms-2" : "me-2")"></i>@Localizer["AddRequest"]</a></li>
-                                        <li><a class="dropdown-item" href="/Requests/MyRequests"><i class="fas fa-list-alt @(direction == "rtl" ? "ms-2" : "me-2")"></i>@Localizer["MyRequests"]</a></li>
-                                    }
-                                    <li><hr class="dropdown-divider"></li>
-                                    <li><a class="dropdown-item text-danger" href="/Account/Logout"><i class="fas fa-sign-out-alt @(direction == "rtl" ? "ms-2" : "me-2")"></i>@Localizer["Logout"]</a></li>
-                                </ul>
-                            </li>
-                        }
-                        else
-                        {
-                            <li class="nav-item"><a class="nav-link" href="/Requests/Create"><i class="fas fa-plus @(direction == "rtl" ? "ms-1" : "me-1")"></i>@Localizer["AddRequest"]</a></li>
-                            <li class="nav-item">
-                                <a class="btn btn-outline-custom" href="/Account/Login">
-                                    <i class="fas fa-sign-in-alt"></i>
-                                    @Localizer["Login"]
-                                </a>
-                            </li>
-                        }
-                    </ul> *@
+         
                 </div>
             </div>
         </nav>
@@ -610,42 +530,8 @@
     <script src="~/js/notification-manager.js"></script>
     <script src="~/js/language-manager.js"></script>
 
+   
 
-@*     <!-- Bootstrap -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
-    <!-- language-manager -->
-    <script src="~/js/language-manager.js"></script>
-
-    <script>
-        if (typeof bootstrap === 'undefined') {
-            console.error('❌ Bootstrap غير محمل');
-            alert('خطأ: Bootstrap غير محمل. تحقق من الاتصال بالإنترنت.');
-        } else {
-            console.log('✅ Bootstrap محمل بنجاح');
-        }
-
-        console.log('🌐 اللغة الحالية:', '@currentLanguage');
-        console.log('📂 الاتجاه:', '@direction');
-        console.log('👤 تسجيل دخول:', @isLoggedIn.ToString().ToLower());
-        console.log('🔐 اسم المستخدم:', '@userName');
-    </script> *@
-    <!-- jQuery - يجب أن يكون أولاً -->
-@*     <script src="https://code.jquery.com/jquery-3.6.0.min.js"
-            integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
-            crossorigin="anonymous"></script>
-
-    <!-- Bootstrap -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
-    <!-- language-manager -->
-    <script src="~/js/language-manager.js"></script>
-    <script src="~/js/advertisements.js?v=3.2"></script>
-    <!-- SignalR -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.0/signalr.min.js"></script>
-
-    <!-- Notification Manager -->
-    <script src="~/js/notification-manager.js"></script> *@
     <script>
         // التحقق من تحميل jQuery
         if (typeof jQuery === 'undefined') {
