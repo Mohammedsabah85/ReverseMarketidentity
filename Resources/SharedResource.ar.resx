@@ -717,4 +717,28 @@
   <data name="RegisterYourStore" xml:space="preserve">
     <value>سجل متجرك </value>
   </data>
+  <data name="EnterPhoneToLogin" xml:space="preserve">
+    <value>أدخل الهاتف لتسجيل الدخول</value>
+  </data>
+  <data name="EnterPhoneWithoutCode" xml:space="preserve">
+    <value>ادخل الهاتف بدون المفتاح</value>
+  </data>
+  <data name="IAgreeToThe" xml:space="preserve">
+    <value>انا موافق على</value>
+  </data>
+  <data name="VerificationCodeViaWhatsApp" xml:space="preserve">
+    <value>كود التحقيق عبر واتساب</value>
+  </data>
+  <data name="SecureAndProtected" xml:space="preserve">
+    <value>حماية وامان</value>
+  </data>
+  <data name="InstantVerification" xml:space="preserve">
+    <value>التحقق الفوري</value>
+  </data>
+  <data name="ForEveryone" xml:space="preserve">
+    <value>متاح للجميع</value>
+  </data>
+  <data name="And" xml:space="preserve">
+    <value>و </value>
+  </data>
 </root>

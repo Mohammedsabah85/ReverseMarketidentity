@@ -717,4 +717,28 @@
   <data name="RegisterYourStore" xml:space="preserve">
     <value />
   </data>
+  <data name="EnterPhoneToLogin" xml:space="preserve">
+    <value />
+  </data>
+  <data name="EnterPhoneWithoutCode" xml:space="preserve">
+    <value />
+  </data>
+  <data name="IAgreeToThe" xml:space="preserve">
+    <value />
+  </data>
+  <data name="VerificationCodeViaWhatsApp" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SecureAndProtected" xml:space="preserve">
+    <value />
+  </data>
+  <data name="InstantVerification" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ForEveryone" xml:space="preserve">
+    <value />
+  </data>
+  <data name="And" xml:space="preserve">
+    <value />
+  </data>
 </root>

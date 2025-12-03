@@ -297,14 +297,14 @@ namespace ReverseMarket.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditSubCategory1(SubCategory1 subCategory)
         {
-            if (ModelState.IsValid)
-            {
+            //if (ModelState.IsValid)
+            //{
                 _context.Update(subCategory);
                 await _context.SaveChangesAsync();
 
                 TempData["SuccessMessage"] = "تم تحديث الفئة الفرعية الأولى بنجاح";
                 return RedirectToAction("Index");
-            }
+            //}
 
             var category = await _context.Categories.FindAsync(subCategory.CategoryId);
             ViewBag.Category = category;
@@ -332,14 +332,14 @@ namespace ReverseMarket.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditSubCategory2(SubCategory2 subCategory)
         {
-            if (ModelState.IsValid)
-            {
+            //if (ModelState.IsValid)
+            //{
                 _context.Update(subCategory);
                 await _context.SaveChangesAsync();
 
                 TempData["SuccessMessage"] = "تم تحديث الفئة الفرعية الثانية بنجاح";
                 return RedirectToAction("Index");
-            }
+            //}
 
             var subCategory1 = await _context.SubCategories1
                 .Include(sc => sc.Category)

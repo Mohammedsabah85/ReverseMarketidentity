@@ -693,9 +693,6 @@
   <data name="AllRequests" xml:space="preserve">
     <value>هەموو داواکاریەکان</value>
   </data>
-  <data name="MadeWithLoveInIraq" xml:space="preserve">
-    <value>بە خۆشەویستی دروستکراوە لە عێراق</value>
-  </data>
   <data name="SearchInTitleOrDescription" xml:space="preserve">
     <value>بەپێی ناونیشان یان وردەکارییەکان بگەڕێ</value>
   </data>
@@ -713,5 +710,32 @@
   </data>
   <data name="RegisterYourStore" xml:space="preserve">
     <value>فرۆشگاکەت تۆمار بکە</value>
+  </data>
+  <data name="MadeWithLoveInIraq" xml:space="preserve">
+    <value>بە خۆشەویستی دروستکراوە لە عێراق</value>
+  </data>
+  <data name="EnterPhoneToLogin" xml:space="preserve">
+    <value>بۆ چوونە ژوورەوە ژمارەی تەلەفۆنەکەت بنووسە</value>
+  </data>
+  <data name="EnterPhoneWithoutCode" xml:space="preserve">
+    <value>مۆبایلەکە بەبێ کلیلەکە دابنێ</value>
+  </data>
+  <data name="IAgreeToThe" xml:space="preserve">
+    <value>منیش ڕازیم</value>
+  </data>
+  <data name="VerificationCodeViaWhatsApp" xml:space="preserve">
+    <value>کۆدی پشتڕاستکردنەوەی واتسئەپ</value>
+  </data>
+  <data name="SecureAndProtected" xml:space="preserve">
+    <value>پاراستن و سەلامەتی</value>
+  </data>
+  <data name="InstantVerification" xml:space="preserve">
+    <value>پشتڕاستکردنەوەی خێرا</value>
+  </data>
+  <data name="ForEveryone" xml:space="preserve">
+    <value>بۆ هەمووان بەردەستە</value>
+  </data>
+  <data name="And" xml:space="preserve">
+    <value>وه </value>
   </data>
 </root>

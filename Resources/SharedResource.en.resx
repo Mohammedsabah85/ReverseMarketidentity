@@ -693,9 +693,6 @@
   <data name="AllRequests" xml:space="preserve">
     <value>AllRequests</value>
   </data>
-  <data name="MadeWithLoveInIraq" xml:space="preserve">
-    <value>Made with love in Iraq</value>
-  </data>
   <data name="SearchInTitleOrDescription" xml:space="preserve">
     <value>SearchInTitleOrDescription</value>
   </data>
@@ -713,5 +710,32 @@
   </data>
   <data name="RegisterYourStore" xml:space="preserve">
     <value>Register Your Store</value>
+  </data>
+  <data name="MadeWithLoveInIraq" xml:space="preserve">
+    <value>Made with love in Iraq</value>
+  </data>
+  <data name="EnterPhoneToLogin" xml:space="preserve">
+    <value>Enter Phone To Login</value>
+  </data>
+  <data name="EnterPhoneWithoutCode" xml:space="preserve">
+    <value>Enter Phone Without Code</value>
+  </data>
+  <data name="IAgreeToThe" xml:space="preserve">
+    <value>I Agree To The</value>
+  </data>
+  <data name="VerificationCodeViaWhatsApp" xml:space="preserve">
+    <value>Verification Code Via WhatsApp</value>
+  </data>
+  <data name="SecureAndProtected" xml:space="preserve">
+    <value>Secure And Protected</value>
+  </data>
+  <data name="InstantVerification" xml:space="preserve">
+    <value>Instant Verification</value>
+  </data>
+  <data name="ForEveryone" xml:space="preserve">
+    <value>For Everyone</value>
+  </data>
+  <data name="And" xml:space="preserve">
+    <value>And </value>
   </data>
 </root>
