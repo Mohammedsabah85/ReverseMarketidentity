@@ -700,45 +700,291 @@
     <value>جميع الطلبات</value>
   </data>
   <data name="SearchInTitleOrDescription" xml:space="preserve">
-    <value />
+    <value>البحث بواسطة العنوان او التفاصيل</value>
   </data>
   <data name="BrowseAvailableRequests" xml:space="preserve">
-    <value />
+    <value>تصفح الطلبات المتاحة</value>
   </data>
   <data name="StoresDirectory" xml:space="preserve">
-    <value />
+    <value>دليل المتاجر</value>
   </data>
   <data name="BrowseRegisteredStores" xml:space="preserve">
-    <value />
+    <value>تصفح المتاجر المسجلة</value>
   </data>
   <data name="SearchInStoreNameOrDescription" xml:space="preserve">
-    <value />
+    <value>البحث في اسم المتجر أو الوصف</value>
   </data>
   <data name="RegisterYourStore" xml:space="preserve">
-    <value />
+    <value>سجل متجرك </value>
   </data>
   <data name="EnterPhoneToLogin" xml:space="preserve">
-    <value />
+    <value>أدخل الهاتف لتسجيل الدخول</value>
   </data>
   <data name="EnterPhoneWithoutCode" xml:space="preserve">
-    <value />
+    <value>ادخل الهاتف بدون المفتاح</value>
   </data>
   <data name="IAgreeToThe" xml:space="preserve">
-    <value />
+    <value>انا موافق على</value>
   </data>
   <data name="VerificationCodeViaWhatsApp" xml:space="preserve">
-    <value />
+    <value>كود التحقيق عبر واتساب</value>
   </data>
   <data name="SecureAndProtected" xml:space="preserve">
-    <value />
+    <value>حماية وامان</value>
   </data>
   <data name="InstantVerification" xml:space="preserve">
-    <value />
+    <value>التحقق الفوري</value>
   </data>
   <data name="ForEveryone" xml:space="preserve">
-    <value />
+    <value>متاح للجميع</value>
   </data>
   <data name="And" xml:space="preserve">
+    <value>و</value>
+  </data>
+  <data name="MadeWithLoveInIraq" xml:space="preserve">
+    <value>صُنع بحب في العراق</value>
+  </data>
+  <data name="RegisteredVerifiedNumber" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RegisteredUnverifiedNumber" xml:space="preserve">
+    <value />
+  </data>
+  <data name="NewNumber" xml:space="preserve">
+    <value />
+  </data>
+  <data name="InstantLoginCode" xml:space="preserve">
+    <value />
+  </data>
+  <data name="VerificationRequired" xml:space="preserve">
+    <value />
+  </data>
+  <data name="CreateNewAccount" xml:space="preserve">
+    <value />
+  </data>
+  <data name="PhoneVerification" xml:space="preserve">
+    <value />
+  </data>
+  <data name="CreateAccount" xml:space="preserve">
+    <value />
+  </data>
+  <data name="CompleteYourData" xml:space="preserve">
+    <value />
+  </data>
+  <data name="VerifiedPhoneNumber" xml:space="preserve">
+    <value />
+  </data>
+  <data name="FirstName" xml:space="preserve">
+    <value />
+  </data>
+  <data name="LastName" xml:space="preserve">
+    <value />
+  </data>
+  <data name="DateOfBirth" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Gender" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SelectGender" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Male" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Female" xml:space="preserve">
+    <value />
+  </data>
+  <data name="LocationInfo" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Basra" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Erbil" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Najaf" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Karbala" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Mosul" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Sulaymaniyah" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Babylon" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Dohuk" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Kirkuk" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Anbar" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Diyala" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Saladin" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Wasit" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ThiQar" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Muthanna" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Qadisiyyah" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Maysan" xml:space="preserve">
+    <value />
+  </data>
+  <data name="DistrictExample" xml:space="preserve">
+    <value />
+  </data>
+  <data name="DetailedAddress" xml:space="preserve">
+    <value />
+  </data>
+  <data name="AddressOptional" xml:space="preserve">
+    <value />
+  </data>
+  <data name="AccountType" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Buyer" xml:space="preserve">
+    <value />
+  </data>
+  <data name="BuyerDescription" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Seller" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SellerDescription" xml:space="preserve">
+    <value />
+  </data>
+  <data name="StoreInfo" xml:space="preserve">
+    <value />
+  </data>
+  <data name="YourStoreName" xml:space="preserve">
+    <value />
+  </data>
+  <data name="StoreDescription" xml:space="preserve">
+    <value />
+  </data>
+  <data name="StoreDescriptionPlaceholder" xml:space="preserve">
+    <value />
+  </data>
+  <data name="WebsiteUrl1" xml:space="preserve">
+    <value />
+  </data>
+  <data name="WebsiteUrl2" xml:space="preserve">
+    <value />
+  </data>
+  <data name="WebsiteUrl3" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ProfileImage" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ProfileImageNote" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ImagePreview" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ExistingVerifiedUser" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ExistingUnverifiedUser" xml:space="preserve">
+    <value />
+  </data>
+  <data name="EnterLoginCode" xml:space="preserve">
+    <value />
+  </data>
+  <data name="VerifyAccount" xml:space="preserve">
+    <value />
+  </data>
+  <data name="EnterVerificationCodeToActivate" xml:space="preserve">
+    <value />
+  </data>
+  <data name="VerifyCode" xml:space="preserve">
+    <value />
+  </data>
+  <data name="EnterVerificationCodeSent" xml:space="preserve">
+    <value />
+  </data>
+  <data name="CheckWhatsApp" xml:space="preserve">
+    <value />
+  </data>
+  <data name="WelcomeBackLoginCodeSent" xml:space="preserve">
+    <value />
+  </data>
+  <data name="AccountExistsNeedsVerification" xml:space="preserve">
+    <value>الحساب موجود ويحتاج إلى التحقق</value>
+  </data>
+  <data name="LoginCode" xml:space="preserve">
+    <value />
+  </data>
+  <data name="VerificationCode" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Enter4DigitCode" xml:space="preserve">
+    <value />
+  </data>
+  <data name="DidNotReceiveCode" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Resend" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ChangeNumber" xml:space="preserve">
+    <value />
+  </data>
+  <data name="CanResendIn" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Seconds" xml:space="preserve">
+    <value />
+  </data>
+  <data name="AdditionalSecurity" xml:space="preserve">
+    <value />
+  </data>
+  <data name="LoginCodeValid10Minutes" xml:space="preserve">
+    <value />
+  </data>
+  <data name="VerificationCodeValid10Minutes" xml:space="preserve">
+    <value />
+  </data>
+  <data name="AdminVerification" xml:space="preserve">
+    <value />
+  </data>
+  <data name="EnterAdminVerificationCode" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RestrictedAreaAdminOnly" xml:space="preserve">
+    <value />
+  </data>
+  <data name="AdminVerificationCode" xml:space="preserve">
+    <value />
+  </data>
+  <data name="EnterDashboard" xml:space="preserve">
+    <value />
+  </data>
+  <data name="BackToLogin" xml:space="preserve">
+    <value />
+  </data>
+  <data name="AdditionalAdminSecurity" xml:space="preserve">
     <value />
   </data>
 </root>
