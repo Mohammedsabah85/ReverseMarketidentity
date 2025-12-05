@@ -1,64 +1,5 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
-  <!-- 
-    Microsoft ResX Schema 
-    
-    Version 2.0
-    
-    The primary goals of this format is to allow a simple XML format 
-    that is mostly human readable. The generation and parsing of the 
-    various data types are done through the TypeConverter classes 
-    associated with the data types.
-    
-    Example:
-    
-    ... ado.net/XML headers & schema ...
-    <resheader name="resmimetype">text/microsoft-resx</resheader>
-    <resheader name="version">2.0</resheader>
-    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
-    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
-    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
-    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
-    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
-        <value>[base64 mime encoded serialized .NET Framework object]</value>
-    </data>
-    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
-        <comment>This is a comment</comment>
-    </data>
-                
-    There are any number of "resheader" rows that contain simple 
-    name/value pairs.
-    
-    Each data row contains a name, and value. The row also contains a 
-    type or mimetype. Type corresponds to a .NET class that support 
-    text/value conversion through the TypeConverter architecture. 
-    Classes that don't support this are serialized and stored with the 
-    mimetype set.
-    
-    The mimetype is used for serialized objects, and tells the 
-    ResXResourceReader how to depersist the object. This is currently not 
-    extensible. For a given mimetype the value must be set accordingly:
-    
-    Note - application/x-microsoft.net.object.binary.base64 is the format 
-    that the ResXResourceWriter will generate, however the reader can 
-    read any of the formats listed below.
-    
-    mimetype: application/x-microsoft.net.object.binary.base64
-    value   : The object must be serialized with 
-            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
-            : and then encoded with base64 encoding.
-    
-    mimetype: application/x-microsoft.net.object.soap.base64
-    value   : The object must be serialized with 
-            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
-            : and then encoded with base64 encoding.
-
-    mimetype: application/x-microsoft.net.object.bytearray.base64
-    value   : The object must be serialized into a byte array 
-            : using a System.ComponentModel.TypeConverter
-            : and then encoded with base64 encoding.
-    -->
   <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
     <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
     <xsd:element name="root" msdata:IsDataSet="true">
@@ -117,12 +58,16 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  
+  <!-- Site Information -->
   <data name="SiteName" xml:space="preserve">
     <value>بازاڕی پێچەوانە</value>
   </data>
   <data name="SiteDescription" xml:space="preserve">
     <value>پلاتفۆرمی بەستنەوەی کڕیاران بە فرۆشگاکان لە عێراق</value>
   </data>
+  
+  <!-- Navigation -->
   <data name="Home" xml:space="preserve">
     <value>سەرەکی</value>
   </data>
@@ -156,6 +101,8 @@
   <data name="AdminPanel" xml:space="preserve">
     <value>پانێڵی بەڕێوەبەر</value>
   </data>
+  
+  <!-- Welcome Section -->
   <data name="Welcome" xml:space="preserve">
     <value>بەخێربێیت بۆ بازاڕی پێچەوانە</value>
   </data>
@@ -168,6 +115,8 @@
   <data name="BrowseRequests" xml:space="preserve">
     <value>گەڕان بە داواکاریەکاندا</value>
   </data>
+  
+  <!-- Search -->
   <data name="Search" xml:space="preserve">
     <value>گەڕان</value>
   </data>
@@ -186,6 +135,8 @@
   <data name="DiscoverProducts" xml:space="preserve">
     <value>بەرهەم و خزمەتگوزاریەکان بدۆزەرەوە</value>
   </data>
+  
+  <!-- Requests Section -->
   <data name="RecentRequests" xml:space="preserve">
     <value>داواکاریە تازە زیادکراوەکان</value>
   </data>
@@ -207,6 +158,17 @@
   <data name="ViewAllRequests" xml:space="preserve">
     <value>بینینی هەموو داواکاریەکان</value>
   </data>
+  <data name="AllRequests" xml:space="preserve">
+    <value>هەموو داواکاریەکان</value>
+  </data>
+  <data name="SearchInTitleOrDescription" xml:space="preserve">
+    <value>بەپێی ناونیشان یان وردەکارییەکان بگەڕێ</value>
+  </data>
+  <data name="BrowseAvailableRequests" xml:space="preserve">
+    <value>گەڕان بە داواکارییە بەردەستەکاندا</value>
+  </data>
+  
+  <!-- How It Works -->
   <data name="HowItWorks" xml:space="preserve">
     <value>بازاڕی پێچەوانە چۆن کار دەکات؟</value>
   </data>
@@ -237,6 +199,8 @@
   <data name="Step4Description" xml:space="preserve">
     <value>پێشنیارەکان بەراورد بکە و گونجاوترین هەڵبژێرە</value>
   </data>
+  
+  <!-- Statistics -->
   <data name="CompletedRequests" xml:space="preserve">
     <value>داواکاری تەواوکراو</value>
   </data>
@@ -249,12 +213,16 @@
   <data name="AvailableCategories" xml:space="preserve">
     <value>پۆلی بەردەست</value>
   </data>
+  
+  <!-- Pagination -->
   <data name="Previous" xml:space="preserve">
     <value>پێشوو</value>
   </data>
   <data name="Next" xml:space="preserve">
     <value>دواتر</value>
   </data>
+  
+  <!-- Common Fields -->
   <data name="Advertisement" xml:space="preserve">
     <value>ڕێکلام</value>
   </data>
@@ -291,6 +259,8 @@
   <data name="FullName" xml:space="preserve">
     <value>ناوی تەواو</value>
   </data>
+  
+  <!-- Contact Page -->
   <data name="ContactInfo" xml:space="preserve">
     <value>زانیاری پەیوەندی</value>
   </data>
@@ -327,6 +297,11 @@
   <data name="MessageSentSuccess" xml:space="preserve">
     <value>پەیامەکەت بە سەرکەوتوویی نێردرا</value>
   </data>
+  <data name="ContactUs" xml:space="preserve">
+    <value>پەیوەندیمان پێوە بکە</value>
+  </data>
+  
+  <!-- FAQ -->
   <data name="FAQ" xml:space="preserve">
     <value>پرسیارە باوەکان</value>
   </data>
@@ -342,6 +317,8 @@
   <data name="FAQ2Answer" xml:space="preserve">
     <value>بەڵێ، زیادکردنی داواکاری و گەڕان بە پێشنیارەکاندا تەواو خۆڕاییە بۆ کڕیارەکان</value>
   </data>
+  
+  <!-- Privacy Policy -->
   <data name="PrivacyPolicy" xml:space="preserve">
     <value>سیاسەتی تایبەتێتی</value>
   </data>
@@ -445,7 +422,7 @@
     <value>تایبەتێتی منداڵان</value>
   </data>
   <data name="ChildrenText" xml:space="preserve">
-    <value>خزمەتگوزاریەکانمان ئامانج نین بۆ منداڵانی خوار 18 ساڵ</value>
+    <value>خزمەتگوزاریەکانمان ئاڕاستەی منداڵانی خوار 18 ساڵ نین</value>
   </data>
   <data name="PolicyChanges" xml:space="preserve">
     <value>گۆڕانکاری لە سیاسەت</value>
@@ -453,15 +430,14 @@
   <data name="PolicyChangesText" xml:space="preserve">
     <value>ڕەنگە ئەم سیاسەتە لە کاتێکەوە بۆ کاتێک نوێ بکەینەوە. ئاگادارت دەکەینەوە لە هەر گۆڕانکاریەکی گرنگ</value>
   </data>
-  <data name="ContactUs" xml:space="preserve">
-    <value>پەیوەندیمان پێوە بکە</value>
-  </data>
   <data name="ContactPrivacyText" xml:space="preserve">
     <value>ئەگەر پرسیارت هەیە دەربارەی سیاسەتی تایبەتێتی، تکایە پەیوەندیمان پێوە بکە</value>
   </data>
   <data name="BackToHome" xml:space="preserve">
     <value>گەڕانەوە بۆ سەرەکی</value>
   </data>
+  
+  <!-- Terms of Use -->
   <data name="TermsOfUse" xml:space="preserve">
     <value>مەرجەکانی بەکارهێنان</value>
   </data>
@@ -549,6 +525,8 @@
   <data name="ContactTermsText" xml:space="preserve">
     <value>ئەگەر پرسیارت هەیە دەربارەی مەرجەکانی بەکارهێنان، تکایە پەیوەندیمان پێوە بکە</value>
   </data>
+  
+  <!-- Common Actions -->
   <data name="Save" xml:space="preserve">
     <value>پاشەکەوتکردن</value>
   </data>
@@ -570,6 +548,8 @@
   <data name="ViewAll" xml:space="preserve">
     <value>بینینی هەموو</value>
   </data>
+  
+  <!-- Status Messages -->
   <data name="Loading" xml:space="preserve">
     <value>بارکردن...</value>
   </data>
@@ -591,6 +571,8 @@
   <data name="NoDataAvailable" xml:space="preserve">
     <value>هیچ داتایەک بەردەست نییە</value>
   </data>
+  
+  <!-- Status Labels -->
   <data name="Active" xml:space="preserve">
     <value>چالاک</value>
   </data>
@@ -609,6 +591,8 @@
   <data name="Status" xml:space="preserve">
     <value>دۆخ</value>
   </data>
+  
+  <!-- Date/Time -->
   <data name="Date" xml:space="preserve">
     <value>بەروار</value>
   </data>
@@ -618,12 +602,22 @@
   <data name="UpdatedAt" xml:space="preserve">
     <value>بەرواری نوێکردنەوە</value>
   </data>
+  
+  <!-- Footer -->
   <data name="ImportantLinks" xml:space="preserve">
     <value>بەستەرە گرنگەکان</value>
   </data>
   <data name="Copyright" xml:space="preserve">
     <value>© 2025 بازاڕی پێچەوانە. هەموو مافەکان پارێزراون</value>
   </data>
+  <data name="AllRightsReserved" xml:space="preserve">
+    <value>هەموو مافەکان پارێزراون</value>
+  </data>
+  <data name="MadeWithLoveInIraq" xml:space="preserve">
+    <value>بە خۆشەویستی دروستکراوە لە عێراق</value>
+  </data>
+  
+  <!-- Language -->
   <data name="LanguageChanged" xml:space="preserve">
     <value>زمان بە سەرکەوتوویی گۆڕدرا</value>
   </data>
@@ -633,6 +627,8 @@
   <data name="LanguageError" xml:space="preserve">
     <value>هەڵە لە گۆڕینی زمان</value>
   </data>
+  
+  <!-- About Page -->
   <data name="AboutSubtitle" xml:space="preserve">
     <value>پلاتفۆرمێکی داهێنەر بۆ بەستنەوەی کڕیاران بە فرۆشیارەکان</value>
   </data>
@@ -672,6 +668,8 @@
   <data name="StartNow" xml:space="preserve">
     <value>ئێستا دەست پێ بکە</value>
   </data>
+  
+  <!-- Social Media -->
   <data name="SocialMedia" xml:space="preserve">
     <value>تۆڕە کۆمەڵایەتیەکان</value>
   </data>
@@ -687,24 +685,16 @@
   <data name="YouTube" xml:space="preserve">
     <value>یوتیوب</value>
   </data>
+  
+  <!-- Database References -->
   <data name="TermsFromDatabase" xml:space="preserve">
     <value>مەرجەکانی بەکارهێنان لە بنکەدراوە</value>
   </data>
   <data name="IntellectualPropertyFromDatabase" xml:space="preserve">
-    <value>مافی خاوەندارێتی فیکری لە بنکەدراوە</value>
+    <value>مافی موڵکی زیهنی لە بنکەدراوە</value>
   </data>
-  <data name="AllRightsReserved" xml:space="preserve">
-    <value>هەموو مافەکان پارێزراون</value>
-  </data>
-  <data name="AllRequests" xml:space="preserve">
-    <value>هەموو داواکاریەکان</value>
-  </data>
-  <data name="SearchInTitleOrDescription" xml:space="preserve">
-    <value>بەپێی ناونیشان یان وردەکارییەکان بگەڕێ</value>
-  </data>
-  <data name="BrowseAvailableRequests" xml:space="preserve">
-    <value>ەڕان بە داواکارییە بەردەستەکاندا</value>
-  </data>
+  
+  <!-- Stores -->
   <data name="StoresDirectory" xml:space="preserve">
     <value>بەڕێوەبەرایەتی فرۆشگاکان</value>
   </data>
@@ -717,17 +707,22 @@
   <data name="RegisterYourStore" xml:space="preserve">
     <value>فرۆشگاکەت تۆمار بکە</value>
   </data>
+  
+  <!-- Login Page -->
   <data name="EnterPhoneToLogin" xml:space="preserve">
-    <value>بۆ چوونە ژوورەوە ژمارەی تەلەفۆنەکەت بنووسە</value>
+    <value>بۆ چوونەژوورەوە ژمارەی تەلەفۆنەکەت بنووسە</value>
   </data>
   <data name="EnterPhoneWithoutCode" xml:space="preserve">
-    <value>مۆبایلەکە بەبێ کلیلەکە دابنێ</value>
+    <value>مۆبایلەکە بەبێ کۆدی وڵات دابنێ</value>
   </data>
   <data name="IAgreeToThe" xml:space="preserve">
-    <value>منیش ڕازیم</value>
+    <value>ڕازیم بە</value>
+  </data>
+  <data name="And" xml:space="preserve">
+    <value>و</value>
   </data>
   <data name="VerificationCodeViaWhatsApp" xml:space="preserve">
-    <value>کۆدی پشتڕاستکردنەوەی واتسئەپ</value>
+    <value>کۆدی پشتڕاستکردنەوە لە ڕێگەی واتساپ</value>
   </data>
   <data name="SecureAndProtected" xml:space="preserve">
     <value>پاراستن و سەلامەتی</value>
@@ -738,254 +733,275 @@
   <data name="ForEveryone" xml:space="preserve">
     <value>بۆ هەمووان بەردەستە</value>
   </data>
-  <data name="And" xml:space="preserve">
-    <value>وه </value>
+  
+  <!-- NEW COMPLETED TRANSLATIONS -->
+  
+  <!-- Phone Status -->
+  <data name="RegisteredVerifiedNumber" xml:space="preserve">
+    <value>ژمارەی تۆمارکراو و چالاککراو</value>
   </data>
-  <data name="MadeWithLoveInIraq" xml:space="preserve">
-    <value>بە خۆشەویستی دروستکراوە لە عێراق</value>
+  <data name="RegisteredUnverifiedNumber" xml:space="preserve">
+    <value>ژمارەی تۆمارکراو و چالاکنەکراو</value>
   </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="RegisteredVerifiedNumber" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
+  <data name="NewNumber" xml:space="preserve">
+    <value>ژمارەی نوێ</value>
   </data>
-  <data name="RegisteredUnverifiedNumber" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
+  <data name="InstantLoginCode" xml:space="preserve">
+    <value>کۆدی چوونەژوورەوەی خێرا</value>
   </data>
-  <data name="NewNumber" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
+  <data name="VerificationRequired" xml:space="preserve">
+    <value>پشتڕاستکردنەوە پێویستە</value>
   </data>
-  <data name="InstantLoginCode" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
+  <data name="CreateNewAccount" xml:space="preserve">
+    <value>دروستکردنی هەژمارەی نوێ</value>
   </data>
-  <data name="VerificationRequired" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
+  
+  <!-- Phone Verification -->
+  <data name="PhoneVerification" xml:space="preserve">
+    <value>پشتڕاستکردنەوەی تەلەفۆن</value>
   </data>
-  <data name="CreateNewAccount" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
+  <data name="CreateAccount" xml:space="preserve">
+    <value>دروستکردنی هەژمار</value>
   </data>
-  <data name="PhoneVerification" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
+  <data name="CompleteYourData" xml:space="preserve">
+    <value>زانیاریەکانت تەواو بکە</value>
   </data>
-  <data name="CreateAccount" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
+  <data name="VerifiedPhoneNumber" xml:space="preserve">
+    <value>ژمارەی تەلەفۆنی چالاککراو</value>
   </data>
-  <data name="CompleteYourData" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
+  
+  <!-- Personal Information -->
+  <data name="FirstName" xml:space="preserve">
+    <value>ناوی یەکەم</value>
   </data>
-  <data name="VerifiedPhoneNumber" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
+  <data name="LastName" xml:space="preserve">
+    <value>ناوی خێزان</value>
   </data>
-  <data name="FirstName" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
+  <data name="DateOfBirth" xml:space="preserve">
+    <value>بەرواری لەدایکبوون</value>
   </data>
-  <data name="LastName" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
+  <data name="Gender" xml:space="preserve">
+    <value>ڕەگەز</value>
   </data>
-  <data name="DateOfBirth" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
+  <data name="SelectGender" xml:space="preserve">
+    <value>ڕەگەز هەڵبژێرە</value>
   </data>
-  <data name="Gender" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
+  <data name="Male" xml:space="preserve">
+    <value>نێر</value>
   </data>
-  <data name="SelectGender" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
+  <data name="Female" xml:space="preserve">
+    <value>مێ</value>
   </data>
-  <data name="Male" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
+  
+  <!-- Location Information -->
+  <data name="LocationInfo" xml:space="preserve">
+    <value>زانیاری شوێن</value>
   </data>
-  <data name="Female" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
+  <data name="Baghdad" xml:space="preserve">
+    <value>بەغدا</value>
   </data>
-  <data name="LocationInfo" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
+  <data name="Basra" xml:space="preserve">
+    <value>بەسرە</value>
   </data>
-  <data name="Basra" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
+  <data name="Erbil" xml:space="preserve">
+    <value>هەولێر</value>
   </data>
-  <data name="Erbil" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
+  <data name="Najaf" xml:space="preserve">
+    <value>نەجەف</value>
   </data>
-  <data name="Najaf" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
+  <data name="Karbala" xml:space="preserve">
+    <value>کەربەلا</value>
   </data>
-  <data name="Karbala" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
+  <data name="Mosul" xml:space="preserve">
+    <value>مووسڵ</value>
   </data>
-  <data name="Mosul" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
+  <data name="Sulaymaniyah" xml:space="preserve">
+    <value>سلێمانی</value>
   </data>
-  <data name="Sulaymaniyah" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
+  <data name="Babylon" xml:space="preserve">
+    <value>بابل</value>
   </data>
-  <data name="Babylon" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
+  <data name="Dohuk" xml:space="preserve">
+    <value>دهۆک</value>
   </data>
-  <data name="Dohuk" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
+  <data name="Kirkuk" xml:space="preserve">
+    <value>کەرکوک</value>
   </data>
-  <data name="Kirkuk" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
+  <data name="Anbar" xml:space="preserve">
+    <value>ئەنبار</value>
   </data>
-  <data name="Anbar" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
+  <data name="Diyala" xml:space="preserve">
+    <value>دیالە</value>
   </data>
-  <data name="Diyala" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
+  <data name="Saladin" xml:space="preserve">
+    <value>سەلاحەدین</value>
   </data>
-  <data name="Saladin" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
+  <data name="Wasit" xml:space="preserve">
+    <value>واسط</value>
   </data>
-  <data name="Wasit" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
+  <data name="ThiQar" xml:space="preserve">
+    <value>زیقار</value>
   </data>
-  <data name="ThiQar" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
+  <data name="Muthanna" xml:space="preserve">
+    <value>موسەننا</value>
   </data>
-  <data name="Muthanna" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
+  <data name="Qadisiyyah" xml:space="preserve">
+    <value>قادسیە</value>
   </data>
-  <data name="Qadisiyyah" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
+  <data name="Maysan" xml:space="preserve">
+    <value>میسان</value>
   </data>
-  <data name="Maysan" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
+  <data name="DistrictExample" xml:space="preserve">
+    <value>نموونە: کەڕادە، مەنسوور</value>
   </data>
-  <data name="DistrictExample" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
+  <data name="DetailedAddress" xml:space="preserve">
+    <value>ناونیشانی ورد</value>
   </data>
-  <data name="DetailedAddress" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
+  <data name="AddressOptional" xml:space="preserve">
+    <value>ناونیشان (ئیختیاری)</value>
   </data>
-  <data name="AddressOptional" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
+  
+  <!-- Account Type -->
+  <data name="AccountType" xml:space="preserve">
+    <value>جۆری هەژمار</value>
   </data>
-  <data name="AccountType" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
+  <data name="Buyer" xml:space="preserve">
+    <value>کڕیار</value>
   </data>
-  <data name="Buyer" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
+  <data name="BuyerDescription" xml:space="preserve">
+    <value>دەمەوێت داواکاری زیاد بکەم و پێشنیار لە فرۆشگاکان وەربگرم</value>
   </data>
-  <data name="BuyerDescription" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
+  <data name="Seller" xml:space="preserve">
+    <value>فرۆشیار</value>
   </data>
-  <data name="Seller" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
+  <data name="SellerDescription" xml:space="preserve">
+    <value>دەمەوێت بەرهەمەکانم پیشان بدەم و پەیوەندی بە کڕیارەکانەوە بگرم</value>
   </data>
-  <data name="SellerDescription" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
+  
+  <!-- Store Information -->
+  <data name="StoreInfo" xml:space="preserve">
+    <value>زانیاری فرۆشگا</value>
   </data>
-  <data name="StoreInfo" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
+  <data name="YourStoreName" xml:space="preserve">
+    <value>ناوی فرۆشگاکەت</value>
   </data>
-  <data name="YourStoreName" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
+  <data name="StoreDescription" xml:space="preserve">
+    <value>وەسفی فرۆشگا</value>
   </data>
-  <data name="StoreDescription" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
+  <data name="StoreDescriptionPlaceholder" xml:space="preserve">
+    <value>وەسفێکی کورت بنووسە دەربارەی فرۆشگاکەت و خزمەتگوزاریەکانی کە پێشکەش دەکەیت...</value>
   </data>
-  <data name="StoreDescriptionPlaceholder" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
+  <data name="WebsiteUrl1" xml:space="preserve">
+    <value>بەستەری ماڵپەڕ</value>
   </data>
-  <data name="WebsiteUrl1" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
+  <data name="WebsiteUrl2" xml:space="preserve">
+    <value>بەستەری زیادە (ئیختیاری)</value>
   </data>
-  <data name="WebsiteUrl2" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
+  <data name="WebsiteUrl3" xml:space="preserve">
+    <value>بەستەری زیادەی تر (ئیختیاری)</value>
   </data>
-  <data name="WebsiteUrl3" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
+  
+  <!-- Profile Image -->
+  <data name="ProfileImage" xml:space="preserve">
+    <value>وێنەی پرۆفایل</value>
   </data>
-  <data name="ProfileImage" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
+  <data name="ProfileImageNote" xml:space="preserve">
+    <value>وێنەی چوارگۆشە پێشنیار دەکرێت، لانی کەم 200×200 پیکسڵ</value>
   </data>
-  <data name="ProfileImageNote" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
+  <data name="ImagePreview" xml:space="preserve">
+    <value>پیشاندانی وێنە</value>
   </data>
-  <data name="ImagePreview" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
+  
+  <!-- User Status -->
+  <data name="ExistingVerifiedUser" xml:space="preserve">
+    <value>بەکارهێنەری تۆمارکراو و چالاککراو</value>
   </data>
-  <data name="ExistingVerifiedUser" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
+  <data name="ExistingUnverifiedUser" xml:space="preserve">
+    <value>بەکارهێنەری تۆمارکراو و چالاکنەکراو</value>
   </data>
-  <data name="ExistingUnverifiedUser" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
+  
+  <!-- Verification -->
+  <data name="EnterLoginCode" xml:space="preserve">
+    <value>کۆدی چوونەژوورەوە بنووسە</value>
   </data>
-  <data name="EnterLoginCode" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
+  <data name="VerifyAccount" xml:space="preserve">
+    <value>چالاککردنی هەژمار</value>
   </data>
-  <data name="VerifyAccount" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
+  <data name="EnterVerificationCodeToActivate" xml:space="preserve">
+    <value>کۆدی چالاککردن بنووسە بۆ چالاککردنی هەژمارەکەت</value>
   </data>
-  <data name="EnterVerificationCodeToActivate" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
+  <data name="VerifyCode" xml:space="preserve">
+    <value>پشتڕاستکردنەوەی کۆد</value>
   </data>
-  <data name="VerifyCode" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
+  <data name="EnterVerificationCodeSent" xml:space="preserve">
+    <value>کۆدی پشتڕاستکردنەوەی نێردراو بنووسە</value>
   </data>
-  <data name="EnterVerificationCodeSent" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
+  <data name="CheckWhatsApp" xml:space="preserve">
+    <value>پەیامەکانی واتساپ بپشکنە</value>
   </data>
-  <data name="CheckWhatsApp" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
+  <data name="WelcomeBackLoginCodeSent" xml:space="preserve">
+    <value>بەخێربێیتەوە! کۆدی چوونەژوورەوە نێردرا</value>
   </data>
-  <data name="WelcomeBackLoginCodeSent" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
+  <data name="AccountExistsNeedsVerification" xml:space="preserve">
+    <value>هەژمار هەیە و پێویستی بە چالاککردن هەیە</value>
   </data>
-  <data name="AccountExistsNeedsVerification" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
+  <data name="LoginCode" xml:space="preserve">
+    <value>کۆدی چوونەژوورەوە</value>
   </data>
-  <data name="LoginCode" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
+  <data name="VerificationCode" xml:space="preserve">
+    <value>کۆدی پشتڕاستکردنەوە</value>
   </data>
-  <data name="VerificationCode" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
+  <data name="Enter4DigitCode" xml:space="preserve">
+    <value>کۆدی 4 ژمارەیی بنووسە</value>
   </data>
-  <data name="Enter4DigitCode" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
+  <data name="DidNotReceiveCode" xml:space="preserve">
+    <value>کۆدەکەت پێنەگەیشت؟</value>
   </data>
-  <data name="DidNotReceiveCode" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
+  <data name="Resend" xml:space="preserve">
+    <value>دووبارە بنێرە</value>
   </data>
-  <data name="Resend" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
+  <data name="ChangeNumber" xml:space="preserve">
+    <value>گۆڕینی ژمارە</value>
   </data>
-  <data name="ChangeNumber" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
+  <data name="CanResendIn" xml:space="preserve">
+    <value>دەتوانیت دووبارە بنێریت لە</value>
   </data>
-  <data name="CanResendIn" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
+  <data name="Seconds" xml:space="preserve">
+    <value>چرکە</value>
   </data>
-  <data name="Seconds" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
+  
+  <!-- Security -->
+  <data name="AdditionalSecurity" xml:space="preserve">
+    <value>ئاسایشی زیادە</value>
   </data>
-  <data name="AdditionalSecurity" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
+  <data name="LoginCodeValid10Minutes" xml:space="preserve">
+    <value>کۆدی چوونەژوورەوە بۆ 10 خولەک کاردەکات</value>
   </data>
-  <data name="LoginCodeValid10Minutes" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
+  <data name="VerificationCodeValid10Minutes" xml:space="preserve">
+    <value>کۆدی پشتڕاستکردنەوە بۆ 10 خولەک کاردەکات</value>
   </data>
-  <data name="VerificationCodeValid10Minutes" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
+  
+  <!-- Admin Verification -->
+  <data name="AdminVerification" xml:space="preserve">
+    <value>پشتڕاستکردنەوەی بەڕێوەبەر</value>
   </data>
-  <data name="AdminVerification" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
+  <data name="EnterAdminVerificationCode" xml:space="preserve">
+    <value>کۆدی پشتڕاستکردنەوەی بەڕێوەبەر بنووسە</value>
   </data>
-  <data name="EnterAdminVerificationCode" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
+  <data name="RestrictedAreaAdminOnly" xml:space="preserve">
+    <value>ناوچەی قەدەغەکراو - تەنها بۆ بەڕێوەبەران</value>
   </data>
-  <data name="RestrictedAreaAdminOnly" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
+  <data name="AdminVerificationCode" xml:space="preserve">
+    <value>کۆدی پشتڕاستکردنەوەی بەڕێوەبەر</value>
   </data>
-  <data name="AdminVerificationCode" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
+  <data name="EnterDashboard" xml:space="preserve">
+    <value>چوونەژوورەوە بۆ پانێل</value>
   </data>
-  <data name="EnterDashboard" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
+  <data name="BackToLogin" xml:space="preserve">
+    <value>گەڕانەوە بۆ چوونەژوورەوە</value>
   </data>
-  <data name="BackToLogin" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
+  <data name="AdditionalAdminSecurity" xml:space="preserve">
+    <value>چینێکی زیادەی ئاسایش بۆ بەڕێوەبەران</value>
   </data>
-  <data name="AdditionalAdminSecurity" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
-  </data>
+  
 </root>

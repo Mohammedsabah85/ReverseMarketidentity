@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -694,7 +694,7 @@
     <value>حقوق الملكية الفكرية من قاعدة البيانات</value>
   </data>
   <data name="AllRightsReserved" xml:space="preserve">
-    <value>عرض جميع الطلبات</value>
+    <value>جميع الحقوق محفوظة</value>
   </data>
   <data name="AllRequests" xml:space="preserve">
     <value>جميع الطلبات</value>
@@ -715,7 +715,7 @@
     <value>البحث في اسم المتجر أو الوصف</value>
   </data>
   <data name="RegisterYourStore" xml:space="preserve">
-    <value>سجل متجرك </value>
+    <value>سجل متجرك</value>
   </data>
   <data name="EnterPhoneToLogin" xml:space="preserve">
     <value>أدخل الهاتف لتسجيل الدخول</value>
@@ -724,13 +724,13 @@
     <value>ادخل الهاتف بدون المفتاح</value>
   </data>
   <data name="IAgreeToThe" xml:space="preserve">
-    <value>انا موافق على</value>
+    <value>أنا موافق على</value>
   </data>
   <data name="VerificationCodeViaWhatsApp" xml:space="preserve">
-    <value>كود التحقيق عبر واتساب</value>
+    <value>كود التحقق عبر واتساب</value>
   </data>
   <data name="SecureAndProtected" xml:space="preserve">
-    <value>حماية وامان</value>
+    <value>حماية وأمان</value>
   </data>
   <data name="InstantVerification" xml:space="preserve">
     <value>التحقق الفوري</value>
@@ -745,246 +745,249 @@
     <value>صُنع بحب في العراق</value>
   </data>
   <data name="RegisteredVerifiedNumber" xml:space="preserve">
-    <value />
+    <value>رقم مسجل ومُفعّل</value>
   </data>
   <data name="RegisteredUnverifiedNumber" xml:space="preserve">
-    <value />
+    <value>رقم مسجل غير مُفعّل</value>
   </data>
   <data name="NewNumber" xml:space="preserve">
-    <value />
+    <value>رقم جديد</value>
   </data>
   <data name="InstantLoginCode" xml:space="preserve">
-    <value />
+    <value>كود دخول فوري</value>
   </data>
   <data name="VerificationRequired" xml:space="preserve">
-    <value />
+    <value>يتطلب التحقق</value>
   </data>
   <data name="CreateNewAccount" xml:space="preserve">
-    <value />
+    <value>إنشاء حساب جديد</value>
   </data>
   <data name="PhoneVerification" xml:space="preserve">
-    <value />
+    <value>التحقق من الهاتف</value>
   </data>
   <data name="CreateAccount" xml:space="preserve">
-    <value />
+    <value>إنشاء حساب</value>
   </data>
   <data name="CompleteYourData" xml:space="preserve">
-    <value />
+    <value>أكمل بياناتك</value>
   </data>
   <data name="VerifiedPhoneNumber" xml:space="preserve">
-    <value />
+    <value>رقم الهاتف المُتحقق منه</value>
   </data>
   <data name="FirstName" xml:space="preserve">
-    <value />
+    <value>الاسم الأول</value>
   </data>
   <data name="LastName" xml:space="preserve">
-    <value />
+    <value>اسم العائلة</value>
   </data>
   <data name="DateOfBirth" xml:space="preserve">
-    <value />
+    <value>تاريخ الميلاد</value>
   </data>
   <data name="Gender" xml:space="preserve">
-    <value />
+    <value>الجنس</value>
   </data>
   <data name="SelectGender" xml:space="preserve">
-    <value />
+    <value>اختر الجنس</value>
   </data>
   <data name="Male" xml:space="preserve">
-    <value />
+    <value>ذكر</value>
   </data>
   <data name="Female" xml:space="preserve">
-    <value />
+    <value>أنثى</value>
   </data>
   <data name="LocationInfo" xml:space="preserve">
-    <value />
+    <value>معلومات الموقع</value>
+  </data>
+  <data name="Baghdad" xml:space="preserve">
+    <value>بغداد</value>
   </data>
   <data name="Basra" xml:space="preserve">
-    <value />
+    <value>البصرة</value>
   </data>
   <data name="Erbil" xml:space="preserve">
-    <value />
+    <value>أربيل</value>
   </data>
   <data name="Najaf" xml:space="preserve">
-    <value />
+    <value>النجف</value>
   </data>
   <data name="Karbala" xml:space="preserve">
-    <value />
+    <value>كربلاء</value>
   </data>
   <data name="Mosul" xml:space="preserve">
-    <value />
+    <value>الموصل</value>
   </data>
   <data name="Sulaymaniyah" xml:space="preserve">
-    <value />
+    <value>السليمانية</value>
   </data>
   <data name="Babylon" xml:space="preserve">
-    <value />
+    <value>بابل</value>
   </data>
   <data name="Dohuk" xml:space="preserve">
-    <value />
+    <value>دهوك</value>
   </data>
   <data name="Kirkuk" xml:space="preserve">
-    <value />
+    <value>كركوك</value>
   </data>
   <data name="Anbar" xml:space="preserve">
-    <value />
+    <value>الأنبار</value>
   </data>
   <data name="Diyala" xml:space="preserve">
-    <value />
+    <value>ديالى</value>
   </data>
   <data name="Saladin" xml:space="preserve">
-    <value />
+    <value>صلاح الدين</value>
   </data>
   <data name="Wasit" xml:space="preserve">
-    <value />
+    <value>واسط</value>
   </data>
   <data name="ThiQar" xml:space="preserve">
-    <value />
+    <value>ذي قار</value>
   </data>
   <data name="Muthanna" xml:space="preserve">
-    <value />
+    <value>المثنى</value>
   </data>
   <data name="Qadisiyyah" xml:space="preserve">
-    <value />
+    <value>القادسية</value>
   </data>
   <data name="Maysan" xml:space="preserve">
-    <value />
+    <value>ميسان</value>
   </data>
   <data name="DistrictExample" xml:space="preserve">
-    <value />
+    <value>مثال: الكرادة، المنصور</value>
   </data>
   <data name="DetailedAddress" xml:space="preserve">
-    <value />
+    <value>العنوان التفصيلي</value>
   </data>
   <data name="AddressOptional" xml:space="preserve">
-    <value />
+    <value>العنوان (اختياري)</value>
   </data>
   <data name="AccountType" xml:space="preserve">
-    <value />
+    <value>نوع الحساب</value>
   </data>
   <data name="Buyer" xml:space="preserve">
-    <value />
+    <value>مشتري</value>
   </data>
   <data name="BuyerDescription" xml:space="preserve">
-    <value />
+    <value>أبحث عن منتجات وخدمات</value>
   </data>
   <data name="Seller" xml:space="preserve">
-    <value />
+    <value>بائع</value>
   </data>
   <data name="SellerDescription" xml:space="preserve">
-    <value />
+    <value>أريد عرض منتجاتي وخدماتي</value>
   </data>
   <data name="StoreInfo" xml:space="preserve">
-    <value />
+    <value>معلومات المتجر</value>
   </data>
   <data name="YourStoreName" xml:space="preserve">
-    <value />
+    <value>اسم متجرك</value>
   </data>
   <data name="StoreDescription" xml:space="preserve">
-    <value />
+    <value>وصف المتجر</value>
   </data>
   <data name="StoreDescriptionPlaceholder" xml:space="preserve">
-    <value />
+    <value>اكتب وصفاً مختصراً عن متجرك والخدمات التي تقدمها...</value>
   </data>
   <data name="WebsiteUrl1" xml:space="preserve">
-    <value />
+    <value>رابط الموقع الأول</value>
   </data>
   <data name="WebsiteUrl2" xml:space="preserve">
-    <value />
+    <value>رابط الموقع الثاني</value>
   </data>
   <data name="WebsiteUrl3" xml:space="preserve">
-    <value />
+    <value>رابط الموقع الثالث</value>
   </data>
   <data name="ProfileImage" xml:space="preserve">
-    <value />
+    <value>صورة الملف الشخصي</value>
   </data>
   <data name="ProfileImageNote" xml:space="preserve">
-    <value />
+    <value>الحد الأدنى 200×200 بكسل، يُفضل صورة مربعة</value>
   </data>
   <data name="ImagePreview" xml:space="preserve">
-    <value />
+    <value>معاينة الصورة</value>
   </data>
   <data name="ExistingVerifiedUser" xml:space="preserve">
-    <value />
+    <value>مستخدم مسجل ومُفعّل</value>
   </data>
   <data name="ExistingUnverifiedUser" xml:space="preserve">
-    <value />
+    <value>مستخدم مسجل غير مُفعّل</value>
   </data>
   <data name="EnterLoginCode" xml:space="preserve">
-    <value />
+    <value>أدخل كود الدخول</value>
   </data>
   <data name="VerifyAccount" xml:space="preserve">
-    <value />
+    <value>تفعيل الحساب</value>
   </data>
   <data name="EnterVerificationCodeToActivate" xml:space="preserve">
-    <value />
+    <value>أدخل كود التحقق لتفعيل حسابك</value>
   </data>
   <data name="VerifyCode" xml:space="preserve">
-    <value />
+    <value>تحقق من الكود</value>
   </data>
   <data name="EnterVerificationCodeSent" xml:space="preserve">
-    <value />
+    <value>أدخل كود التحقق المرسل إليك</value>
   </data>
   <data name="CheckWhatsApp" xml:space="preserve">
-    <value />
+    <value>تحقق من رسائل واتساب</value>
   </data>
   <data name="WelcomeBackLoginCodeSent" xml:space="preserve">
-    <value />
+    <value>مرحباً بعودتك! تم إرسال كود الدخول</value>
   </data>
   <data name="AccountExistsNeedsVerification" xml:space="preserve">
     <value>الحساب موجود ويحتاج إلى التحقق</value>
   </data>
   <data name="LoginCode" xml:space="preserve">
-    <value />
+    <value>كود الدخول</value>
   </data>
   <data name="VerificationCode" xml:space="preserve">
-    <value />
+    <value>كود التحقق</value>
   </data>
   <data name="Enter4DigitCode" xml:space="preserve">
-    <value />
+    <value>أدخل الكود المكون من 4 أرقام</value>
   </data>
   <data name="DidNotReceiveCode" xml:space="preserve">
-    <value />
+    <value>لم تستلم الكود؟</value>
   </data>
   <data name="Resend" xml:space="preserve">
-    <value />
+    <value>إعادة الإرسال</value>
   </data>
   <data name="ChangeNumber" xml:space="preserve">
-    <value />
+    <value>تغيير الرقم</value>
   </data>
   <data name="CanResendIn" xml:space="preserve">
-    <value />
+    <value>يمكنك إعادة الإرسال بعد</value>
   </data>
   <data name="Seconds" xml:space="preserve">
-    <value />
+    <value>ثانية</value>
   </data>
   <data name="AdditionalSecurity" xml:space="preserve">
-    <value />
+    <value>أمان إضافي</value>
   </data>
   <data name="LoginCodeValid10Minutes" xml:space="preserve">
-    <value />
+    <value>كود الدخول صالح لمدة 10 دقائق</value>
   </data>
   <data name="VerificationCodeValid10Minutes" xml:space="preserve">
-    <value />
+    <value>كود التحقق صالح لمدة 10 دقائق</value>
   </data>
   <data name="AdminVerification" xml:space="preserve">
-    <value />
+    <value>التحقق من المشرف</value>
   </data>
   <data name="EnterAdminVerificationCode" xml:space="preserve">
-    <value />
+    <value>أدخل كود التحقق الخاص بالمشرف</value>
   </data>
   <data name="RestrictedAreaAdminOnly" xml:space="preserve">
-    <value />
+    <value>منطقة محظورة - للمشرفين فقط</value>
   </data>
   <data name="AdminVerificationCode" xml:space="preserve">
-    <value />
+    <value>كود التحقق للمشرف</value>
   </data>
   <data name="EnterDashboard" xml:space="preserve">
-    <value />
+    <value>الدخول للوحة التحكم</value>
   </data>
   <data name="BackToLogin" xml:space="preserve">
-    <value />
+    <value>العودة لتسجيل الدخول</value>
   </data>
   <data name="AdditionalAdminSecurity" xml:space="preserve">
-    <value />
+    <value>أمان إضافي للمشرفين</value>
   </data>
 </root>
